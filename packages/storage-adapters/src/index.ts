@@ -16,5 +16,5 @@ export { StorageError, StorageErrorCode } from './interface.js';
 // Storage adapter implementations
 export { IndexedDBAdapter } from './indexeddb.js';
 export { OPFSAdapter } from './opfs.js';
-// export { LocalStorageAdapter } from './localstorage.js';
+export { LocalStorageAdapter } from './localstorage.js';
 // export { MemoryAdapter } from './memory.js';
