@@ -196,18 +196,18 @@ Based on PRD: `0001-prd-browser-git.md`
   - [x] 3.11 Write unit tests for all fs operations
   - [x] 3.12 Write integration tests combining fs operations with storage adapters
 
-- [ ] 4.0 Set up testing infrastructure and CI/CD pipeline
-  - [ ] 4.1 Install and configure Vitest for unit testing across all TypeScript packages
-  - [ ] 4.2 Create shared Vitest configuration for consistent test setup
-  - [ ] 4.3 Install and configure Playwright for integration and cross-browser testing
-  - [ ] 4.4 Create Playwright configuration for Chrome, Firefox, and Safari
-  - [ ] 4.5 Set up test utilities and helpers for common test scenarios
-  - [ ] 4.6 Create mock storage adapter for deterministic testing
-  - [ ] 4.7 Set up GitHub Actions workflow for CI (lint, type-check, unit tests)
-  - [ ] 4.8 Configure GitHub Actions to run Playwright tests on multiple browsers
-  - [ ] 4.9 Set up code coverage reporting with coverage thresholds (>80%)
-  - [ ] 4.10 Create performance benchmark infrastructure
-  - [ ] 4.11 Configure test scripts in root package.json (test, test:unit, test:integration, test:browser)
+- [x] 4.0 Set up testing infrastructure and CI/CD pipeline
+  - [x] 4.1 Install and configure Vitest for unit testing across all TypeScript packages
+  - [x] 4.2 Create shared Vitest configuration for consistent test setup
+  - [x] 4.3 Install and configure Playwright for integration and cross-browser testing
+  - [x] 4.4 Create Playwright configuration for Chrome, Firefox, and Safari
+  - [x] 4.5 Set up test utilities and helpers for common test scenarios
+  - [x] 4.6 Create mock storage adapter for deterministic testing
+  - [x] 4.7 Set up GitHub Actions workflow for CI (lint, type-check, unit tests)
+  - [x] 4.8 Configure GitHub Actions to run Playwright tests on multiple browsers
+  - [x] 4.9 Set up code coverage reporting with coverage thresholds (>80%)
+  - [x] 4.10 Create performance benchmark infrastructure
+  - [x] 4.11 Configure test scripts in root package.json (test, test:unit, test:integration, test:browser)
 
 - [ ] 5.0 Configure build system for Go/WASM and TypeScript
   - [ ] 5.1 Install TinyGo and verify installation
