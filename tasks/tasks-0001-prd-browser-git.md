@@ -209,19 +209,19 @@ Based on PRD: `0001-prd-browser-git.md`
   - [x] 4.10 Create performance benchmark infrastructure
   - [x] 4.11 Configure test scripts in root package.json (test, test:unit, test:integration, test:browser)
 
-- [ ] 5.0 Configure build system for Go/WASM and TypeScript
-  - [ ] 5.1 Install TinyGo and verify installation
-  - [ ] 5.2 Create `packages/git-core/go.mod` with module definition
-  - [ ] 5.3 Create `packages/git-core/Makefile` with WASM build targets
-  - [ ] 5.4 Configure TinyGo WASM build with optimization flags
-  - [ ] 5.5 Set up WASM binary output to `packages/browser-git/dist/` directory
-  - [ ] 5.6 Configure TypeScript build for each package (browser-git, storage-adapters, diff-engine, git-cli)
-  - [ ] 5.7 Set up build order dependencies (storage-adapters → diff-engine → git-core → browser-git → git-cli)
-  - [ ] 5.8 Create build scripts in root package.json (build, build:wasm, build:packages)
-  - [ ] 5.9 Set up watch mode for development (separate for WASM and TypeScript)
-  - [ ] 5.10 Configure source maps for debugging
-  - [ ] 5.11 Set up bundle size analysis and tracking
-  - [ ] 5.12 Create clean scripts to remove build artifacts
+- [x] 5.0 Configure build system for Go/WASM and TypeScript
+  - [x] 5.1 Install TinyGo and verify installation
+  - [x] 5.2 Create `packages/git-core/go.mod` with module definition
+  - [x] 5.3 Create `packages/git-core/Makefile` with WASM build targets
+  - [x] 5.4 Configure TinyGo WASM build with optimization flags
+  - [x] 5.5 Set up WASM binary output to `packages/browser-git/dist/` directory
+  - [x] 5.6 Configure TypeScript build for each package (browser-git, storage-adapters, diff-engine, git-cli)
+  - [x] 5.7 Set up build order dependencies (storage-adapters → diff-engine → git-core → browser-git → git-cli)
+  - [x] 5.8 Create build scripts in root package.json (build, build:wasm, build:packages)
+  - [x] 5.9 Set up watch mode for development (separate for WASM and TypeScript)
+  - [x] 5.10 Configure source maps for debugging
+  - [x] 5.11 Set up bundle size analysis and tracking
+  - [x] 5.12 Create clean scripts to remove build artifacts
 
 ### Phase 2: Core Git Operations
 
