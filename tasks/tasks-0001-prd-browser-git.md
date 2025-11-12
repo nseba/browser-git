@@ -171,7 +171,7 @@ Based on PRD: `0001-prd-browser-git.md`
 
 - [ ] 2.0 Implement storage abstraction layer with multiple backends
   - [x] 2.1 Create `storage-adapters` package structure with `package.json` and TypeScript config
-  - [ ] 2.2 Define common storage interface in `interface.ts` (methods: get, set, delete, list, exists, clear)
+  - [x] 2.2 Define common storage interface in `interface.ts` (methods: get, set, delete, list, exists, clear)
   - [ ] 2.3 Implement IndexedDB storage adapter with proper database schema and transaction handling
   - [ ] 2.4 Implement OPFS storage adapter with error handling for unsupported browsers
   - [ ] 2.5 Implement LocalStorage adapter with size limit checking and fallback behavior
