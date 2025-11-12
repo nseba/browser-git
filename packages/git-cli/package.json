@@ -1,0 +1,37 @@
+{
+  "name": "@browser-git/git-cli",
+  "version": "0.1.0",
+  "description": "Command-line interface for BrowserGit",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "bin": {
+    "browser-git": "./dist/cli.js",
+    "bgit": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "clean": "rm -rf dist",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@browser-git/browser-git": "0.1.0",
+    "@browser-git/storage-adapters": "0.1.0"
+  },
+  "keywords": [
+    "git",
+    "cli",
+    "browser-git",
+    "command-line"
+  ],
+  "author": "Sebastian Negomireanu",
+  "license": "SEE LICENSE IN LICENSE",
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  }
+}

@@ -7,11 +7,13 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "allowImportingTsExtensions": false
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "test"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"],
   "references": [
-    { "path": "../storage-adapters" }
+    { "path": "../storage-adapters" },
+    { "path": "../browser-git" }
   ]
 }
