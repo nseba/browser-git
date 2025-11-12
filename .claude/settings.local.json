@@ -22,7 +22,8 @@
       "Bash(npm run test:coverage:*)",
       "Bash(tinygo version:*)",
       "Bash(brew install:*)",
-      "Bash(brew tap:*)"
+      "Bash(brew tap:*)",
+      "Bash(chmod:*)"
     ],
     "deny": [],
     "ask": []

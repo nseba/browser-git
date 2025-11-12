@@ -35,11 +35,13 @@
     "type-check": "npm run type-check -ws --if-present",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "analyze": "node scripts/analyze-bundle.js",
     "ci": "npm run lint && npm run type-check && npm run test:unit && npm run build",
-    "ci:full": "npm run lint && npm run type-check && npm run test:all && npm run bench:run && npm run build"
+    "ci:full": "npm run lint && npm run type-check && npm run test:all && npm run bench:run && npm run build && npm run analyze"
   },
   "devDependencies": {
     "@playwright/test": "^1.40.0",
+    "@rollup/plugin-terser": "^0.4.4",
     "@types/node": "^20.10.0",
     "@typescript-eslint/eslint-plugin": "^6.13.0",
     "@typescript-eslint/parser": "^6.13.0",
@@ -48,6 +50,7 @@
     "eslint": "^8.54.0",
     "eslint-config-prettier": "^9.0.0",
     "prettier": "^3.1.0",
+    "rollup-plugin-visualizer": "^6.0.5",
     "typescript": "^5.3.0",
     "vitest": "^1.0.0"
   },
