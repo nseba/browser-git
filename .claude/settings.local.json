@@ -16,7 +16,8 @@
       "Bash(test:*)",
       "Bash(npm run type-check:*)",
       "Bash(npm run build:*)",
-      "Bash(npm run test:unit:*)"
+      "Bash(npm run test:unit:*)",
+      "Bash(npx playwright install:*)"
     ],
     "deny": [],
     "ask": []
