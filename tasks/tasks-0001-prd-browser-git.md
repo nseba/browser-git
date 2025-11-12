@@ -175,7 +175,7 @@ Based on PRD: `0001-prd-browser-git.md`
   - [x] 2.3 Implement IndexedDB storage adapter with proper database schema and transaction handling
   - [x] 2.4 Implement OPFS storage adapter with error handling for unsupported browsers
   - [x] 2.5 Implement LocalStorage adapter with size limit checking and fallback behavior
-  - [ ] 2.6 Implement in-memory storage adapter for testing purposes
+  - [x] 2.6 Implement in-memory storage adapter for testing purposes
   - [ ] 2.7 Create storage quota management utilities to monitor and report storage usage
   - [ ] 2.8 Implement data serialization helpers for binary data and JSON
   - [ ] 2.9 Write unit tests for each storage adapter ensuring interface compliance
