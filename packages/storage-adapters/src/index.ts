@@ -18,6 +18,8 @@ export { IndexedDBAdapter } from './indexeddb.js';
 export { OPFSAdapter } from './opfs.js';
 export { LocalStorageAdapter } from './localstorage.js';
 export { MemoryAdapter } from './memory.js';
+export { MockAdapter } from './mock.js';
+export type { MockStorageOptions, MockCall } from './mock.js';
 
 // Utilities
 export * from './utils/quota.js';
