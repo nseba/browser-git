@@ -169,18 +169,18 @@ Based on PRD: `0001-prd-browser-git.md`
   - [x] 1.7 Document monorepo setup in root `README.md`
   - [x] 1.8 Create `CONTRIBUTING.md` with development guidelines
 
-- [ ] 2.0 Implement storage abstraction layer with multiple backends
+- [x] 2.0 Implement storage abstraction layer with multiple backends
   - [x] 2.1 Create `storage-adapters` package structure with `package.json` and TypeScript config
   - [x] 2.2 Define common storage interface in `interface.ts` (methods: get, set, delete, list, exists, clear)
   - [x] 2.3 Implement IndexedDB storage adapter with proper database schema and transaction handling
   - [x] 2.4 Implement OPFS storage adapter with error handling for unsupported browsers
   - [x] 2.5 Implement LocalStorage adapter with size limit checking and fallback behavior
   - [x] 2.6 Implement in-memory storage adapter for testing purposes
-  - [ ] 2.7 Create storage quota management utilities to monitor and report storage usage
-  - [ ] 2.8 Implement data serialization helpers for binary data and JSON
-  - [ ] 2.9 Write unit tests for each storage adapter ensuring interface compliance
-  - [ ] 2.10 Write cross-storage adapter tests to verify consistent behavior
-  - [ ] 2.11 Add browser feature detection for OPFS and IndexedDB support
+  - [x] 2.7 Create storage quota management utilities to monitor and report storage usage
+  - [x] 2.8 Implement data serialization helpers for binary data and JSON
+  - [x] 2.9 Write unit tests for each storage adapter ensuring interface compliance
+  - [x] 2.10 Write cross-storage adapter tests to verify consistent behavior
+  - [x] 2.11 Add browser feature detection for OPFS and IndexedDB support
 
 - [ ] 3.0 Create file system API layer
   - [ ] 3.1 Design and implement Node.js-like async fs API in `browser-git/src/filesystem/fs.ts`

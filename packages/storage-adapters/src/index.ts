@@ -18,3 +18,7 @@ export { IndexedDBAdapter } from './indexeddb.js';
 export { OPFSAdapter } from './opfs.js';
 export { LocalStorageAdapter } from './localstorage.js';
 export { MemoryAdapter } from './memory.js';
+
+// Utilities
+export * from './utils/quota.js';
+export * from './utils/serialization.js';
