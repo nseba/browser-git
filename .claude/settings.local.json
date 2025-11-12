@@ -18,7 +18,8 @@
       "Bash(npm run build:*)",
       "Bash(npm run test:unit:*)",
       "Bash(npx playwright install:*)",
-      "Bash(npx playwright test --reporter=list)"
+      "Bash(npx playwright test --reporter=list)",
+      "Bash(npm run test:coverage:*)"
     ],
     "deny": [],
     "ask": []
