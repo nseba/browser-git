@@ -182,19 +182,19 @@ Based on PRD: `0001-prd-browser-git.md`
   - [x] 2.10 Write cross-storage adapter tests to verify consistent behavior
   - [x] 2.11 Add browser feature detection for OPFS and IndexedDB support
 
-- [ ] 3.0 Create file system API layer
-  - [ ] 3.1 Design and implement Node.js-like async fs API in `browser-git/src/filesystem/fs.ts`
-  - [ ] 3.2 Implement `readFile(path, encoding?)` with support for text and binary data
-  - [ ] 3.3 Implement `writeFile(path, data, encoding?)` with automatic directory creation
-  - [ ] 3.4 Implement `mkdir(path, recursive?)` for directory creation
-  - [ ] 3.5 Implement `readdir(path)` for listing directory contents
-  - [ ] 3.6 Implement `unlink(path)` for file deletion
-  - [ ] 3.7 Implement `rmdir(path, recursive?)` for directory deletion
-  - [ ] 3.8 Implement `stat(path)` for file metadata retrieval
-  - [ ] 3.9 Create path manipulation utilities (join, dirname, basename, normalize, relative)
-  - [ ] 3.10 Implement file watching API with event emitters for file changes
-  - [ ] 3.11 Write unit tests for all fs operations
-  - [ ] 3.12 Write integration tests combining fs operations with storage adapters
+- [x] 3.0 Create file system API layer
+  - [x] 3.1 Design and implement Node.js-like async fs API in `browser-git/src/filesystem/fs.ts`
+  - [x] 3.2 Implement `readFile(path, encoding?)` with support for text and binary data
+  - [x] 3.3 Implement `writeFile(path, data, encoding?)` with automatic directory creation
+  - [x] 3.4 Implement `mkdir(path, recursive?)` for directory creation
+  - [x] 3.5 Implement `readdir(path)` for listing directory contents
+  - [x] 3.6 Implement `unlink(path)` for file deletion
+  - [x] 3.7 Implement `rmdir(path, recursive?)` for directory deletion
+  - [x] 3.8 Implement `stat(path)` for file metadata retrieval
+  - [x] 3.9 Create path manipulation utilities (join, dirname, basename, normalize, relative)
+  - [x] 3.10 Implement file watching API with event emitters for file changes
+  - [x] 3.11 Write unit tests for all fs operations
+  - [x] 3.12 Write integration tests combining fs operations with storage adapters
 
 - [ ] 4.0 Set up testing infrastructure and CI/CD pipeline
   - [ ] 4.1 Install and configure Vitest for unit testing across all TypeScript packages
