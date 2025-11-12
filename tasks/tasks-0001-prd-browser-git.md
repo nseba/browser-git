@@ -159,7 +159,7 @@ Based on PRD: `0001-prd-browser-git.md`
 
 ### Phase 1: Foundation & Infrastructure
 
-- [ ] 1.0 Set up monorepo infrastructure and development environment
+- [x] 1.0 Set up monorepo infrastructure and development environment
   - [x] 1.1 Initialize Git repository with initial commit
   - [x] 1.2 Create root `package.json` with yarn workspaces configuration
   - [x] 1.3 Create directory structure for all packages (git-core, browser-git, storage-adapters, diff-engine, git-cli)
