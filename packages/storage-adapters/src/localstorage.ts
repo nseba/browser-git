@@ -1,6 +1,6 @@
 import type {
   StorageAdapter,
-  StorageAdapterOptions,
+  
   StorageQuota,
 } from './interface.js';
 import { StorageError, StorageErrorCode } from './interface.js';

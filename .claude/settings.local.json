@@ -12,7 +12,10 @@
       "Bash(yarn install:*)",
       "Bash(npm test:*)",
       "Bash(timeout 20 npm test)",
-      "Bash(timeout 15 npm test:*)"
+      "Bash(timeout 15 npm test:*)",
+      "Bash(test:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

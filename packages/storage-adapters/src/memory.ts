@@ -2,7 +2,6 @@ import type {
   StorageAdapter,
   StorageQuota,
 } from './interface.js';
-import { StorageError, StorageErrorCode } from './interface.js';
 
 /**
  * In-memory storage adapter.

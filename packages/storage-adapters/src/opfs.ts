@@ -1,6 +1,5 @@
 import type {
   StorageAdapter,
-  StorageAdapterOptions,
   StorageQuota,
 } from './interface.js';
 import { StorageError, StorageErrorCode } from './interface.js';
@@ -135,7 +134,7 @@ export class OPFSAdapter implements StorageAdapter {
       const writable = await fileHandle.createWritable();
 
       try {
-        await writable.write(value);
+        await writable.write(value as unknown as FileSystemWriteChunkType);
         await writable.close();
       } catch (writeError) {
         // Try to close the writable even if write failed
@@ -241,7 +240,7 @@ export class OPFSAdapter implements StorageAdapter {
     keys: string[],
     prefix?: string
   ): Promise<void> {
-    for await (const [name, handle] of dir.entries()) {
+    for await (const [name, handle] of (dir as any).entries()) {
       const fullPath = path ? `${path}/${name}` : name;
 
       if (handle.kind === 'file') {
@@ -282,7 +281,7 @@ export class OPFSAdapter implements StorageAdapter {
 
     try {
       // Remove all entries in the root directory
-      for await (const [name] of this.rootDir.entries()) {
+      for await (const [name] of (this.rootDir as any).entries()) {
         await this.rootDir.removeEntry(name, { recursive: true });
       }
     } catch (error) {

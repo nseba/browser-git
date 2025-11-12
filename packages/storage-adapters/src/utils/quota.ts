@@ -53,6 +53,9 @@ export interface QuotaStatus {
 export async function getQuotaStatus(
   adapter: StorageAdapter
 ): Promise<QuotaStatus | null> {
+  if (!adapter.getQuota) {
+    return null;
+  }
   const quota = await adapter.getQuota();
   if (!quota) {
     return null;

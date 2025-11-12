@@ -1,0 +1,46 @@
+{
+  "name": "@browser-git/browser-git",
+  "version": "0.1.0",
+  "description": "Browser-based Git implementation with file system API",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./filesystem": {
+      "types": "./dist/filesystem/index.d.ts",
+      "import": "./dist/filesystem/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@browser-git/storage-adapters": "0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.6.1",
+    "jsdom": "^23.0.1"
+  },
+  "keywords": [
+    "git",
+    "browser",
+    "filesystem",
+    "wasm",
+    "vcs"
+  ],
+  "author": "Sebastian Negomireanu",
+  "license": "SEE LICENSE IN LICENSE"
+}
