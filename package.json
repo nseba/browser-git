@@ -1,0 +1,70 @@
+{
+  "name": "browser-git",
+  "version": "0.1.0",
+  "description": "A full-featured Git implementation for browsers using Go + WebAssembly and TypeScript",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
+  "scripts": {
+    "build": "yarn build:wasm && yarn build:packages",
+    "build:wasm": "cd packages/git-core && make build",
+    "build:packages": "yarn workspaces foreach -pt --exclude browser-git run build",
+    "dev": "concurrently \"yarn dev:wasm\" \"yarn dev:packages\"",
+    "dev:wasm": "cd packages/git-core && make watch",
+    "dev:packages": "yarn workspaces foreach -pi run dev",
+    "clean": "yarn workspaces foreach -p run clean && rm -rf dist",
+    "test": "yarn test:unit && yarn test:integration && yarn test:browser",
+    "test:unit": "yarn workspaces foreach -p run test",
+    "test:integration": "vitest run tests/integration",
+    "test:browser": "playwright test",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "typecheck": "yarn workspaces foreach -p run typecheck",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\""
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "concurrently": "^8.2.0",
+    "eslint": "^8.54.0",
+    "eslint-config-prettier": "^9.0.0",
+    "prettier": "^3.1.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "yarn": ">=4.0.0"
+  },
+  "packageManager": "yarn@4.0.2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nseba/browser-git.git"
+  },
+  "keywords": [
+    "git",
+    "browser",
+    "wasm",
+    "webassembly",
+    "version-control",
+    "offline",
+    "indexeddb",
+    "opfs",
+    "typescript",
+    "go"
+  ],
+  "author": "Sebastian Negomireanu",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/nseba/browser-git/issues"
+  },
+  "homepage": "https://github.com/nseba/browser-git#readme"
+}

@@ -160,14 +160,14 @@ Based on PRD: `0001-prd-browser-git.md`
 ### Phase 1: Foundation & Infrastructure
 
 - [ ] 1.0 Set up monorepo infrastructure and development environment
-  - [ ] 1.1 Initialize Git repository with initial commit
-  - [ ] 1.2 Create root `package.json` with yarn workspaces configuration
-  - [ ] 1.3 Create directory structure for all packages (git-core, browser-git, storage-adapters, diff-engine, git-cli)
-  - [ ] 1.4 Create directory structure for examples and tests
-  - [ ] 1.5 Set up `.gitignore` with patterns for node_modules, dist, build artifacts, WASM files
-  - [ ] 1.6 Create base `tsconfig.base.json` with shared TypeScript configuration
-  - [ ] 1.7 Document monorepo setup in root `README.md`
-  - [ ] 1.8 Create `CONTRIBUTING.md` with development guidelines
+  - [x] 1.1 Initialize Git repository with initial commit
+  - [x] 1.2 Create root `package.json` with yarn workspaces configuration
+  - [x] 1.3 Create directory structure for all packages (git-core, browser-git, storage-adapters, diff-engine, git-cli)
+  - [x] 1.4 Create directory structure for examples and tests
+  - [x] 1.5 Set up `.gitignore` with patterns for node_modules, dist, build artifacts, WASM files
+  - [x] 1.6 Create base `tsconfig.base.json` with shared TypeScript configuration
+  - [x] 1.7 Document monorepo setup in root `README.md`
+  - [x] 1.8 Create `CONTRIBUTING.md` with development guidelines
 
 - [ ] 2.0 Implement storage abstraction layer with multiple backends
   - [ ] 2.1 Create `storage-adapters` package structure with `package.json` and TypeScript config
