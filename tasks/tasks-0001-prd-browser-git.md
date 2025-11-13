@@ -260,31 +260,31 @@ Based on PRD: `0001-prd-browser-git.md`
   - [x] 8.9 Write unit tests for repository initialization
   - [x] 8.10 Write integration tests verifying complete repository structure
 
-- [ ] 9.0 Implement staging and commit operations
-  - [ ] 9.1 Implement index (staging area) data structure
-  - [ ] 9.2 Implement `git add` to stage files (add to index)
-  - [ ] 9.3 Implement `git add` with glob patterns and .gitignore support
-  - [ ] 9.4 Implement .gitignore pattern matching using gitignore library
-  - [ ] 9.5 Implement index serialization/deserialization
-  - [ ] 9.6 Implement `git commit` to create commit objects from staged changes
-  - [ ] 9.7 Update HEAD and branch references after commit
-  - [ ] 9.8 Implement tree building from index entries
-  - [ ] 9.9 Implement `git status` showing working tree vs index vs HEAD
-  - [ ] 9.10 Create TypeScript APIs: `repo.add(paths)`, `repo.commit(message, options)`
-  - [ ] 9.11 Write unit tests for staging operations
-  - [ ] 9.12 Write integration tests for complete add-commit workflow
+- [x] 9.0 Implement staging and commit operations
+  - [x] 9.1 Implement index (staging area) data structure
+  - [x] 9.2 Implement `git add` to stage files (add to index)
+  - [x] 9.3 Implement `git add` with glob patterns and .gitignore support
+  - [x] 9.4 Implement .gitignore pattern matching using gitignore library
+  - [x] 9.5 Implement index serialization/deserialization
+  - [x] 9.6 Implement `git commit` to create commit objects from staged changes
+  - [x] 9.7 Update HEAD and branch references after commit
+  - [x] 9.8 Implement tree building from index entries
+  - [x] 9.9 Implement `git status` showing working tree vs index vs HEAD
+  - [x] 9.10 Create TypeScript APIs: `repo.add(paths)`, `repo.commit(message, options)`
+  - [x] 9.11 Write unit tests for staging operations
+  - [x] 9.12 Write integration tests for complete add-commit workflow
 
-- [ ] 10.0 Implement branch management
-  - [ ] 10.1 Implement reference storage (refs/heads/*, refs/tags/*)
-  - [ ] 10.2 Implement `git branch` to list branches
-  - [ ] 10.3 Implement `git branch <name>` to create new branch
-  - [ ] 10.4 Implement `git branch -d <name>` to delete branch
-  - [ ] 10.5 Implement `git branch -m <old> <new>` to rename branch
-  - [ ] 10.6 Implement symbolic reference handling (HEAD → refs/heads/main)
-  - [ ] 10.7 Implement current branch detection
-  - [ ] 10.8 Create TypeScript APIs: `repo.branch()`, `repo.createBranch(name)`, `repo.deleteBranch(name)`
-  - [ ] 10.9 Write unit tests for branch operations
-  - [ ] 10.10 Write integration tests for branch lifecycle
+- [x] 10.0 Implement branch management
+  - [x] 10.1 Implement reference storage (refs/heads/*, refs/tags/*)
+  - [x] 10.2 Implement `git branch` to list branches
+  - [x] 10.3 Implement `git branch <name>` to create new branch
+  - [x] 10.4 Implement `git branch -d <name>` to delete branch
+  - [x] 10.5 Implement `git branch -m <old> <new>` to rename branch
+  - [x] 10.6 Implement symbolic reference handling (HEAD → refs/heads/main)
+  - [x] 10.7 Implement current branch detection
+  - [x] 10.8 Create TypeScript APIs: `repo.branch()`, `repo.createBranch(name)`, `repo.deleteBranch(name)`
+  - [x] 10.9 Write unit tests for branch operations
+  - [x] 10.10 Write integration tests for branch lifecycle
 
 - [ ] 11.0 Implement checkout operations
   - [ ] 11.1 Implement `git checkout <branch>` to switch branches
