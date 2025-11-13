@@ -23,7 +23,10 @@
       "Bash(tinygo version:*)",
       "Bash(brew install:*)",
       "Bash(brew tap:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(go test:*)",
+      "Bash(go build:*)",
+      "Bash(GOOS=js GOARCH=wasm go build:*)"
     ],
     "deny": [],
     "ask": []

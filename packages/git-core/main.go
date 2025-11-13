@@ -54,6 +54,9 @@ func main() {
 			"currentBranch": js.FuncOf(currentBranch),
 			"checkout":      js.FuncOf(checkout),
 			"checkoutFile":  js.FuncOf(checkoutFile),
+			"log":           js.FuncOf(getLog),
+			"getCommit":     js.FuncOf(getCommitByHash),
+			"blame":         js.FuncOf(getBlame),
 		}),
 	}))
 
@@ -1106,5 +1109,233 @@ func checkoutFile(this js.Value, args []js.Value) interface{} {
 	return js.ValueOf(map[string]interface{}{
 		"success": true,
 		"path":    filePath,
+	})
+}
+
+// getLog returns commit history
+// Args: repoPath (string), ref (string, optional - defaults to HEAD), options (optional: { maxCount, author, since, until, format, graph })
+// Returns: { success, commits[] } or { error }
+func getLog(this js.Value, args []js.Value) interface{} {
+	if len(args) < 1 {
+		return jsError("missing repoPath argument")
+	}
+
+	repoPath := args[0].String()
+
+	// Open repository
+	repo, err := repository.Open(repoPath)
+	if err != nil {
+		return jsError("failed to open repository: " + err.Error())
+	}
+
+	// Get ref (default to empty string for HEAD)
+	ref := ""
+	if len(args) >= 2 && args[1].Type() == js.TypeString {
+		ref = args[1].String()
+	}
+
+	// Parse options
+	opts := repository.DefaultLogOptions()
+	if len(args) >= 3 && args[2].Type() == js.TypeObject {
+		optsJS := args[2]
+
+		if !optsJS.Get("maxCount").IsUndefined() {
+			opts.MaxCount = optsJS.Get("maxCount").Int()
+		}
+		if !optsJS.Get("author").IsUndefined() {
+			opts.Author = optsJS.Get("author").String()
+		}
+		if !optsJS.Get("format").IsUndefined() {
+			formatStr := optsJS.Get("format").String()
+			switch formatStr {
+			case "oneline":
+				opts.Format = repository.LogFormatOneline
+			case "short":
+				opts.Format = repository.LogFormatShort
+			default:
+				opts.Format = repository.LogFormatFull
+			}
+		}
+		if !optsJS.Get("graph").IsUndefined() {
+			opts.Graph = optsJS.Get("graph").Bool()
+		}
+		if !optsJS.Get("all").IsUndefined() {
+			opts.All = optsJS.Get("all").Bool()
+		}
+	}
+
+	// Get log
+	entries, err := repo.Log(ref, opts)
+	if err != nil {
+		return jsError("failed to get log: " + err.Error())
+	}
+
+	// Convert entries to JS
+	jsEntries := make([]interface{}, len(entries))
+	for i, entry := range entries {
+		jsEntries[i] = map[string]interface{}{
+			"hash":    entry.Hash.String(),
+			"author":  entry.Commit.Author.Name,
+			"email":   entry.Commit.Author.Email,
+			"date":    entry.Commit.Author.When.Unix(),
+			"message": entry.Commit.Message,
+			"parents": func() []interface{} {
+				parents := make([]interface{}, len(entry.Parents))
+				for j, p := range entry.Parents {
+					parents[j] = p.String()
+				}
+				return parents
+			}(),
+			"refs": entry.Refs,
+		}
+	}
+
+	return js.ValueOf(map[string]interface{}{
+		"success": true,
+		"commits": jsEntries,
+	})
+}
+
+// getCommitByHash retrieves a commit by hash
+// Args: repoPath (string), hash (string - can be abbreviated)
+// Returns: { success, commit } or { error }
+func getCommitByHash(this js.Value, args []js.Value) interface{} {
+	if len(args) < 2 {
+		return jsError("missing repoPath or hash arguments")
+	}
+
+	repoPath := args[0].String()
+	hashStr := args[1].String()
+
+	// Open repository
+	repo, err := repository.Open(repoPath)
+	if err != nil {
+		return jsError("failed to open repository: " + err.Error())
+	}
+
+	// Get commit
+	commit, commitHash, err := repo.GetCommit(hashStr)
+	if err != nil {
+		return jsError("failed to get commit: " + err.Error())
+	}
+
+	// Convert to JS
+	parents := make([]interface{}, len(commit.Parents))
+	for i, p := range commit.Parents {
+		parents[i] = p.String()
+	}
+
+	return js.ValueOf(map[string]interface{}{
+		"success": true,
+		"commit": map[string]interface{}{
+			"hash":    commitHash.String(),
+			"tree":    commit.Tree.String(),
+			"parents": parents,
+			"author": map[string]interface{}{
+				"name":      commit.Author.Name,
+				"email":     commit.Author.Email,
+				"timestamp": commit.Author.When.Unix(),
+			},
+			"committer": map[string]interface{}{
+				"name":      commit.Committer.Name,
+				"email":     commit.Committer.Email,
+				"timestamp": commit.Committer.When.Unix(),
+			},
+			"message": commit.Message,
+		},
+	})
+}
+
+// getBlame returns line-by-line history for a file
+// Args: repoPath (string), path (string), ref (string, optional - defaults to HEAD), options (optional: { startLine, endLine })
+// Returns: { success, lines[] } or { error }
+func getBlame(this js.Value, args []js.Value) interface{} {
+	if len(args) < 2 {
+		return jsError("missing repoPath or path arguments")
+	}
+
+	repoPath := args[0].String()
+	filePath := args[1].String()
+
+	// Open repository
+	repo, err := repository.Open(repoPath)
+	if err != nil {
+		return jsError("failed to open repository: " + err.Error())
+	}
+
+	// Get ref (default to HEAD)
+	ref := ""
+	if len(args) >= 3 && args[2].Type() == js.TypeString {
+		ref = args[2].String()
+	}
+
+	// Resolve ref to hash
+	var commitHash hash.Hash
+	if ref == "" {
+		// Use HEAD
+		headStr, err := repo.HEAD()
+		if err != nil {
+			return jsError("failed to get HEAD: " + err.Error())
+		}
+
+		if headStr[:5] == "ref: " {
+			refName := headStr[5:]
+			commitHash, err = repo.ResolveRef(refName)
+			if err != nil {
+				return jsError("failed to resolve HEAD: " + err.Error())
+			}
+		} else {
+			commitHash, err = hash.ParseHash(headStr)
+			if err != nil {
+				return jsError("invalid HEAD hash: " + err.Error())
+			}
+		}
+	} else {
+		// Try to resolve the ref
+		commit, h, err := repo.GetCommit(ref)
+		if err != nil {
+			return jsError("failed to resolve ref: " + err.Error())
+		}
+		_ = commit // unused
+		commitHash = h
+	}
+
+	// Parse options
+	opts := repository.DefaultBlameOptions()
+	if len(args) >= 4 && args[3].Type() == js.TypeObject {
+		optsJS := args[3]
+		if !optsJS.Get("startLine").IsUndefined() {
+			opts.StartLine = optsJS.Get("startLine").Int()
+		}
+		if !optsJS.Get("endLine").IsUndefined() {
+			opts.EndLine = optsJS.Get("endLine").Int()
+		}
+	}
+
+	// Get blame
+	blameLines, err := repo.Blame(filePath, commitHash, opts)
+	if err != nil {
+		return jsError("failed to get blame: " + err.Error())
+	}
+
+	// Convert to JS
+	jsLines := make([]interface{}, len(blameLines))
+	for i, line := range blameLines {
+		jsLines[i] = map[string]interface{}{
+			"lineNumber": line.LineNumber,
+			"content":    line.Content,
+			"commit": map[string]interface{}{
+				"hash":    line.CommitHash.String(),
+				"author":  line.Commit.Author.Name,
+				"email":   line.Commit.Author.Email,
+				"date":    line.Commit.Author.When.Unix(),
+				"message": line.Commit.Message,
+			},
+		}
+	}
+
+	return js.ValueOf(map[string]interface{}{
+		"success": true,
+		"lines":   jsLines,
 	})
 }

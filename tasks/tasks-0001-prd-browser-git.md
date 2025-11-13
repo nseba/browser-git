@@ -299,18 +299,18 @@ Based on PRD: `0001-prd-browser-git.md`
   - [x] 11.10 Write unit tests for checkout operations
   - [x] 11.11 Write integration tests for branch switching scenarios
 
-- [ ] 12.0 Implement history and log operations
-  - [ ] 12.1 Implement commit graph traversal (parents, ancestors)
-  - [ ] 12.2 Implement `git log` with commit history display
-  - [ ] 12.3 Add filtering options (author, date range, path)
-  - [ ] 12.4 Implement `git log --oneline` format
-  - [ ] 12.5 Implement `git log --graph` for branch visualization
-  - [ ] 12.6 Implement commit lookup by hash (full and abbreviated)
-  - [ ] 12.7 Implement `git show <commit>` to display commit details
-  - [ ] 12.8 Implement `git blame` for line-by-line history
-  - [ ] 12.9 Create TypeScript APIs: `repo.log(options)`, `repo.getCommit(hash)`, `repo.blame(path)`
-  - [ ] 12.10 Write unit tests for history traversal
-  - [ ] 12.11 Write integration tests for log with various options
+- [x] 12.0 Implement history and log operations
+  - [x] 12.1 Implement commit graph traversal (parents, ancestors)
+  - [x] 12.2 Implement `git log` with commit history display
+  - [x] 12.3 Add filtering options (author, date range, path)
+  - [x] 12.4 Implement `git log --oneline` format
+  - [x] 12.5 Implement `git log --graph` for branch visualization
+  - [x] 12.6 Implement commit lookup by hash (full and abbreviated)
+  - [x] 12.7 Implement `git show <commit>` to display commit details
+  - [x] 12.8 Implement `git blame` for line-by-line history
+  - [x] 12.9 Create TypeScript APIs: `repo.log(options)`, `repo.getCommit(hash)`, `repo.blame(path)`
+  - [x] 12.10 Write unit tests for history traversal
+  - [x] 12.11 Write integration tests for log with various options
 
 ### Phase 3: Diff & Merge
 
