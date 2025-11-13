@@ -235,18 +235,18 @@ Based on PRD: `0001-prd-browser-git.md`
   - [x] 6.7 Verify hash outputs match standard Git for known inputs
   - [x] 6.8 Export hash functionality to TypeScript through WASM bridge
 
-- [ ] 7.0 Implement Git object model (blob, tree, commit, tag)
-  - [ ] 7.1 Define object interface with serialize/deserialize methods
-  - [ ] 7.2 Implement blob object with content storage
-  - [ ] 7.3 Implement tree object with entries (mode, name, hash)
-  - [ ] 7.4 Implement commit object with tree, parent(s), author, committer, message
-  - [ ] 7.5 Implement tag object with target, tagger, message
-  - [ ] 7.6 Implement object serialization to Git format
-  - [ ] 7.7 Implement object deserialization from Git format
-  - [ ] 7.8 Create object database interface for storage/retrieval
-  - [ ] 7.9 Implement object compression using Go's compress/zlib
-  - [ ] 7.10 Write unit tests for each object type with serialization round-trip tests
-  - [ ] 7.11 Export object model to TypeScript with proper type definitions
+- [x] 7.0 Implement Git object model (blob, tree, commit, tag)
+  - [x] 7.1 Define object interface with serialize/deserialize methods
+  - [x] 7.2 Implement blob object with content storage
+  - [x] 7.3 Implement tree object with entries (mode, name, hash)
+  - [x] 7.4 Implement commit object with tree, parent(s), author, committer, message
+  - [x] 7.5 Implement tag object with target, tagger, message
+  - [x] 7.6 Implement object serialization to Git format
+  - [x] 7.7 Implement object deserialization from Git format
+  - [x] 7.8 Create object database interface for storage/retrieval
+  - [x] 7.9 Implement object compression using Go's compress/zlib
+  - [x] 7.10 Write unit tests for each object type with serialization round-trip tests
+  - [x] 7.11 Export object model to TypeScript with proper type definitions
 
 - [ ] 8.0 Implement repository initialization and configuration
   - [ ] 8.1 Implement `git init` to create repository structure (.git directory structure)
