@@ -8,6 +8,7 @@ import (
 
 	"github.com/nseba/browser-git/git-core/pkg/hash"
 	"github.com/nseba/browser-git/git-core/pkg/object"
+	"github.com/nseba/browser-git/git-core/pkg/repository"
 )
 
 // Version information
@@ -22,7 +23,6 @@ func main() {
 	// Export functions to JavaScript
 	js.Global().Set("gitCore", js.ValueOf(map[string]interface{}{
 		"version": js.FuncOf(getVersion),
-		"init":    js.FuncOf(initRepository),
 		"hash": js.ValueOf(map[string]interface{}{
 			"sha1":     js.FuncOf(hashSHA1),
 			"sha256":   js.FuncOf(hashSHA256),
@@ -37,6 +37,12 @@ func main() {
 			"compress":     js.FuncOf(compressObject),
 			"decompress":   js.FuncOf(decompressObject),
 		}),
+		"repository": js.ValueOf(map[string]interface{}{
+			"init":         js.FuncOf(initRepository),
+			"open":         js.FuncOf(openRepository),
+			"isRepository": js.FuncOf(isRepository),
+			"find":         js.FuncOf(findRepository),
+		}),
 	}))
 
 	println("BrowserGit WASM module loaded - version", Version)
@@ -50,12 +56,111 @@ func getVersion(this js.Value, args []js.Value) interface{} {
 }
 
 // initRepository initializes a new Git repository
-// Placeholder implementation
+// Args: path (string), options (optional: { bare, initialBranch, hashAlgorithm })
+// Returns: { success, path, gitDir } or { error }
 func initRepository(this js.Value, args []js.Value) interface{} {
-	// TODO: Implement repository initialization
+	if len(args) < 1 {
+		return jsError("missing path argument")
+	}
+
+	path := args[0].String()
+
+	// Parse options
+	opts := repository.DefaultInitOptions()
+	if len(args) >= 2 && args[1].Type() == js.TypeObject {
+		optsJS := args[1]
+
+		if !optsJS.Get("bare").IsUndefined() {
+			opts.Bare = optsJS.Get("bare").Bool()
+		}
+		if !optsJS.Get("initialBranch").IsUndefined() {
+			opts.InitialBranch = optsJS.Get("initialBranch").String()
+		}
+		if !optsJS.Get("hashAlgorithm").IsUndefined() {
+			opts.HashAlgorithm = optsJS.Get("hashAlgorithm").String()
+		}
+	}
+
+	// Initialize repository
+	if err := repository.Init(path, opts); err != nil {
+		return jsError("failed to initialize repository: " + err.Error())
+	}
+
+	// Get git dir
+	gitDir := path
+	if !opts.Bare {
+		gitDir = path + "/.git"
+	}
+
 	return js.ValueOf(map[string]interface{}{
 		"success": true,
-		"message": "Repository initialized (placeholder)",
+		"path":    path,
+		"gitDir":  gitDir,
+	})
+}
+
+// openRepository opens an existing repository
+// Args: path (string)
+// Returns: { success, path, gitDir, config } or { error }
+func openRepository(this js.Value, args []js.Value) interface{} {
+	if len(args) < 1 {
+		return jsError("missing path argument")
+	}
+
+	path := args[0].String()
+
+	repo, err := repository.Open(path)
+	if err != nil {
+		return jsError("failed to open repository: " + err.Error())
+	}
+
+	// Get config values
+	userName, userEmail := repo.Config.GetUser()
+
+	return js.ValueOf(map[string]interface{}{
+		"success": true,
+		"path":    repo.Path,
+		"gitDir":  repo.GitDir,
+		"config": map[string]interface{}{
+			"bare":          repo.Config.IsBare(),
+			"hashAlgorithm": repo.Config.GetHashAlgorithm(),
+			"userName":      userName,
+			"userEmail":     userEmail,
+		},
+	})
+}
+
+// isRepository checks if a path contains a repository
+// Args: path (string)
+// Returns: boolean
+func isRepository(this js.Value, args []js.Value) interface{} {
+	if len(args) < 1 {
+		return js.ValueOf(false)
+	}
+
+	path := args[0].String()
+	return js.ValueOf(repository.IsRepository(path))
+}
+
+// findRepository finds a repository starting from path
+// Args: path (string)
+// Returns: { found, path } or { found: false }
+func findRepository(this js.Value, args []js.Value) interface{} {
+	if len(args) < 1 {
+		return jsError("missing path argument")
+	}
+
+	path := args[0].String()
+	repoPath, err := repository.FindRepository(path)
+	if err != nil {
+		return js.ValueOf(map[string]interface{}{
+			"found": false,
+		})
+	}
+
+	return js.ValueOf(map[string]interface{}{
+		"found": true,
+		"path":  repoPath,
 	})
 }
 
