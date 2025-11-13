@@ -328,19 +328,19 @@ Based on PRD: `0001-prd-browser-git.md`
   - [x] 13.11 Write unit tests for diff engine with various input scenarios
   - [x] 13.12 Export diff engine to browser-git package through dependency
 
-- [ ] 14.0 Implement merge operations with conflict detection
-  - [ ] 14.1 Implement three-way merge algorithm
-  - [ ] 14.2 Find merge base (common ancestor) between two branches
-  - [ ] 14.3 Implement file-level merge (content merging for modified files)
-  - [ ] 14.4 Implement tree merging (directory structure changes)
-  - [ ] 14.5 Detect merge conflicts (both sides modified same lines)
-  - [ ] 14.6 Handle binary file conflicts
-  - [ ] 14.7 Implement fast-forward merge detection and execution
-  - [ ] 14.8 Create merge commit with two parents
-  - [ ] 14.9 Update working directory with merge results
-  - [ ] 14.10 Create TypeScript API: `repo.merge(branch, options)`
-  - [ ] 14.11 Write unit tests for merge scenarios (fast-forward, three-way, conflicts)
-  - [ ] 14.12 Write integration tests for complete merge workflows
+- [x] 14.0 Implement merge operations with conflict detection
+  - [x] 14.1 Implement three-way merge algorithm
+  - [x] 14.2 Find merge base (common ancestor) between two branches
+  - [x] 14.3 Implement file-level merge (content merging for modified files)
+  - [x] 14.4 Implement tree merging (directory structure changes)
+  - [x] 14.5 Detect merge conflicts (both sides modified same lines)
+  - [x] 14.6 Handle binary file conflicts
+  - [x] 14.7 Implement fast-forward merge detection and execution
+  - [x] 14.8 Create merge commit with two parents
+  - [x] 14.9 Update working directory with merge results
+  - [x] 14.10 Create TypeScript API: `repo.merge(branch, options)`
+  - [x] 14.11 Write unit tests for merge scenarios (fast-forward, three-way, conflicts)
+  - [x] 14.12 Write integration tests for complete merge workflows
 
 - [ ] 15.0 Implement conflict resolution API
   - [ ] 15.1 Define structured conflict data type (base, ours, theirs, path)
