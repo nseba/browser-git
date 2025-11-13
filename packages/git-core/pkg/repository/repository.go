@@ -182,6 +182,52 @@ func (r *Repository) DeleteBranch(name string) error {
 	return removeFile(refPath)
 }
 
+// RenameBranch renames a branch
+func (r *Repository) RenameBranch(oldName, newName string) error {
+	// Check if old branch exists
+	if !r.BranchExists(oldName) {
+		return fmt.Errorf("branch %s does not exist", oldName)
+	}
+
+	// Check if new branch already exists
+	if r.BranchExists(newName) {
+		return fmt.Errorf("branch %s already exists", newName)
+	}
+
+	// Get hash that old branch points to
+	h, err := r.GetBranch(oldName)
+	if err != nil {
+		return fmt.Errorf("failed to get branch %s: %w", oldName, err)
+	}
+
+	// Create new branch pointing to same hash
+	if err := r.CreateBranch(newName, h); err != nil {
+		return fmt.Errorf("failed to create branch %s: %w", newName, err)
+	}
+
+	// If the current branch is being renamed, update HEAD
+	currentBranch, err := r.CurrentBranch()
+	if err == nil && currentBranch == oldName {
+		newRef := fmt.Sprintf("ref: refs/heads/%s", newName)
+		if err := r.SetHEAD(newRef); err != nil {
+			// Try to clean up the new branch if HEAD update fails
+			r.DeleteBranch(newName)
+			return fmt.Errorf("failed to update HEAD: %w", err)
+		}
+	}
+
+	// Delete old branch
+	if err := r.DeleteBranch(oldName); err != nil {
+		// Try to clean up if old branch deletion fails and we're not on it
+		if currentBranch != oldName {
+			r.DeleteBranch(newName)
+		}
+		return fmt.Errorf("failed to delete old branch %s: %w", oldName, err)
+	}
+
+	return nil
+}
+
 // ListBranches lists all branches
 func (r *Repository) ListBranches() ([]string, error) {
 	entries, err := ListDirectory(r.GitDir, "refs/heads")

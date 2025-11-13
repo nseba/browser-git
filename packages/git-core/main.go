@@ -3,10 +3,12 @@
 package main
 
 import (
+	"path/filepath"
 	"syscall/js"
 	"time"
 
 	"github.com/nseba/browser-git/git-core/pkg/hash"
+	"github.com/nseba/browser-git/git-core/pkg/index"
 	"github.com/nseba/browser-git/git-core/pkg/object"
 	"github.com/nseba/browser-git/git-core/pkg/repository"
 )
@@ -38,10 +40,18 @@ func main() {
 			"decompress":   js.FuncOf(decompressObject),
 		}),
 		"repository": js.ValueOf(map[string]interface{}{
-			"init":         js.FuncOf(initRepository),
-			"open":         js.FuncOf(openRepository),
-			"isRepository": js.FuncOf(isRepository),
-			"find":         js.FuncOf(findRepository),
+			"init":          js.FuncOf(initRepository),
+			"open":          js.FuncOf(openRepository),
+			"isRepository":  js.FuncOf(isRepository),
+			"find":          js.FuncOf(findRepository),
+			"add":           js.FuncOf(addFiles),
+			"commit":        js.FuncOf(createCommitFromIndex),
+			"status":        js.FuncOf(getStatus),
+			"listBranches":  js.FuncOf(listBranches),
+			"createBranch":  js.FuncOf(createBranch),
+			"deleteBranch":  js.FuncOf(deleteBranch),
+			"renameBranch":  js.FuncOf(renameBranch),
+			"currentBranch": js.FuncOf(currentBranch),
 		}),
 	}))
 
@@ -592,4 +602,428 @@ func serializeObjectToJS(obj object.Object) js.Value {
 	}
 
 	return js.ValueOf(result)
+}
+
+// addFiles adds files to the index (staging area)
+// Args: repoPath (string), paths (array of strings), options (optional: { force, updateOnly })
+// Returns: { success, filesAdded } or { error }
+func addFiles(this js.Value, args []js.Value) interface{} {
+	if len(args) < 2 {
+		return jsError("missing repoPath or paths arguments")
+	}
+
+	repoPath := args[0].String()
+	pathsJS := args[1]
+
+	// Parse paths array
+	if pathsJS.Type() != js.TypeObject || pathsJS.Get("length").IsUndefined() {
+		return jsError("paths must be an array")
+	}
+
+	length := pathsJS.Get("length").Int()
+	paths := make([]string, length)
+	for i := 0; i < length; i++ {
+		paths[i] = pathsJS.Index(i).String()
+	}
+
+	// Parse options
+	opts := index.AddOptions{
+		Force:      false,
+		UpdateOnly: false,
+	}
+	if len(args) >= 3 && args[2].Type() == js.TypeObject {
+		optsJS := args[2]
+		if !optsJS.Get("force").IsUndefined() {
+			opts.Force = optsJS.Get("force").Bool()
+		}
+		if !optsJS.Get("updateOnly").IsUndefined() {
+			opts.UpdateOnly = optsJS.Get("updateOnly").Bool()
+		}
+	}
+
+	// Open repository
+	repo, err := repository.Open(repoPath)
+	if err != nil {
+		return jsError("failed to open repository: " + err.Error())
+	}
+
+	// Load index
+	indexPath := filepath.Join(repo.GitDir, "index")
+	idx, err := index.Load(indexPath)
+	if err != nil {
+		return jsError("failed to load index: " + err.Error())
+	}
+
+	// Add files to index
+	workTreePath := repo.WorkTree()
+	if err := idx.Add(workTreePath, paths, opts); err != nil {
+		return jsError("failed to add files: " + err.Error())
+	}
+
+	// Save index
+	if err := idx.Save(indexPath); err != nil {
+		return jsError("failed to save index: " + err.Error())
+	}
+
+	return js.ValueOf(map[string]interface{}{
+		"success":    true,
+		"filesAdded": len(paths),
+	})
+}
+
+// createCommitFromIndex creates a commit from the index
+// Args: repoPath (string), message (string), options (optional: { author: {name, email}, committer: {name, email} })
+// Returns: { success, commitHash } or { error }
+func createCommitFromIndex(this js.Value, args []js.Value) interface{} {
+	if len(args) < 2 {
+		return jsError("missing repoPath or message arguments")
+	}
+
+	repoPath := args[0].String()
+	message := args[1].String()
+
+	// Open repository
+	repo, err := repository.Open(repoPath)
+	if err != nil {
+		return jsError("failed to open repository: " + err.Error())
+	}
+
+	// Load index
+	indexPath := filepath.Join(repo.GitDir, "index")
+	idx, err := index.Load(indexPath)
+	if err != nil {
+		return jsError("failed to load index: " + err.Error())
+	}
+
+	// Parse options
+	var author, committer object.Signature
+	userName, userEmail := repo.Config.GetUser()
+
+	if len(args) >= 3 && args[2].Type() == js.TypeObject {
+		optsJS := args[2]
+
+		// Parse author
+		if !optsJS.Get("author").IsUndefined() {
+			author = parseSignature(optsJS.Get("author"))
+		} else {
+			author = index.DefaultSignature(userName, userEmail)
+		}
+
+		// Parse committer
+		if !optsJS.Get("committer").IsUndefined() {
+			committer = parseSignature(optsJS.Get("committer"))
+		} else {
+			committer = index.DefaultSignature(userName, userEmail)
+		}
+	} else {
+		author = index.DefaultSignature(userName, userEmail)
+		committer = index.DefaultSignature(userName, userEmail)
+	}
+
+	// Get parent commit
+	parents, err := index.GetParentCommit(repo)
+	if err != nil {
+		parents = nil // Initial commit has no parents
+	}
+
+	// Write blobs to object database
+	workTreePath := repo.WorkTree()
+	if err := idx.WriteBlobs(workTreePath, repo.ObjectDB); err != nil {
+		return jsError("failed to write blobs: " + err.Error())
+	}
+
+	// Create commit
+	commitOpts := index.CommitOptions{
+		Message:   message,
+		Author:    author,
+		Committer: committer,
+		Parents:   parents,
+	}
+
+	commitHash, err := idx.CreateCommit(repo.Hasher, repo.ObjectDB, commitOpts)
+	if err != nil {
+		return jsError("failed to create commit: " + err.Error())
+	}
+
+	// Update HEAD
+	currentBranch, err := repo.CurrentBranch()
+	if err != nil {
+		// Detached HEAD - update HEAD directly
+		if err := repo.SetHEAD(commitHash.String()); err != nil {
+			return jsError("failed to update HEAD: " + err.Error())
+		}
+	} else {
+		// Update branch reference
+		if err := repo.UpdateRef("refs/heads/"+currentBranch, commitHash); err != nil {
+			return jsError("failed to update branch: " + err.Error())
+		}
+	}
+
+	return js.ValueOf(map[string]interface{}{
+		"success":    true,
+		"commitHash": commitHash.String(),
+	})
+}
+
+// getStatus gets the status of the repository
+// Args: repoPath (string), options (optional: { includeUntracked, includeIgnored })
+// Returns: { untracked[], modified[], staged[], deleted[], added[], isClean } or { error }
+func getStatus(this js.Value, args []js.Value) interface{} {
+	if len(args) < 1 {
+		return jsError("missing repoPath argument")
+	}
+
+	repoPath := args[0].String()
+
+	// Open repository
+	repo, err := repository.Open(repoPath)
+	if err != nil {
+		return jsError("failed to open repository: " + err.Error())
+	}
+
+	// Load index
+	indexPath := filepath.Join(repo.GitDir, "index")
+	idx, err := index.Load(indexPath)
+	if err != nil {
+		return jsError("failed to load index: " + err.Error())
+	}
+
+	// Parse options
+	opts := index.DefaultStatusOptions()
+	if len(args) >= 2 && args[1].Type() == js.TypeObject {
+		optsJS := args[1]
+		if !optsJS.Get("includeUntracked").IsUndefined() {
+			opts.IncludeUntracked = optsJS.Get("includeUntracked").Bool()
+		}
+		if !optsJS.Get("includeIgnored").IsUndefined() {
+			opts.IncludeIgnored = optsJS.Get("includeIgnored").Bool()
+		}
+	}
+
+	// Get HEAD commit
+	var headCommit *object.Commit
+	headStr, err := repo.HEAD()
+	if err == nil {
+		// Try to resolve HEAD
+		var commitHash hash.Hash
+		if headStr[:5] == "ref: " {
+			// Symbolic ref
+			refName := headStr[5:]
+			commitHash, err = repo.ResolveRef(refName)
+		} else {
+			// Direct hash
+			commitHash, err = hash.ParseHash(headStr)
+		}
+
+		if err == nil {
+			// Load commit
+			obj, err := repo.ObjectDB.Get(commitHash)
+			if err == nil {
+				headCommit, _ = obj.(*object.Commit)
+			}
+		}
+	}
+
+	// Get status
+	workTreePath := repo.WorkTree()
+	status, err := index.GetStatus(workTreePath, idx, headCommit, repo.ObjectDB, opts)
+	if err != nil {
+		return jsError("failed to get status: " + err.Error())
+	}
+
+	return js.ValueOf(map[string]interface{}{
+		"success":    true,
+		"untracked":  status.Untracked,
+		"modified":   status.Modified,
+		"staged":     status.Staged,
+		"deleted":    status.Deleted,
+		"added":      status.Added,
+		"isClean":    status.IsClean(),
+		"hasChanges": status.HasChanges(),
+	})
+}
+
+// listBranches lists all branches in the repository
+// Args: repoPath (string)
+// Returns: { success, branches[], currentBranch } or { error }
+func listBranches(this js.Value, args []js.Value) interface{} {
+	if len(args) < 1 {
+		return jsError("missing repoPath argument")
+	}
+
+	repoPath := args[0].String()
+
+	// Open repository
+	repo, err := repository.Open(repoPath)
+	if err != nil {
+		return jsError("failed to open repository: " + err.Error())
+	}
+
+	// List branches
+	branches, err := repo.ListBranches()
+	if err != nil {
+		return jsError("failed to list branches: " + err.Error())
+	}
+
+	// Get current branch
+	currentBranch, err := repo.CurrentBranch()
+	if err != nil {
+		currentBranch = "" // Detached HEAD
+	}
+
+	return js.ValueOf(map[string]interface{}{
+		"success":       true,
+		"branches":      branches,
+		"currentBranch": currentBranch,
+	})
+}
+
+// createBranch creates a new branch
+// Args: repoPath (string), name (string), commitHash (string, optional - defaults to HEAD)
+// Returns: { success, branchName } or { error }
+func createBranch(this js.Value, args []js.Value) interface{} {
+	if len(args) < 2 {
+		return jsError("missing repoPath or name arguments")
+	}
+
+	repoPath := args[0].String()
+	branchName := args[1].String()
+
+	// Open repository
+	repo, err := repository.Open(repoPath)
+	if err != nil {
+		return jsError("failed to open repository: " + err.Error())
+	}
+
+	// Get commit hash
+	var commitHash hash.Hash
+	if len(args) >= 3 && args[2].Type() == js.TypeString {
+		// Use provided commit hash
+		hashStr := args[2].String()
+		commitHash, err = hash.ParseHash(hashStr)
+		if err != nil {
+			return jsError("invalid commit hash: " + err.Error())
+		}
+	} else {
+		// Use HEAD
+		headStr, err := repo.HEAD()
+		if err != nil {
+			return jsError("failed to get HEAD: " + err.Error())
+		}
+
+		// Resolve HEAD to commit hash
+		if headStr[:5] == "ref: " {
+			refName := headStr[5:]
+			commitHash, err = repo.ResolveRef(refName)
+			if err != nil {
+				return jsError("failed to resolve HEAD: " + err.Error())
+			}
+		} else {
+			commitHash, err = hash.ParseHash(headStr)
+			if err != nil {
+				return jsError("invalid HEAD hash: " + err.Error())
+			}
+		}
+	}
+
+	// Create branch
+	if err := repo.CreateBranch(branchName, commitHash); err != nil {
+		return jsError("failed to create branch: " + err.Error())
+	}
+
+	return js.ValueOf(map[string]interface{}{
+		"success":    true,
+		"branchName": branchName,
+	})
+}
+
+// deleteBranch deletes a branch
+// Args: repoPath (string), name (string)
+// Returns: { success, branchName } or { error }
+func deleteBranch(this js.Value, args []js.Value) interface{} {
+	if len(args) < 2 {
+		return jsError("missing repoPath or name arguments")
+	}
+
+	repoPath := args[0].String()
+	branchName := args[1].String()
+
+	// Open repository
+	repo, err := repository.Open(repoPath)
+	if err != nil {
+		return jsError("failed to open repository: " + err.Error())
+	}
+
+	// Delete branch
+	if err := repo.DeleteBranch(branchName); err != nil {
+		return jsError("failed to delete branch: " + err.Error())
+	}
+
+	return js.ValueOf(map[string]interface{}{
+		"success":    true,
+		"branchName": branchName,
+	})
+}
+
+// renameBranch renames a branch
+// Args: repoPath (string), oldName (string), newName (string)
+// Returns: { success, oldName, newName } or { error }
+func renameBranch(this js.Value, args []js.Value) interface{} {
+	if len(args) < 3 {
+		return jsError("missing repoPath, oldName, or newName arguments")
+	}
+
+	repoPath := args[0].String()
+	oldName := args[1].String()
+	newName := args[2].String()
+
+	// Open repository
+	repo, err := repository.Open(repoPath)
+	if err != nil {
+		return jsError("failed to open repository: " + err.Error())
+	}
+
+	// Rename branch
+	if err := repo.RenameBranch(oldName, newName); err != nil {
+		return jsError("failed to rename branch: " + err.Error())
+	}
+
+	return js.ValueOf(map[string]interface{}{
+		"success": true,
+		"oldName": oldName,
+		"newName": newName,
+	})
+}
+
+// currentBranch returns the current branch
+// Args: repoPath (string)
+// Returns: { success, branchName } or { error, detached: true }
+func currentBranch(this js.Value, args []js.Value) interface{} {
+	if len(args) < 1 {
+		return jsError("missing repoPath argument")
+	}
+
+	repoPath := args[0].String()
+
+	// Open repository
+	repo, err := repository.Open(repoPath)
+	if err != nil {
+		return jsError("failed to open repository: " + err.Error())
+	}
+
+	// Get current branch
+	branchName, err := repo.CurrentBranch()
+	if err != nil {
+		// Detached HEAD
+		return js.ValueOf(map[string]interface{}{
+			"success":  false,
+			"detached": true,
+			"error":    err.Error(),
+		})
+	}
+
+	return js.ValueOf(map[string]interface{}{
+		"success":    true,
+		"branchName": branchName,
+	})
 }
