@@ -26,7 +26,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@browser-git/storage-adapters": "0.1.0"
+    "@browser-git/storage-adapters": "0.1.0",
+    "@browser-git/diff-engine": "0.1.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",

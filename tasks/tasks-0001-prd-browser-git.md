@@ -314,7 +314,7 @@ Based on PRD: `0001-prd-browser-git.md`
 
 ### Phase 3: Diff & Merge
 
-- [ ] 13.0 Create pluggable diff-engine package
+- [x] 13.0 Create pluggable diff-engine package
   - [x] 13.1 Create `diff-engine` package structure
   - [x] 13.2 Define pluggable diff interface in `interface.ts`
   - [x] 13.3 Define diff result types (hunks, changes, line numbers)
@@ -325,8 +325,8 @@ Based on PRD: `0001-prd-browser-git.md`
   - [x] 13.8 Implement binary file diff detection
   - [x] 13.9 Create text processing utilities (line splitting, whitespace handling)
   - [x] 13.10 Implement diff formatting (unified diff, side-by-side)
-  - [ ] 13.11 Write unit tests for diff engine with various input scenarios
-  - [ ] 13.12 Export diff engine to git-core through WASM bridge
+  - [x] 13.11 Write unit tests for diff engine with various input scenarios
+  - [x] 13.12 Export diff engine to browser-git package through dependency
 
 - [ ] 14.0 Implement merge operations with conflict detection
   - [ ] 14.1 Implement three-way merge algorithm
