@@ -315,16 +315,16 @@ Based on PRD: `0001-prd-browser-git.md`
 ### Phase 3: Diff & Merge
 
 - [ ] 13.0 Create pluggable diff-engine package
-  - [ ] 13.1 Create `diff-engine` package structure
-  - [ ] 13.2 Define pluggable diff interface in `interface.ts`
-  - [ ] 13.3 Define diff result types (hunks, changes, line numbers)
-  - [ ] 13.4 Research and select battle-tested diff library (e.g., diff-match-patch, jsdiff)
-  - [ ] 13.5 Implement Myers diff algorithm wrapper
-  - [ ] 13.6 Implement line-by-line diff for text files
-  - [ ] 13.7 Implement word-level diff support
-  - [ ] 13.8 Implement binary file diff detection
-  - [ ] 13.9 Create text processing utilities (line splitting, whitespace handling)
-  - [ ] 13.10 Implement diff formatting (unified diff, side-by-side)
+  - [x] 13.1 Create `diff-engine` package structure
+  - [x] 13.2 Define pluggable diff interface in `interface.ts`
+  - [x] 13.3 Define diff result types (hunks, changes, line numbers)
+  - [x] 13.4 Research and select battle-tested diff library (e.g., diff-match-patch, jsdiff)
+  - [x] 13.5 Implement Myers diff algorithm wrapper
+  - [x] 13.6 Implement line-by-line diff for text files
+  - [x] 13.7 Implement word-level diff support
+  - [x] 13.8 Implement binary file diff detection
+  - [x] 13.9 Create text processing utilities (line splitting, whitespace handling)
+  - [x] 13.10 Implement diff formatting (unified diff, side-by-side)
   - [ ] 13.11 Write unit tests for diff engine with various input scenarios
   - [ ] 13.12 Export diff engine to git-core through WASM bridge
 
