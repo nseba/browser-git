@@ -225,15 +225,15 @@ Based on PRD: `0001-prd-browser-git.md`
 
 ### Phase 2: Core Git Operations
 
-- [ ] 6.0 Implement hash algorithm abstraction (SHA-1 and SHA-256)
-  - [ ] 6.1 Create hash interface in `packages/git-core/pkg/hash/interface.go`
-  - [ ] 6.2 Implement SHA-1 hasher with standard library
-  - [ ] 6.3 Implement SHA-256 hasher with standard library
-  - [ ] 6.4 Create hash factory function to select algorithm based on repository config
-  - [ ] 6.5 Implement hash utilities (hex encoding, comparison, validation)
-  - [ ] 6.6 Write unit tests for both hash implementations
-  - [ ] 6.7 Verify hash outputs match standard Git for known inputs
-  - [ ] 6.8 Export hash functionality to TypeScript through WASM bridge
+- [x] 6.0 Implement hash algorithm abstraction (SHA-1 and SHA-256)
+  - [x] 6.1 Create hash interface in `packages/git-core/pkg/hash/interface.go`
+  - [x] 6.2 Implement SHA-1 hasher with standard library
+  - [x] 6.3 Implement SHA-256 hasher with standard library
+  - [x] 6.4 Create hash factory function to select algorithm based on repository config
+  - [x] 6.5 Implement hash utilities (hex encoding, comparison, validation)
+  - [x] 6.6 Write unit tests for both hash implementations
+  - [x] 6.7 Verify hash outputs match standard Git for known inputs
+  - [x] 6.8 Export hash functionality to TypeScript through WASM bridge
 
 - [ ] 7.0 Implement Git object model (blob, tree, commit, tag)
   - [ ] 7.1 Define object interface with serialize/deserialize methods
