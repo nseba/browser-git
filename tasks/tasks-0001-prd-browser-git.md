@@ -286,18 +286,18 @@ Based on PRD: `0001-prd-browser-git.md`
   - [x] 10.9 Write unit tests for branch operations
   - [x] 10.10 Write integration tests for branch lifecycle
 
-- [ ] 11.0 Implement checkout operations
-  - [ ] 11.1 Implement `git checkout <branch>` to switch branches
-  - [ ] 11.2 Implement working directory update (write files from tree)
-  - [ ] 11.3 Implement index update to match checked out tree
-  - [ ] 11.4 Implement HEAD update to point to new branch
-  - [ ] 11.5 Implement `git checkout <commit>` for detached HEAD state
-  - [ ] 11.6 Implement `git checkout -- <file>` to restore files from index
-  - [ ] 11.7 Add safety checks for uncommitted changes
-  - [ ] 11.8 Implement file conflict detection during checkout
-  - [ ] 11.9 Create TypeScript APIs: `repo.checkout(target, options)`
-  - [ ] 11.10 Write unit tests for checkout operations
-  - [ ] 11.11 Write integration tests for branch switching scenarios
+- [x] 11.0 Implement checkout operations
+  - [x] 11.1 Implement `git checkout <branch>` to switch branches
+  - [x] 11.2 Implement working directory update (write files from tree)
+  - [x] 11.3 Implement index update to match checked out tree
+  - [x] 11.4 Implement HEAD update to point to new branch
+  - [x] 11.5 Implement `git checkout <commit>` for detached HEAD state
+  - [x] 11.6 Implement `git checkout -- <file>` to restore files from index
+  - [x] 11.7 Add safety checks for uncommitted changes
+  - [x] 11.8 Implement file conflict detection during checkout
+  - [x] 11.9 Create TypeScript APIs: `repo.checkout(target, options)`
+  - [x] 11.10 Write unit tests for checkout operations
+  - [x] 11.11 Write integration tests for branch switching scenarios
 
 - [ ] 12.0 Implement history and log operations
   - [ ] 12.1 Implement commit graph traversal (parents, ancestors)
