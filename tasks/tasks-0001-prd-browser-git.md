@@ -248,17 +248,17 @@ Based on PRD: `0001-prd-browser-git.md`
   - [x] 7.10 Write unit tests for each object type with serialization round-trip tests
   - [x] 7.11 Export object model to TypeScript with proper type definitions
 
-- [ ] 8.0 Implement repository initialization and configuration
-  - [ ] 8.1 Implement `git init` to create repository structure (.git directory structure)
-  - [ ] 8.2 Create HEAD file pointing to initial branch (refs/heads/main)
-  - [ ] 8.3 Create config file with default configuration
-  - [ ] 8.4 Implement config parser for reading/writing repository configuration
-  - [ ] 8.5 Add support for configuring hash algorithm (SHA-1 or SHA-256)
-  - [ ] 8.6 Add support for configuring user name and email
-  - [ ] 8.7 Implement repository detection (finding .git directory)
-  - [ ] 8.8 Create TypeScript API: `Repository.init(path, options)`
-  - [ ] 8.9 Write unit tests for repository initialization
-  - [ ] 8.10 Write integration tests verifying complete repository structure
+- [x] 8.0 Implement repository initialization and configuration
+  - [x] 8.1 Implement `git init` to create repository structure (.git directory structure)
+  - [x] 8.2 Create HEAD file pointing to initial branch (refs/heads/main)
+  - [x] 8.3 Create config file with default configuration
+  - [x] 8.4 Implement config parser for reading/writing repository configuration
+  - [x] 8.5 Add support for configuring hash algorithm (SHA-1 or SHA-256)
+  - [x] 8.6 Add support for configuring user name and email
+  - [x] 8.7 Implement repository detection (finding .git directory)
+  - [x] 8.8 Create TypeScript API: `Repository.init(path, options)`
+  - [x] 8.9 Write unit tests for repository initialization
+  - [x] 8.10 Write integration tests verifying complete repository structure
 
 - [ ] 9.0 Implement staging and commit operations
   - [ ] 9.1 Implement index (staging area) data structure
