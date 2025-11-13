@@ -52,6 +52,8 @@ func main() {
 			"deleteBranch":  js.FuncOf(deleteBranch),
 			"renameBranch":  js.FuncOf(renameBranch),
 			"currentBranch": js.FuncOf(currentBranch),
+			"checkout":      js.FuncOf(checkout),
+			"checkoutFile":  js.FuncOf(checkoutFile),
 		}),
 	}))
 
@@ -1025,5 +1027,84 @@ func currentBranch(this js.Value, args []js.Value) interface{} {
 	return js.ValueOf(map[string]interface{}{
 		"success":    true,
 		"branchName": branchName,
+	})
+}
+
+// checkout checks out a branch or commit
+// Args: repoPath (string), target (string), options (optional: { force, createBranch, detach })
+// Returns: { success, target, detached } or { error }
+func checkout(this js.Value, args []js.Value) interface{} {
+	if len(args) < 2 {
+		return jsError("missing repoPath or target arguments")
+	}
+
+	repoPath := args[0].String()
+	target := args[1].String()
+
+	// Open repository
+	repo, err := repository.Open(repoPath)
+	if err != nil {
+		return jsError("failed to open repository: " + err.Error())
+	}
+
+	// Parse options
+	opts := repository.DefaultCheckoutOptions()
+	if len(args) >= 3 && args[2].Type() == js.TypeObject {
+		optsJS := args[2]
+		if !optsJS.Get("force").IsUndefined() {
+			opts.Force = optsJS.Get("force").Bool()
+		}
+		if !optsJS.Get("createBranch").IsUndefined() {
+			opts.CreateBranch = optsJS.Get("createBranch").Bool()
+		}
+		if !optsJS.Get("detach").IsUndefined() {
+			opts.Detach = optsJS.Get("detach").Bool()
+		}
+	}
+
+	// Perform checkout
+	if err := repo.Checkout(target, opts); err != nil {
+		return jsError("failed to checkout: " + err.Error())
+	}
+
+	// Check if result is detached
+	isDetached := false
+	_, err = repo.CurrentBranch()
+	if err != nil {
+		isDetached = true
+	}
+
+	return js.ValueOf(map[string]interface{}{
+		"success":  true,
+		"target":   target,
+		"detached": isDetached,
+	})
+}
+
+// checkoutFile checks out a single file from the index
+// Args: repoPath (string), path (string)
+// Returns: { success, path } or { error }
+func checkoutFile(this js.Value, args []js.Value) interface{} {
+	if len(args) < 2 {
+		return jsError("missing repoPath or path arguments")
+	}
+
+	repoPath := args[0].String()
+	filePath := args[1].String()
+
+	// Open repository
+	repo, err := repository.Open(repoPath)
+	if err != nil {
+		return jsError("failed to open repository: " + err.Error())
+	}
+
+	// Perform checkout
+	if err := repo.CheckoutFile(filePath); err != nil {
+		return jsError("failed to checkout file: " + err.Error())
+	}
+
+	return js.ValueOf(map[string]interface{}{
+		"success": true,
+		"path":    filePath,
 	})
 }
