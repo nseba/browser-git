@@ -82,8 +82,11 @@ func (r *Repository) Merge(branchName string, opts *MergeOptions) (*merge.MergeR
 		return nil, fmt.Errorf("failed to perform three-way merge: %w", err)
 	}
 
-	// If there are conflicts, return them
+	// If there are conflicts, save merge state and return them
 	if !result.Success {
+		if err := r.saveMergeState(branchCommitHash, branchName, result.Conflicts); err != nil {
+			return nil, fmt.Errorf("failed to save merge state: %w", err)
+		}
 		return result, nil
 	}
 
@@ -334,6 +337,48 @@ func (r *Repository) checkoutTreeRecursive(tree *object.Tree, prefix string, idx
 			}
 			idx.AddEntry(indexEntry)
 		}
+	}
+
+	return nil
+}
+
+// saveMergeState saves the merge state when there are conflicts
+func (r *Repository) saveMergeState(theirCommit hash.Hash, branchName string, conflicts []merge.Conflict) error {
+	// Write MERGE_HEAD
+	mergeHeadPath := filepath.Join(r.GitDir, "MERGE_HEAD")
+	if err := os.WriteFile(mergeHeadPath, []byte(theirCommit.String()+"\n"), 0644); err != nil {
+		return fmt.Errorf("failed to write MERGE_HEAD: %w", err)
+	}
+
+	// Write MERGE_MSG
+	mergeMsgPath := filepath.Join(r.GitDir, "MERGE_MSG")
+	msg := fmt.Sprintf("Merge branch '%s'\n\nConflicts:\n", branchName)
+	for _, c := range conflicts {
+		msg += fmt.Sprintf("\t%s\n", c.Path)
+	}
+	if err := os.WriteFile(mergeMsgPath, []byte(msg), 0644); err != nil {
+		return fmt.Errorf("failed to write MERGE_MSG: %w", err)
+	}
+
+	// Write MERGE_CONFLICTS
+	conflictsPath := filepath.Join(r.GitDir, "MERGE_CONFLICTS")
+	var conflictPaths string
+	for _, c := range conflicts {
+		conflictPaths += c.Path + "\n"
+
+		// Write conflict markers to the file
+		filePath := filepath.Join(r.WorkTree(), c.Path)
+		if err := os.MkdirAll(filepath.Dir(filePath), 0755); err != nil {
+			continue
+		}
+
+		conflictContent := merge.GenerateConflictMarkersWithBranches(c, "HEAD", branchName)
+		if err := os.WriteFile(filePath, []byte(conflictContent), 0644); err != nil {
+			continue
+		}
+	}
+	if err := os.WriteFile(conflictsPath, []byte(conflictPaths), 0644); err != nil {
+		return fmt.Errorf("failed to write MERGE_CONFLICTS: %w", err)
 	}
 
 	return nil

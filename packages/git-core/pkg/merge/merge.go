@@ -22,6 +22,18 @@ const (
 	AddConflict
 )
 
+// ConflictMetadata contains additional information about a conflict
+type ConflictMetadata struct {
+	// StartLine is the starting line number of the conflict (1-based)
+	StartLine int
+	// EndLine is the ending line number of the conflict (1-based)
+	EndLine int
+	// OurChangeType describes what changed on our side
+	OurChangeType string // "modified", "added", "deleted"
+	// TheirChangeType describes what changed on their side
+	TheirChangeType string // "modified", "added", "deleted"
+}
+
 // Conflict represents a merge conflict
 type Conflict struct {
 	// Path is the file path with the conflict
@@ -36,6 +48,8 @@ type Conflict struct {
 	Theirs []byte
 	// IsBinary indicates if this is a binary file conflict
 	IsBinary bool
+	// Metadata contains additional conflict information
+	Metadata *ConflictMetadata
 }
 
 // MergeResult represents the result of a merge operation
@@ -180,17 +194,49 @@ func isBinaryContent(content []byte) bool {
 
 // GenerateConflictMarkers generates Git-style conflict markers for a conflict
 func GenerateConflictMarkers(conflict Conflict) string {
+	return GenerateConflictMarkersWithBranches(conflict, "HEAD", "MERGE")
+}
+
+// GenerateConflictMarkersWithBranches generates Git-style conflict markers with custom branch names
+func GenerateConflictMarkersWithBranches(conflict Conflict, ourBranch, theirBranch string) string {
 	if conflict.IsBinary {
 		return fmt.Sprintf("Binary file conflict in %s\n", conflict.Path)
 	}
 
 	var buf strings.Builder
 
-	buf.WriteString("<<<<<<< HEAD\n")
-	buf.Write(conflict.Ours)
-	buf.WriteString("\n=======\n")
-	buf.Write(conflict.Theirs)
-	buf.WriteString("\n>>>>>>> MERGE\n")
+	// Add conflict markers with branch names
+	buf.WriteString(fmt.Sprintf("<<<<<<< %s\n", ourBranch))
+	if len(conflict.Ours) > 0 {
+		buf.Write(conflict.Ours)
+		if conflict.Ours[len(conflict.Ours)-1] != '\n' {
+			buf.WriteString("\n")
+		}
+	}
+	buf.WriteString("=======\n")
+	if len(conflict.Theirs) > 0 {
+		buf.Write(conflict.Theirs)
+		if conflict.Theirs[len(conflict.Theirs)-1] != '\n' {
+			buf.WriteString("\n")
+		}
+	}
+	buf.WriteString(fmt.Sprintf(">>>>>>> %s\n", theirBranch))
 
 	return buf.String()
+}
+
+// GetConflictType returns a string representation of the conflict type
+func (c ConflictType) String() string {
+	switch c {
+	case ContentConflict:
+		return "content"
+	case BinaryConflict:
+		return "binary"
+	case DeleteConflict:
+		return "delete"
+	case AddConflict:
+		return "add"
+	default:
+		return "unknown"
+	}
 }

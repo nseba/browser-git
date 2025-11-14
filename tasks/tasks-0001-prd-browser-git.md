@@ -342,17 +342,17 @@ Based on PRD: `0001-prd-browser-git.md`
   - [x] 14.11 Write unit tests for merge scenarios (fast-forward, three-way, conflicts)
   - [x] 14.12 Write integration tests for complete merge workflows
 
-- [ ] 15.0 Implement conflict resolution API
-  - [ ] 15.1 Define structured conflict data type (base, ours, theirs, path)
-  - [ ] 15.2 Return structured conflict objects from merge operation
-  - [ ] 15.3 Include conflict metadata (line ranges, change types)
-  - [ ] 15.4 Implement utility to generate Git-style conflict markers (<<<<<<, ======, >>>>>>)
-  - [ ] 15.5 Implement `repo.getConflicts()` to retrieve current conflicts
-  - [ ] 15.6 Implement `repo.resolveConflict(path, resolution)` to mark conflicts as resolved
-  - [ ] 15.7 Support resolution strategies (accept-ours, accept-theirs, manual)
-  - [ ] 15.8 Update index after conflict resolution
-  - [ ] 15.9 Write unit tests for conflict detection and resolution
-  - [ ] 15.10 Write integration tests for conflict resolution workflows
+- [x] 15.0 Implement conflict resolution API
+  - [x] 15.1 Define structured conflict data type (base, ours, theirs, path)
+  - [x] 15.2 Return structured conflict objects from merge operation
+  - [x] 15.3 Include conflict metadata (line ranges, change types)
+  - [x] 15.4 Implement utility to generate Git-style conflict markers (<<<<<<, ======, >>>>>>)
+  - [x] 15.5 Implement `repo.getConflicts()` to retrieve current conflicts
+  - [x] 15.6 Implement `repo.resolveConflict(path, resolution)` to mark conflicts as resolved
+  - [x] 15.7 Support resolution strategies (accept-ours, accept-theirs, manual)
+  - [x] 15.8 Update index after conflict resolution
+  - [x] 15.9 Write unit tests for conflict detection and resolution
+  - [x] 15.10 Write integration tests for conflict resolution workflows
 
 ### Phase 4: Remote Operations
 

@@ -243,15 +243,49 @@ func (tm *TreeMerger) createConflict(
 		isBinaryContent(conflict.Ours) ||
 		isBinaryContent(conflict.Theirs)
 
+	// Set change types for metadata
+	ourChangeType := "modified"
+	theirChangeType := "modified"
+
 	if conflict.IsBinary {
 		conflict.Type = BinaryConflict
 	} else if base == nil {
 		conflict.Type = AddConflict
+		ourChangeType = "added"
+		theirChangeType = "added"
 	} else if ours == nil || theirs == nil {
 		conflict.Type = DeleteConflict
+		if ours == nil {
+			ourChangeType = "deleted"
+		}
+		if theirs == nil {
+			theirChangeType = "deleted"
+		}
+	}
+
+	// Add metadata
+	conflict.Metadata = &ConflictMetadata{
+		StartLine:       1,
+		EndLine:         countLines(conflict.Base),
+		OurChangeType:   ourChangeType,
+		TheirChangeType: theirChangeType,
 	}
 
 	return conflict, nil, nil
+}
+
+// countLines counts the number of lines in content
+func countLines(content []byte) int {
+	if len(content) == 0 {
+		return 0
+	}
+	count := 1
+	for _, b := range content {
+		if b == '\n' {
+			count++
+		}
+	}
+	return count
 }
 
 // entriesEqual checks if two tree entries are equal
