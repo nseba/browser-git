@@ -411,17 +411,334 @@ func buildDeltaData(sourceSize, targetSize uint64, instructions []byte) []byte {
 	return buf.Bytes()
 }
 
-// Helper function to write variable-length size
-func writeDeltaSize(buf *bytes.Buffer, size uint64) {
-	for {
-		b := byte(size & 0x7F)
-		size >>= 7
-		if size != 0 {
-			b |= 0x80 // Set MSB to indicate more bytes
-		}
-		buf.WriteByte(b)
-		if size == 0 {
-			break
-		}
+func TestEncodeCopyInstruction(t *testing.T) {
+	tests := []struct {
+		name   string
+		inst   *CopyInstruction
+	}{
+		{
+			name: "small copy",
+			inst: &CopyInstruction{
+				Offset: 10,
+				Size:   5,
+			},
+		},
+		{
+			name: "large offset",
+			inst: &CopyInstruction{
+				Offset: 0x1234,
+				Size:   100,
+			},
+		},
+		{
+			name: "large size",
+			inst: &CopyInstruction{
+				Offset: 0,
+				Size:   1000,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			if err := encodeCopyInstruction(&buf, tt.inst); err != nil {
+				t.Errorf("encodeCopyInstruction() unexpected error: %v", err)
+				return
+			}
+
+			// Read back and verify
+			reader := bytes.NewReader(buf.Bytes())
+			opcode, _ := reader.ReadByte()
+			decoded, err := parseCopyInstruction(reader, opcode)
+			if err != nil {
+				t.Errorf("parseCopyInstruction() unexpected error: %v", err)
+				return
+			}
+
+			if decoded.Offset != tt.inst.Offset {
+				t.Errorf("offset = %d, want %d", decoded.Offset, tt.inst.Offset)
+			}
+			if decoded.Size != tt.inst.Size {
+				t.Errorf("size = %d, want %d", decoded.Size, tt.inst.Size)
+			}
+		})
+	}
+}
+
+func TestEncodeInsertInstruction(t *testing.T) {
+	tests := []struct {
+		name string
+		inst *InsertInstruction
+	}{
+		{
+			name: "small insert",
+			inst: &InsertInstruction{
+				Data: []byte("hello"),
+			},
+		},
+		{
+			name: "single byte",
+			inst: &InsertInstruction{
+				Data: []byte("x"),
+			},
+		},
+		{
+			name: "max size insert (127 bytes)",
+			inst: &InsertInstruction{
+				Data: make([]byte, 127),
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			if err := encodeInsertInstruction(&buf, tt.inst); err != nil {
+				t.Errorf("encodeInsertInstruction() unexpected error: %v", err)
+				return
+			}
+
+			// Read back and verify
+			reader := bytes.NewReader(buf.Bytes())
+			opcode, _ := reader.ReadByte()
+			decoded, err := parseInsertInstruction(reader, opcode)
+			if err != nil {
+				t.Errorf("parseInsertInstruction() unexpected error: %v", err)
+				return
+			}
+
+			if !bytes.Equal(decoded.Data, tt.inst.Data) {
+				t.Errorf("data mismatch")
+			}
+		})
+	}
+}
+
+func TestEncodeInsertInstructionErrors(t *testing.T) {
+	tests := []struct {
+		name string
+		inst *InsertInstruction
+	}{
+		{
+			name: "empty data",
+			inst: &InsertInstruction{
+				Data: []byte{},
+			},
+		},
+		{
+			name: "data too large",
+			inst: &InsertInstruction{
+				Data: make([]byte, 128),
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			err := encodeInsertInstruction(&buf, tt.inst)
+			if err == nil {
+				t.Error("encodeInsertInstruction() expected error, got nil")
+			}
+		})
+	}
+}
+
+func TestEncodeDelta(t *testing.T) {
+	tests := []struct {
+		name  string
+		delta *Delta
+	}{
+		{
+			name: "simple delta",
+			delta: &Delta{
+				SourceSize: 10,
+				TargetSize: 15,
+				Instructions: []DeltaInstruction{
+					&InsertInstruction{Data: []byte("hello")},
+				},
+			},
+		},
+		{
+			name: "delta with copy and insert",
+			delta: &Delta{
+				SourceSize: 20,
+				TargetSize: 25,
+				Instructions: []DeltaInstruction{
+					&CopyInstruction{Offset: 0, Size: 10},
+					&InsertInstruction{Data: []byte("world")},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			encoded, err := EncodeDelta(tt.delta)
+			if err != nil {
+				t.Errorf("EncodeDelta() unexpected error: %v", err)
+				return
+			}
+
+			// Parse back
+			decoded, err := ParseDelta(encoded)
+			if err != nil {
+				t.Errorf("ParseDelta() unexpected error: %v", err)
+				return
+			}
+
+			if decoded.SourceSize != tt.delta.SourceSize {
+				t.Errorf("source size = %d, want %d", decoded.SourceSize, tt.delta.SourceSize)
+			}
+			if decoded.TargetSize != tt.delta.TargetSize {
+				t.Errorf("target size = %d, want %d", decoded.TargetSize, tt.delta.TargetSize)
+			}
+			if len(decoded.Instructions) != len(tt.delta.Instructions) {
+				t.Errorf("instruction count = %d, want %d", len(decoded.Instructions), len(tt.delta.Instructions))
+			}
+		})
+	}
+}
+
+func TestCreateDelta(t *testing.T) {
+	tests := []struct {
+		name   string
+		source []byte
+		target []byte
+	}{
+		{
+			name:   "identical",
+			source: []byte("hello world"),
+			target: []byte("hello world"),
+		},
+		{
+			name:   "append",
+			source: []byte("hello"),
+			target: []byte("hello world"),
+		},
+		{
+			name:   "prepend",
+			source: []byte("world"),
+			target: []byte("hello world"),
+		},
+		{
+			name:   "completely different",
+			source: []byte("abc"),
+			target: []byte("xyz"),
+		},
+		{
+			name:   "empty source",
+			source: []byte(""),
+			target: []byte("hello"),
+		},
+		{
+			name:   "empty target",
+			source: []byte("hello"),
+			target: []byte(""),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			delta := CreateDelta(tt.source, tt.target)
+
+			if delta.SourceSize != uint64(len(tt.source)) {
+				t.Errorf("source size = %d, want %d", delta.SourceSize, len(tt.source))
+			}
+			if delta.TargetSize != uint64(len(tt.target)) {
+				t.Errorf("target size = %d, want %d", delta.TargetSize, len(tt.target))
+			}
+
+			// Apply delta and verify result
+			result, err := ApplyDelta(tt.source, delta)
+			if err != nil {
+				t.Errorf("ApplyDelta() unexpected error: %v", err)
+				return
+			}
+
+			if !bytes.Equal(result, tt.target) {
+				t.Errorf("ApplyDelta() = %q, want %q", string(result), string(tt.target))
+			}
+		})
+	}
+}
+
+func TestCreateAndEncodeDelta(t *testing.T) {
+	tests := []struct {
+		name   string
+		source []byte
+		target []byte
+	}{
+		{
+			name:   "simple modification",
+			source: []byte("The quick brown fox"),
+			target: []byte("The quick red fox"),
+		},
+		{
+			name:   "large source reuse",
+			source: []byte("abcdefghijklmnopqrstuvwxyz"),
+			target: []byte("abcdefghijklmnopqrstuvwxyz0123456789"),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Create and encode delta
+			deltaData, err := CreateAndEncodeDelta(tt.source, tt.target)
+			if err != nil {
+				t.Errorf("CreateAndEncodeDelta() unexpected error: %v", err)
+				return
+			}
+
+			// Parse and apply
+			delta, err := ParseDelta(deltaData)
+			if err != nil {
+				t.Errorf("ParseDelta() unexpected error: %v", err)
+				return
+			}
+
+			result, err := ApplyDelta(tt.source, delta)
+			if err != nil {
+				t.Errorf("ApplyDelta() unexpected error: %v", err)
+				return
+			}
+
+			if !bytes.Equal(result, tt.target) {
+				t.Errorf("result = %q, want %q", string(result), string(tt.target))
+			}
+		})
+	}
+}
+
+func TestDeltaRoundTrip(t *testing.T) {
+	// Test encoding and decoding a delta
+	source := []byte("This is the original content with some text.")
+	target := []byte("This is the modified content with some different text.")
+
+	// Create delta
+	delta := CreateDelta(source, target)
+
+	// Encode delta
+	encoded, err := EncodeDelta(delta)
+	if err != nil {
+		t.Fatalf("EncodeDelta() error: %v", err)
+	}
+
+	// Decode delta
+	decoded, err := ParseDelta(encoded)
+	if err != nil {
+		t.Fatalf("ParseDelta() error: %v", err)
+	}
+
+	// Apply decoded delta
+	result, err := ApplyDelta(source, decoded)
+	if err != nil {
+		t.Fatalf("ApplyDelta() error: %v", err)
+	}
+
+	// Verify result matches target
+	if !bytes.Equal(result, target) {
+		t.Errorf("Round trip failed:\ngot:  %q\nwant: %q", string(result), string(target))
 	}
 }

@@ -322,3 +322,234 @@ func IsRegularObject(objType uint8) bool {
 func IsDeltaObject(objType uint8) bool {
 	return objType == ObjOfsDelta || objType == ObjRefDelta
 }
+
+// PackfileWriter writes packfiles
+type PackfileWriter struct {
+	writer   io.Writer
+	hasher   io.Writer // SHA-1 hasher for checksum
+	buf      *bytes.Buffer
+	offset   int64
+}
+
+// NewPackfileWriter creates a new packfile writer
+func NewPackfileWriter(w io.Writer) *PackfileWriter {
+	buf := &bytes.Buffer{}
+	hasher := sha1.New()
+
+	return &PackfileWriter{
+		writer: w,
+		hasher: hasher,
+		buf:    buf,
+		offset: 0,
+	}
+}
+
+// WritePackfile writes a complete packfile
+func (w *PackfileWriter) WritePackfile(objects []PackfileObject) error {
+	// Write header
+	if err := w.WriteHeader(uint32(len(objects))); err != nil {
+		return fmt.Errorf("failed to write header: %w", err)
+	}
+
+	// Write all objects
+	for i, obj := range objects {
+		if err := w.WriteObject(&obj); err != nil {
+			return fmt.Errorf("failed to write object %d: %w", i, err)
+		}
+	}
+
+	// Calculate and write checksum
+	if err := w.WriteChecksum(); err != nil {
+		return fmt.Errorf("failed to write checksum: %w", err)
+	}
+
+	// Write buffered data to actual writer
+	if _, err := w.buf.WriteTo(w.writer); err != nil {
+		return fmt.Errorf("failed to flush buffer: %w", err)
+	}
+
+	return nil
+}
+
+// WriteHeader writes the packfile header
+func (w *PackfileWriter) WriteHeader(objectCount uint32) error {
+	header := make([]byte, PackfileHeaderSize)
+
+	// Write signature
+	copy(header[0:4], []byte(PackfileSignature))
+
+	// Write version (big-endian)
+	binary.BigEndian.PutUint32(header[4:8], PackfileVersion)
+
+	// Write object count (big-endian)
+	binary.BigEndian.PutUint32(header[8:12], objectCount)
+
+	n, err := w.buf.Write(header)
+	if err != nil {
+		return err
+	}
+	w.offset += int64(n)
+
+	return nil
+}
+
+// WriteObject writes a single object to the packfile
+func (w *PackfileWriter) WriteObject(obj *PackfileObject) error {
+	// Write object header (type and size)
+	if err := w.writeObjectHeader(obj.Type, obj.Size); err != nil {
+		return fmt.Errorf("failed to write object header: %w", err)
+	}
+
+	// Handle different object types
+	switch obj.Type {
+	case ObjCommit, ObjTree, ObjBlob, ObjTag:
+		// Regular object - write compressed data
+		if err := w.writeCompressedData(obj.Data); err != nil {
+			return fmt.Errorf("failed to write compressed data: %w", err)
+		}
+
+	case ObjOfsDelta:
+		// Offset delta - write offset to base
+		if err := w.writeOffsetDeltaOffset(obj.Offset); err != nil {
+			return fmt.Errorf("failed to write offset delta: %w", err)
+		}
+		// Write delta data
+		if err := w.writeCompressedData(obj.Data); err != nil {
+			return fmt.Errorf("failed to write delta data: %w", err)
+		}
+
+	case ObjRefDelta:
+		// Reference delta - write 20-byte SHA-1 of base
+		if len(obj.BaseHash) != 20 {
+			return fmt.Errorf("invalid base hash length: %d (expected 20)", len(obj.BaseHash))
+		}
+		n, err := w.buf.Write(obj.BaseHash)
+		if err != nil {
+			return fmt.Errorf("failed to write ref delta hash: %w", err)
+		}
+		w.offset += int64(n)
+
+		// Write delta data
+		if err := w.writeCompressedData(obj.Data); err != nil {
+			return fmt.Errorf("failed to write delta data: %w", err)
+		}
+
+	default:
+		return fmt.Errorf("unknown object type: %d", obj.Type)
+	}
+
+	return nil
+}
+
+// writeObjectHeader writes the variable-length object type and size header
+func (w *PackfileWriter) writeObjectHeader(objType uint8, size uint64) error {
+	// First byte contains type (bits 6-4) and size (bits 3-0)
+	firstByte := (objType << 4) | byte(size&0xF)
+	size >>= 4
+
+	// Set MSB if more bytes needed
+	if size > 0 {
+		firstByte |= 0x80
+	}
+
+	if err := w.writeByte(firstByte); err != nil {
+		return err
+	}
+
+	// Write continuation bytes if needed
+	for size > 0 {
+		b := byte(size & 0x7F)
+		size >>= 7
+
+		// Set MSB if more bytes needed
+		if size > 0 {
+			b |= 0x80
+		}
+
+		if err := w.writeByte(b); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// writeOffsetDeltaOffset writes the offset for OFS_DELTA
+func (w *PackfileWriter) writeOffsetDeltaOffset(offset int64) error {
+	// Convert to positive offset from current position
+	negativeOffset := w.offset - offset
+
+	// Encode using variable-length encoding
+	bytes := []byte{}
+	bytes = append(bytes, byte(negativeOffset&0x7F))
+	negativeOffset >>= 7
+
+	for negativeOffset > 0 {
+		negativeOffset--
+		bytes = append(bytes, byte((negativeOffset&0x7F)|0x80))
+		negativeOffset >>= 7
+	}
+
+	// Write bytes in reverse order
+	for i := len(bytes) - 1; i >= 0; i-- {
+		if err := w.writeByte(bytes[i]); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// writeCompressedData compresses and writes data using zlib
+func (w *PackfileWriter) writeCompressedData(data []byte) error {
+	// Create a buffer for compressed data
+	var compressed bytes.Buffer
+
+	// Create zlib writer
+	zlibWriter := zlib.NewWriter(&compressed)
+
+	// Write data
+	if _, err := zlibWriter.Write(data); err != nil {
+		zlibWriter.Close()
+		return fmt.Errorf("failed to compress data: %w", err)
+	}
+
+	// Close to flush
+	if err := zlibWriter.Close(); err != nil {
+		return fmt.Errorf("failed to close zlib writer: %w", err)
+	}
+
+	// Write compressed data to buffer
+	n, err := w.buf.Write(compressed.Bytes())
+	if err != nil {
+		return err
+	}
+	w.offset += int64(n)
+
+	return nil
+}
+
+// writeByte writes a single byte
+func (w *PackfileWriter) writeByte(b byte) error {
+	if err := w.buf.WriteByte(b); err != nil {
+		return err
+	}
+	w.offset++
+	return nil
+}
+
+// WriteChecksum writes the SHA-1 checksum of the packfile
+func (w *PackfileWriter) WriteChecksum() error {
+	// The hasher has been computing the checksum as we write
+	// But we need to write the buffered data to it first
+	hasher := sha1.New()
+	hasher.Write(w.buf.Bytes())
+	checksum := hasher.Sum(nil)
+
+	// Write checksum to buffer (not hashed itself)
+	if _, err := w.buf.Write(checksum); err != nil {
+		return fmt.Errorf("failed to write checksum: %w", err)
+	}
+
+	return nil
+}
