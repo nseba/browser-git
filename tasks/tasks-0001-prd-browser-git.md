@@ -140,6 +140,7 @@ Based on PRD: `0001-prd-browser-git.md`
 - `docs/architecture/overview.md` - Architecture overview
 - `docs/architecture/storage-layer.md` - Storage layer design
 - `docs/architecture/wasm-bridge.md` - WASM bridge design
+- `docs/architecture/git-http-protocol.md` - Git HTTP smart protocol specification
 - `docs/guides/integration.md` - Integration guide for IDEs
 - `docs/guides/cors-workarounds.md` - CORS handling guide
 - `docs/guides/authentication.md` - Authentication setup guide
@@ -357,7 +358,7 @@ Based on PRD: `0001-prd-browser-git.md`
 ### Phase 4: Remote Operations
 
 - [ ] 16.0 Implement HTTP Git protocol (smart protocol)
-  - [ ] 16.1 Research and document Git HTTP smart protocol specification
+  - [x] 16.1 Research and document Git HTTP smart protocol specification
   - [ ] 16.2 Implement discovery phase (GET /info/refs?service=git-upload-pack)
   - [ ] 16.3 Parse advertisement of remote references
   - [ ] 16.4 Implement negotiation protocol (want/have exchange)
