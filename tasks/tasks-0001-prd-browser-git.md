@@ -42,6 +42,8 @@ Based on PRD: `0001-prd-browser-git.md`
 - `packages/git-core/pkg/protocol/negotiation_test.go` - Negotiation tests
 - `packages/git-core/pkg/protocol/packfile.go` - Packfile format reader and parser
 - `packages/git-core/pkg/protocol/packfile_test.go` - Packfile reader tests
+- `packages/git-core/pkg/protocol/delta.go` - Delta object decoding and application
+- `packages/git-core/pkg/protocol/delta_test.go` - Delta decoding tests
 - `packages/git-core/pkg/protocol/http.go` - HTTP Git protocol implementation (TBD)
 - `packages/git-core/pkg/protocol/protocol_test.go` - Protocol tests (TBD)
 - `packages/git-core/Makefile` - Build automation for WASM compilation
@@ -371,9 +373,9 @@ Based on PRD: `0001-prd-browser-git.md`
   - [x] 16.4 Implement negotiation protocol (want/have exchange)
   - [x] 16.5 Implement packfile format reader
   - [ ] 16.6 Implement packfile format writer
-  - [ ] 16.7 Implement delta object decoding
+  - [x] 16.7 Implement delta object decoding
   - [ ] 16.8 Implement delta object encoding
-  - [ ] 16.9 Handle packfile compression/decompression
+  - [x] 16.9 Handle packfile compression/decompression
   - [ ] 16.10 Implement CORS detection and error handling with helpful messages
   - [ ] 16.11 Write unit tests for protocol parsing and packfile handling
   - [ ] 16.12 Write integration tests against real Git server (using test fixtures)
