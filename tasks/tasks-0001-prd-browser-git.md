@@ -44,6 +44,8 @@ Based on PRD: `0001-prd-browser-git.md`
 - `packages/git-core/pkg/protocol/packfile_test.go` - Packfile reader tests
 - `packages/git-core/pkg/protocol/delta.go` - Delta object decoding and application
 - `packages/git-core/pkg/protocol/delta_test.go` - Delta decoding tests
+- `packages/git-core/pkg/protocol/errors.go` - Protocol error handling with CORS detection
+- `packages/git-core/pkg/protocol/errors_test.go` - Error handling tests
 - `packages/git-core/pkg/protocol/http.go` - HTTP Git protocol implementation (TBD)
 - `packages/git-core/pkg/protocol/protocol_test.go` - Protocol tests (TBD)
 - `packages/git-core/Makefile` - Build automation for WASM compilation
@@ -376,8 +378,8 @@ Based on PRD: `0001-prd-browser-git.md`
   - [x] 16.7 Implement delta object decoding
   - [ ] 16.8 Implement delta object encoding
   - [x] 16.9 Handle packfile compression/decompression
-  - [ ] 16.10 Implement CORS detection and error handling with helpful messages
-  - [ ] 16.11 Write unit tests for protocol parsing and packfile handling
+  - [x] 16.10 Implement CORS detection and error handling with helpful messages
+  - [x] 16.11 Write unit tests for protocol parsing and packfile handling
   - [ ] 16.12 Write integration tests against real Git server (using test fixtures)
 
 - [ ] 17.0 Implement authentication layer
