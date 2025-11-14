@@ -34,9 +34,13 @@ Based on PRD: `0001-prd-browser-git.md`
 - `packages/git-core/pkg/refs/refs_test.go` - Reference tests
 - `packages/git-core/pkg/merge/merge.go` - Merge implementation
 - `packages/git-core/pkg/merge/merge_test.go` - Merge tests
-- `packages/git-core/pkg/protocol/http.go` - HTTP Git protocol implementation
-- `packages/git-core/pkg/protocol/packfile.go` - Packfile reading/writing
-- `packages/git-core/pkg/protocol/protocol_test.go` - Protocol tests
+- `packages/git-core/pkg/protocol/pktline.go` - Pkt-line format encoding/decoding
+- `packages/git-core/pkg/protocol/pktline_test.go` - Pkt-line tests
+- `packages/git-core/pkg/protocol/discovery.go` - HTTP discovery phase (info/refs)
+- `packages/git-core/pkg/protocol/discovery_test.go` - Discovery tests
+- `packages/git-core/pkg/protocol/http.go` - HTTP Git protocol implementation (TBD)
+- `packages/git-core/pkg/protocol/packfile.go` - Packfile reading/writing (TBD)
+- `packages/git-core/pkg/protocol/protocol_test.go` - Protocol tests (TBD)
 - `packages/git-core/Makefile` - Build automation for WASM compilation
 - `packages/git-core/go.mod` - Go module definition
 - `packages/git-core/README.md` - Package documentation
@@ -359,8 +363,8 @@ Based on PRD: `0001-prd-browser-git.md`
 
 - [ ] 16.0 Implement HTTP Git protocol (smart protocol)
   - [x] 16.1 Research and document Git HTTP smart protocol specification
-  - [ ] 16.2 Implement discovery phase (GET /info/refs?service=git-upload-pack)
-  - [ ] 16.3 Parse advertisement of remote references
+  - [x] 16.2 Implement discovery phase (GET /info/refs?service=git-upload-pack)
+  - [x] 16.3 Parse advertisement of remote references
   - [ ] 16.4 Implement negotiation protocol (want/have exchange)
   - [ ] 16.5 Implement packfile format reader
   - [ ] 16.6 Implement packfile format writer
