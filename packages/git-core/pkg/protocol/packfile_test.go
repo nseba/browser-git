@@ -410,3 +410,372 @@ func compressData(data string) []byte {
 	w.Close()
 	return buf.Bytes()
 }
+
+func TestWritePackfileHeader(t *testing.T) {
+	tests := []struct {
+		name        string
+		objectCount uint32
+	}{
+		{
+			name:        "empty packfile",
+			objectCount: 0,
+		},
+		{
+			name:        "single object",
+			objectCount: 1,
+		},
+		{
+			name:        "multiple objects",
+			objectCount: 100,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			writer := NewPackfileWriter(&buf)
+
+			if err := writer.WriteHeader(tt.objectCount); err != nil {
+				t.Errorf("WriteHeader() unexpected error: %v", err)
+				return
+			}
+
+			// Flush internal buffer to writer
+			writer.buf.WriteTo(&buf)
+
+			// Read back the header
+			reader := NewPackfileReader(bytes.NewReader(buf.Bytes()))
+			header, err := reader.ReadHeader()
+			if err != nil {
+				t.Errorf("ReadHeader() unexpected error: %v", err)
+				return
+			}
+
+			if header.ObjectCount != tt.objectCount {
+				t.Errorf("object count = %d, want %d", header.ObjectCount, tt.objectCount)
+			}
+		})
+	}
+}
+
+func TestWriteObjectHeader(t *testing.T) {
+	tests := []struct {
+		name     string
+		objType  uint8
+		size     uint64
+	}{
+		{
+			name:    "small blob",
+			objType: ObjBlob,
+			size:    5,
+		},
+		{
+			name:    "commit",
+			objType: ObjCommit,
+			size:    100,
+		},
+		{
+			name:    "large tree",
+			objType: ObjTree,
+			size:    65536,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			writer := NewPackfileWriter(&buf)
+
+			if err := writer.writeObjectHeader(tt.objType, tt.size); err != nil {
+				t.Errorf("writeObjectHeader() unexpected error: %v", err)
+				return
+			}
+
+			// Flush internal buffer to writer
+			writer.buf.WriteTo(&buf)
+
+			// Read back the header
+			reader := NewPackfileReader(bytes.NewReader(buf.Bytes()))
+			objType, size, err := reader.readObjectHeader()
+			if err != nil {
+				t.Errorf("readObjectHeader() unexpected error: %v", err)
+				return
+			}
+
+			if objType != tt.objType {
+				t.Errorf("object type = %d, want %d", objType, tt.objType)
+			}
+
+			if size != tt.size {
+				t.Errorf("size = %d, want %d", size, tt.size)
+			}
+		})
+	}
+}
+
+func TestWriteCompressedData(t *testing.T) {
+	tests := []struct {
+		name string
+		data string
+	}{
+		{
+			name: "simple text",
+			data: "hello world",
+		},
+		{
+			name: "empty data",
+			data: "",
+		},
+		{
+			name: "binary data",
+			data: "\x00\x01\x02\x03\x04",
+		},
+		{
+			name: "large data",
+			data: string(make([]byte, 10000)),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			writer := NewPackfileWriter(&buf)
+
+			if err := writer.writeCompressedData([]byte(tt.data)); err != nil {
+				t.Errorf("writeCompressedData() unexpected error: %v", err)
+				return
+			}
+
+			// Flush internal buffer to writer
+			writer.buf.WriteTo(&buf)
+
+			// Read back the data
+			reader := NewPackfileReader(bytes.NewReader(buf.Bytes()))
+			data, err := reader.readCompressedData()
+			if err != nil {
+				t.Errorf("readCompressedData() unexpected error: %v", err)
+				return
+			}
+
+			if string(data) != tt.data {
+				t.Errorf("data mismatch: got %d bytes, want %d bytes", len(data), len(tt.data))
+			}
+		})
+	}
+}
+
+func TestWriteObject(t *testing.T) {
+	tests := []struct {
+		name string
+		obj  PackfileObject
+	}{
+		{
+			name: "blob object",
+			obj: PackfileObject{
+				Type: ObjBlob,
+				Size: 11,
+				Data: []byte("hello world"),
+			},
+		},
+		{
+			name: "commit object",
+			obj: PackfileObject{
+				Type: ObjCommit,
+				Size: 100,
+				Data: []byte("tree abc123\nauthor John Doe\ncommitter John Doe\n\nCommit message"),
+			},
+		},
+		{
+			name: "ref delta",
+			obj: PackfileObject{
+				Type:     ObjRefDelta,
+				Size:     10,
+				Data:     []byte("delta data"),
+				IsDelta:  true,
+				BaseHash: []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			writer := NewPackfileWriter(&buf)
+
+			if err := writer.WriteObject(&tt.obj); err != nil {
+				t.Errorf("WriteObject() unexpected error: %v", err)
+				return
+			}
+
+			// Flush internal buffer to writer
+			writer.buf.WriteTo(&buf)
+
+			// Read back the object
+			reader := NewPackfileReader(bytes.NewReader(buf.Bytes()))
+			obj, err := reader.ReadObject()
+			if err != nil {
+				t.Errorf("ReadObject() unexpected error: %v", err)
+				return
+			}
+
+			if obj.Type != tt.obj.Type {
+				t.Errorf("type = %d, want %d", obj.Type, tt.obj.Type)
+			}
+
+			if obj.Size != tt.obj.Size {
+				t.Errorf("size = %d, want %d", obj.Size, tt.obj.Size)
+			}
+
+			if obj.IsDelta != tt.obj.IsDelta {
+				t.Errorf("isDelta = %v, want %v", obj.IsDelta, tt.obj.IsDelta)
+			}
+
+			if tt.obj.IsDelta && tt.obj.Type == ObjRefDelta {
+				if !bytes.Equal(obj.BaseHash, tt.obj.BaseHash) {
+					t.Errorf("base hash mismatch")
+				}
+			}
+		})
+	}
+}
+
+func TestWritePackfile(t *testing.T) {
+	tests := []struct {
+		name    string
+		objects []PackfileObject
+	}{
+		{
+			name:    "empty packfile",
+			objects: []PackfileObject{},
+		},
+		{
+			name: "single blob",
+			objects: []PackfileObject{
+				{
+					Type: ObjBlob,
+					Size: 11,
+					Data: []byte("hello world"),
+				},
+			},
+		},
+		{
+			name: "multiple objects",
+			objects: []PackfileObject{
+				{
+					Type: ObjBlob,
+					Size: 5,
+					Data: []byte("hello"),
+				},
+				{
+					Type: ObjCommit,
+					Size: 20,
+					Data: []byte("tree abc\nauthor Bob"),
+				},
+				{
+					Type: ObjTree,
+					Size: 10,
+					Data: []byte("tree data\n"),
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			writer := NewPackfileWriter(&buf)
+
+			if err := writer.WritePackfile(tt.objects); err != nil {
+				t.Errorf("WritePackfile() unexpected error: %v", err)
+				return
+			}
+
+			// Read back the packfile
+			reader := NewPackfileReader(bytes.NewReader(buf.Bytes()))
+			packfile, err := reader.ReadPackfile()
+			if err != nil {
+				t.Errorf("ReadPackfile() unexpected error: %v", err)
+				return
+			}
+
+			if packfile.Header.ObjectCount != uint32(len(tt.objects)) {
+				t.Errorf("object count = %d, want %d", packfile.Header.ObjectCount, len(tt.objects))
+			}
+
+			if len(packfile.Objects) != len(tt.objects) {
+				t.Errorf("objects length = %d, want %d", len(packfile.Objects), len(tt.objects))
+			}
+
+			// Verify each object
+			for i, expected := range tt.objects {
+				actual := packfile.Objects[i]
+
+				if actual.Type != expected.Type {
+					t.Errorf("object[%d] type = %d, want %d", i, actual.Type, expected.Type)
+				}
+
+				if actual.Size != expected.Size {
+					t.Errorf("object[%d] size = %d, want %d", i, actual.Size, expected.Size)
+				}
+			}
+		})
+	}
+}
+
+func TestPackfileRoundTrip(t *testing.T) {
+	// Create a complex packfile with various object types
+	objects := []PackfileObject{
+		{
+			Type: ObjBlob,
+			Size: 26,
+			Data: []byte("abcdefghijklmnopqrstuvwxyz"),
+		},
+		{
+			Type: ObjTree,
+			Size: 15,
+			Data: []byte("100644 file.txt"),
+		},
+		{
+			Type: ObjCommit,
+			Size: 50,
+			Data: []byte("tree abc123\nauthor Test <test@example.com>\n\nMsg"),
+		},
+		{
+			Type:     ObjRefDelta,
+			Size:     10,
+			Data:     []byte("delta data"),
+			IsDelta:  true,
+			BaseHash: []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
+		},
+	}
+
+	// Write packfile
+	var buf bytes.Buffer
+	writer := NewPackfileWriter(&buf)
+	if err := writer.WritePackfile(objects); err != nil {
+		t.Fatalf("WritePackfile() error: %v", err)
+	}
+
+	// Read packfile
+	reader := NewPackfileReader(bytes.NewReader(buf.Bytes()))
+	packfile, err := reader.ReadPackfile()
+	if err != nil {
+		t.Fatalf("ReadPackfile() error: %v", err)
+	}
+
+	// Verify
+	if len(packfile.Objects) != len(objects) {
+		t.Errorf("object count = %d, want %d", len(packfile.Objects), len(objects))
+	}
+
+	for i := range objects {
+		if packfile.Objects[i].Type != objects[i].Type {
+			t.Errorf("object[%d] type mismatch: got %d, want %d",
+				i, packfile.Objects[i].Type, objects[i].Type)
+		}
+		if packfile.Objects[i].Size != objects[i].Size {
+			t.Errorf("object[%d] size mismatch: got %d, want %d",
+				i, packfile.Objects[i].Size, objects[i].Size)
+		}
+	}
+}
