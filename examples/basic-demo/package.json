@@ -1,0 +1,18 @@
+{
+  "name": "browser-git-basic-demo",
+  "version": "0.1.0",
+  "description": "Basic demo of BrowserGit",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@browser-git/browser-git": "0.1.0",
+    "@browser-git/storage-adapters": "0.1.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
