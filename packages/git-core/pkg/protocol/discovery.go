@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/nseba/browser-git/git-core/pkg/auth"
 )
 
 // ServiceType represents the type of Git service
@@ -35,41 +37,52 @@ type DiscoveryResponse struct {
 
 // Client represents a Git HTTP protocol client
 type Client struct {
-	httpClient *http.Client
-	userAgent  string
-	authHeader string // For authentication
+	httpClient   *http.Client
+	userAgent    string
+	authProvider auth.AuthProvider
 }
 
 // NewClient creates a new Git protocol client
 func NewClient() *Client {
 	return &Client{
-		httpClient: &http.Client{},
-		userAgent:  "browser-git/0.1.0",
+		httpClient:   &http.Client{},
+		userAgent:    "browser-git/0.1.0",
+		authProvider: &auth.NoneAuthProvider{},
 	}
 }
 
-// SetAuth sets the authentication header
+// SetAuthProvider sets the authentication provider
+func (c *Client) SetAuthProvider(provider auth.AuthProvider) {
+	if provider == nil {
+		c.authProvider = &auth.NoneAuthProvider{}
+	} else {
+		c.authProvider = provider
+	}
+}
+
+// SetAuth sets basic authentication (convenience method)
 func (c *Client) SetAuth(username, password string) {
-	// Use Basic authentication
-	c.authHeader = "Basic " + basicAuth(username, password)
+	c.authProvider = auth.NewBasicAuthProvider(username, password)
 }
 
-// SetAuthToken sets a bearer token for authentication
+// SetAuthToken sets token authentication (convenience method)
 func (c *Client) SetAuthToken(token string) {
-	c.authHeader = "Bearer " + token
+	c.authProvider = auth.NewTokenAuthProvider(token)
 }
 
-// SetAuthHeader sets a custom authentication header
-func (c *Client) SetAuthHeader(header string) {
-	c.authHeader = header
+// SetAuthConfig configures authentication from a config object
+func (c *Client) SetAuthConfig(config *auth.AuthConfig) error {
+	provider, err := auth.NewAuthProvider(config)
+	if err != nil {
+		return fmt.Errorf("failed to create auth provider: %w", err)
+	}
+	c.authProvider = provider
+	return nil
 }
 
-// basicAuth encodes username and password for HTTP Basic Auth
-func basicAuth(username, password string) string {
-	auth := username + ":" + password
-	// In real implementation, this should be base64 encoded
-	// For WASM, we'll handle this in the JS bridge
-	return auth
+// GetAuthProvider returns the current authentication provider
+func (c *Client) GetAuthProvider() auth.AuthProvider {
+	return c.authProvider
 }
 
 // Discover performs the discovery phase and retrieves repository info
@@ -90,22 +103,25 @@ func (c *Client) Discover(repoURL string, service ServiceType) (*DiscoveryRespon
 	req.Header.Set("User-Agent", c.userAgent)
 	req.Header.Set("Git-Protocol", "version=2")
 
-	// Add authentication if provided
-	if c.authHeader != "" {
-		req.Header.Set("Authorization", c.authHeader)
+	// Apply authentication
+	if err := c.authProvider.ApplyAuth(req); err != nil {
+		return nil, fmt.Errorf("failed to apply authentication: %w", err)
 	}
 
 	// Make the request
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("discovery request failed: %w", err)
+		// Wrap error with protocol context (handles CORS, network errors, etc.)
+		return nil, WrapProtocolError(err, 0, repoURL)
 	}
 	defer resp.Body.Close()
 
-	// Check status code
+	// Check status code and handle errors appropriately
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("discovery failed with status %d: %s", resp.StatusCode, string(body))
+		err := fmt.Errorf("%s", string(body))
+		// Wrap error with protocol context (handles auth, forbidden, not found, etc.)
+		return nil, WrapProtocolError(err, resp.StatusCode, repoURL)
 	}
 
 	// Verify content type
