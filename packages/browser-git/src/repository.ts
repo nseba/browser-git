@@ -51,6 +51,136 @@ export interface CloneOptions {
 }
 
 /**
+ * Fetch options
+ */
+export interface FetchOptions {
+  /**
+   * Name of the remote to fetch from
+   * @default "origin"
+   */
+  remote?: string;
+
+  /**
+   * Refspecs to fetch (default: fetch all branches)
+   * @default []
+   */
+  refspecs?: string[];
+
+  /**
+   * Prune remote tracking branches that no longer exist
+   * @default false
+   */
+  prune?: boolean;
+
+  /**
+   * Force non-fast-forward updates
+   * @default false
+   */
+  force?: boolean;
+
+  /**
+   * Depth for shallow fetch (0 for full fetch)
+   * @default 0
+   */
+  depth?: number;
+
+  /**
+   * Authentication configuration
+   */
+  auth?: AuthConfig;
+
+  /**
+   * Progress callback
+   */
+  onProgress?: ProgressCallback;
+}
+
+/**
+ * Pull options
+ */
+export interface PullOptions {
+  /**
+   * Name of the remote to pull from
+   * @default "origin"
+   */
+  remote?: string;
+
+  /**
+   * Specific branch to pull (empty for current branch's upstream)
+   * @default ""
+   */
+  branch?: string;
+
+  /**
+   * Rebase instead of merge
+   * @default false
+   */
+  rebase?: boolean;
+
+  /**
+   * Only allow fast-forward merges
+   * @default false
+   */
+  fastForwardOnly?: boolean;
+
+  /**
+   * Force non-fast-forward updates during fetch
+   * @default false
+   */
+  force?: boolean;
+
+  /**
+   * Authentication configuration
+   */
+  auth?: AuthConfig;
+
+  /**
+   * Progress callback
+   */
+  onProgress?: ProgressCallback;
+}
+
+/**
+ * Reference update information
+ */
+export interface RefUpdate {
+  /** Reference name */
+  refName: string;
+  /** Previous hash (empty if new) */
+  oldHash: string;
+  /** New hash (empty if deleted) */
+  newHash: string;
+  /** Whether this was a forced update */
+  forced: boolean;
+}
+
+/**
+ * Fetch result
+ */
+export interface FetchResult {
+  /** Updated references */
+  updatedRefs: Record<string, RefUpdate>;
+  /** Pruned references */
+  prunedRefs: string[];
+  /** Number of objects fetched */
+  objectCount: number;
+}
+
+/**
+ * Pull result
+ */
+export interface PullResult {
+  /** Fetch operation result */
+  fetchResult: FetchResult;
+  /** Merge operation result (if any) */
+  mergeResult?: any;
+  /** Whether this was a fast-forward update */
+  fastForward: boolean;
+  /** Whether already up to date */
+  alreadyUpToDate: boolean;
+}
+
+/**
  * Repository init options
  */
 export interface InitOptions {
@@ -261,6 +391,103 @@ export class Repository {
       );
     }
   }
+
+  /**
+   * Fetch objects and refs from a remote repository
+   *
+   * @param options - Fetch options
+   * @returns Promise resolving to fetch result
+   *
+   * @example
+   * ```ts
+   * const result = await repo.fetch({
+   *   remote: 'origin',
+   *   prune: true,
+   *   auth: {
+   *     method: AuthMethod.Token,
+   *     token: 'ghp_xxxxxxxxxxxx'
+   *   },
+   *   onProgress: (msg) => console.log(msg)
+   * });
+   * console.log(`Fetched ${result.objectCount} objects`);
+   * ```
+   */
+  async fetch(options: FetchOptions = {}): Promise<FetchResult> {
+    const fetchOpts = {
+      remote: options.remote ?? 'origin',
+      refspecs: options.refspecs ?? [],
+      prune: options.prune ?? false,
+      force: options.force ?? false,
+      depth: options.depth ?? 0,
+      auth: options.auth,
+    };
+
+    // Create progress callback wrapper
+    const progressCallback = options.onProgress
+      ? (msg: string) => options.onProgress!(msg)
+      : undefined;
+
+    try {
+      return await this.wasmInstance.fetch(this.path, fetchOpts, progressCallback);
+    } catch (error) {
+      throw new GitError(
+        `Failed to fetch: ${error instanceof Error ? error.message : String(error)}`,
+        error
+      );
+    }
+  }
+
+  /**
+   * Pull changes from a remote repository and integrate them into the current branch
+   *
+   * @param options - Pull options
+   * @returns Promise resolving to pull result
+   *
+   * @example
+   * ```ts
+   * const result = await repo.pull({
+   *   remote: 'origin',
+   *   branch: 'main',
+   *   auth: {
+   *     method: AuthMethod.Token,
+   *     token: 'ghp_xxxxxxxxxxxx'
+   *   },
+   *   onProgress: (msg) => console.log(msg)
+   * });
+   *
+   * if (result.alreadyUpToDate) {
+   *   console.log('Already up to date');
+   * } else if (result.fastForward) {
+   *   console.log('Fast-forwarded');
+   * } else {
+   *   console.log('Merged changes');
+   * }
+   * ```
+   */
+  async pull(options: PullOptions = {}): Promise<PullResult> {
+    const pullOpts = {
+      remote: options.remote ?? 'origin',
+      branch: options.branch ?? '',
+      rebase: options.rebase ?? false,
+      fastForwardOnly: options.fastForwardOnly ?? false,
+      force: options.force ?? false,
+      auth: options.auth,
+    };
+
+    // Create progress callback wrapper
+    const progressCallback = options.onProgress
+      ? (msg: string) => options.onProgress!(msg)
+      : undefined;
+
+    try {
+      return await this.wasmInstance.pull(this.path, pullOpts, progressCallback);
+    } catch (error) {
+      throw new GitError(
+        `Failed to pull: ${error instanceof Error ? error.message : String(error)}`,
+        error
+      );
+    }
+  }
 }
 
 /**
@@ -323,6 +550,12 @@ async function loadWASM(): Promise<any> {
       throw new Error('WASM not yet integrated');
     },
     checkout: async (path: string, target: string) => {
+      throw new Error('WASM not yet integrated');
+    },
+    fetch: async (path: string, opts: any, progress?: ProgressCallback) => {
+      throw new Error('WASM not yet integrated');
+    },
+    pull: async (path: string, opts: any, progress?: ProgressCallback) => {
       throw new Error('WASM not yet integrated');
     },
   };
