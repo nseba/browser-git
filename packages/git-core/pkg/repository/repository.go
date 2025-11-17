@@ -136,6 +136,68 @@ func (r *Repository) ResolveRef(ref string) (hash.Hash, error) {
 	return hash.ParseHash(ref)
 }
 
+// GetRef is an alias for ResolveRef (for consistency)
+func (r *Repository) GetRef(ref string) (hash.Hash, error) {
+	return r.ResolveRef(ref)
+}
+
+// DeleteRef deletes a reference
+func (r *Repository) DeleteRef(ref string) error {
+	if len(ref) < 5 || ref[:5] != "refs/" {
+		return fmt.Errorf("invalid ref: must start with refs/")
+	}
+
+	refPath := filepath.Join(r.GitDir, ref)
+	return removeFile(refPath)
+}
+
+// ListRefs lists all references under a given prefix
+func (r *Repository) ListRefs(prefix string) ([]string, error) {
+	// Ensure prefix starts with refs/
+	if len(prefix) < 5 || prefix[:5] != "refs/" {
+		return nil, fmt.Errorf("invalid ref prefix: must start with refs/")
+	}
+
+	refs := []string{}
+	refPath := filepath.Join(r.GitDir, prefix)
+
+	// Walk the directory tree
+	err := filepath.Walk(refPath, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			// If directory doesn't exist, return empty list
+			if os.IsNotExist(err) {
+				return filepath.SkipDir
+			}
+			return err
+		}
+
+		// Skip directories
+		if info.IsDir() {
+			return nil
+		}
+
+		// Get relative path from GitDir
+		relPath, err := filepath.Rel(r.GitDir, path)
+		if err != nil {
+			return err
+		}
+
+		// Add to refs list (use forward slashes for consistency)
+		refs = append(refs, filepath.ToSlash(relPath))
+		return nil
+	})
+
+	if err != nil {
+		// If the directory doesn't exist, return empty list instead of error
+		if os.IsNotExist(err) {
+			return []string{}, nil
+		}
+		return nil, err
+	}
+
+	return refs, nil
+}
+
 // UpdateRef updates a reference to point to a hash
 func (r *Repository) UpdateRef(ref string, h hash.Hash) error {
 	if len(ref) < 5 || ref[:5] != "refs/" {

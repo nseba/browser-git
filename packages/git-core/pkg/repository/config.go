@@ -310,3 +310,65 @@ func (c *Config) ListKeys(section string) []string {
 	}
 	return nil
 }
+
+// GetRemoteURL returns the URL for a remote
+func (c *Config) GetRemoteURL(remoteName string) (string, error) {
+	section := fmt.Sprintf("remote.%s", remoteName)
+	if url, ok := c.Get(section, "url"); ok {
+		return url, nil
+	}
+	return "", fmt.Errorf("remote '%s' not found", remoteName)
+}
+
+// SetRemoteURL sets the URL for a remote
+func (c *Config) SetRemoteURL(remoteName, url string) {
+	section := fmt.Sprintf("remote.%s", remoteName)
+	c.Set(section, "url", url)
+}
+
+// GetFetchRefSpecs returns the fetch refspecs for a remote
+func (c *Config) GetFetchRefSpecs(remoteName string) ([]string, error) {
+	section := fmt.Sprintf("remote.%s", remoteName)
+
+	// Try to get fetch refspec
+	if fetch, ok := c.Get(section, "fetch"); ok {
+		return []string{fetch}, nil
+	}
+
+	return nil, fmt.Errorf("no fetch refspec configured for remote '%s'", remoteName)
+}
+
+// SetFetchRefSpec sets a fetch refspec for a remote
+func (c *Config) SetFetchRefSpec(remoteName, refspec string) {
+	section := fmt.Sprintf("remote.%s", remoteName)
+	c.Set(section, "fetch", refspec)
+}
+
+// GetBranchUpstream returns the upstream branch for a local branch
+func (c *Config) GetBranchUpstream(branchName string) (string, error) {
+	section := fmt.Sprintf("branch.%s", branchName)
+
+	// Get remote and merge refs
+	remote, hasRemote := c.Get(section, "remote")
+	merge, hasMerge := c.Get(section, "merge")
+
+	if !hasRemote || !hasMerge {
+		return "", fmt.Errorf("no upstream configured for branch '%s'", branchName)
+	}
+
+	// Convert merge ref to remote tracking ref
+	// e.g., refs/heads/main -> refs/remotes/origin/main
+	if strings.HasPrefix(merge, "refs/heads/") {
+		branchName := strings.TrimPrefix(merge, "refs/heads/")
+		return fmt.Sprintf("refs/remotes/%s/%s", remote, branchName), nil
+	}
+
+	return merge, nil
+}
+
+// SetBranchUpstream sets the upstream for a local branch
+func (c *Config) SetBranchUpstream(branchName, remoteName, remoteBranch string) {
+	section := fmt.Sprintf("branch.%s", branchName)
+	c.Set(section, "remote", remoteName)
+	c.Set(section, "merge", fmt.Sprintf("refs/heads/%s", remoteBranch))
+}
