@@ -2,7 +2,8 @@
  * Credential storage implementation using various browser storage mechanisms
  */
 
-import type { AuthConfig, StoredCredentials, AuthMethod } from '../types/auth';
+import type { AuthConfig, StoredCredentials } from '../types/auth';
+import { AuthMethod } from '../types/auth';
 
 /**
  * Storage backend interface
@@ -111,10 +112,10 @@ class CredentialManagerBackend implements StorageBackend {
     if ('credentials' in navigator && 'PasswordCredential' in window) {
       try {
         const data = JSON.parse(value) as StoredCredentials;
-        if (data.username && data.method === 'basic') {
+        if (data.username && (data.method === AuthMethod.Basic || data.method === 'basic')) {
           // Note: PasswordCredential doesn't store the password in a retrievable way
           // This is just for browser's autofill
-          const credential = new PasswordCredential({
+          const credential = new (window as any).PasswordCredential({
             id: data.username,
             password: '', // Can't store actual password
             name: data.username,
@@ -172,19 +173,19 @@ export class CredentialStorage {
 
     // Extract credentials based on auth method
     switch (config.method) {
-      case 'basic':
+      case AuthMethod.Basic:
         credentials.username = config.username;
         // Note: Storing passwords in browser storage is not secure
         // This is a convenience feature and should be used with caution
         break;
 
-      case 'token':
+      case AuthMethod.Token:
         credentials.token = config.token;
         break;
 
-      case 'oauth':
+      case AuthMethod.OAuth:
         credentials.accessToken = config.accessToken;
-        credentials.refreshToken = config.refreshToken;
+        credentials.refreshToken = config.refreshToken || undefined;
         break;
 
       default:
@@ -246,25 +247,28 @@ export class CredentialStorage {
    */
   credentialsToAuthConfig(credentials: StoredCredentials): AuthConfig | null {
     switch (credentials.method) {
+      case AuthMethod.Basic:
       case 'basic':
         if (!credentials.username) return null;
         return {
-          method: 'basic' as const,
+          method: AuthMethod.Basic,
           username: credentials.username,
           password: '', // Password is not retrievable
         };
 
+      case AuthMethod.Token:
       case 'token':
         if (!credentials.token) return null;
         return {
-          method: 'token' as const,
+          method: AuthMethod.Token,
           token: credentials.token,
         };
 
+      case AuthMethod.OAuth:
       case 'oauth':
         if (!credentials.accessToken) return null;
         return {
-          method: 'oauth' as const,
+          method: AuthMethod.OAuth,
           accessToken: credentials.accessToken,
           refreshToken: credentials.refreshToken,
         };
