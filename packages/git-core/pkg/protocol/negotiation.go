@@ -87,9 +87,9 @@ func (u *UploadPackClient) Negotiate(req *NegotiationRequest) (*NegotiationRespo
 	httpReq.Header.Set("Accept", "application/x-git-upload-pack-result")
 	httpReq.Header.Set("Git-Protocol", "version=2")
 
-	// Add authentication if provided
-	if u.client.authHeader != "" {
-		httpReq.Header.Set("Authorization", u.client.authHeader)
+	// Apply authentication
+	if err := u.client.authProvider.ApplyAuth(httpReq); err != nil {
+		return nil, fmt.Errorf("failed to apply authentication: %w", err)
 	}
 
 	// Make the request
