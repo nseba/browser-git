@@ -204,9 +204,9 @@ MIT © Sebastian Narvaez
 ## Roadmap
 
 - [x] Phase 1: Foundation & Infrastructure
-- [ ] Phase 2: Core Git Operations
-- [ ] Phase 3: Diff & Merge
-- [ ] Phase 4: Remote Operations
+- [x] Phase 2: Core Git Operations
+- [x] Phase 3: Diff & Merge
+- [x] Phase 4: Remote Operations
 - [ ] Phase 5: CLI, Examples & Documentation
 
 See the [PRD](./tasks/0001-prd-browser-git.md) and [task list](./tasks/tasks-0001-prd-browser-git.md) for detailed implementation plans.

@@ -368,112 +368,112 @@ Based on PRD: `0001-prd-browser-git.md`
 
 ### Phase 4: Remote Operations
 
-- [ ] 16.0 Implement HTTP Git protocol (smart protocol)
+- [x] 16.0 Implement HTTP Git protocol (smart protocol)
   - [x] 16.1 Research and document Git HTTP smart protocol specification
   - [x] 16.2 Implement discovery phase (GET /info/refs?service=git-upload-pack)
   - [x] 16.3 Parse advertisement of remote references
   - [x] 16.4 Implement negotiation protocol (want/have exchange)
   - [x] 16.5 Implement packfile format reader
-  - [ ] 16.6 Implement packfile format writer
+  - [x] 16.6 Implement packfile format writer
   - [x] 16.7 Implement delta object decoding
-  - [ ] 16.8 Implement delta object encoding
+  - [x] 16.8 Implement delta object encoding
   - [x] 16.9 Handle packfile compression/decompression
   - [x] 16.10 Implement CORS detection and error handling with helpful messages
   - [x] 16.11 Write unit tests for protocol parsing and packfile handling
-  - [ ] 16.12 Write integration tests against real Git server (using test fixtures)
+  - [x] 16.12 Write integration tests against real Git server (using test fixtures)
 
-- [ ] 17.0 Implement authentication layer
-  - [ ] 17.1 Define authentication interface with pluggable providers
-  - [ ] 17.2 Implement HTTP Basic Authentication with username/token
-  - [ ] 17.3 Implement OAuth flow integration hooks (callback handling)
-  - [ ] 17.4 Research SSH key management in browser (Web Crypto API)
-  - [ ] 17.5 Implement SSH key-based authentication (if feasible)
-  - [ ] 17.6 Allow consumers to provide custom authentication handlers
-  - [ ] 17.7 Implement credential storage using browser Credential Management API
-  - [ ] 17.8 Add authentication to HTTP requests with proper headers
-  - [ ] 17.9 Handle authentication errors with clear user-facing messages
-  - [ ] 17.10 Create TypeScript API: `repo.setAuth(config)`
-  - [ ] 17.11 Write unit tests for authentication providers
-  - [ ] 17.12 Document authentication setup for GitHub, GitLab, etc.
+- [x] 17.0 Implement authentication layer
+  - [x] 17.1 Define authentication interface with pluggable providers
+  - [x] 17.2 Implement HTTP Basic Authentication with username/token
+  - [x] 17.3 Implement OAuth flow integration hooks (callback handling)
+  - [x] 17.4 Research SSH key management in browser (Web Crypto API)
+  - [x] 17.5 Implement SSH key-based authentication (if feasible)
+  - [x] 17.6 Allow consumers to provide custom authentication handlers
+  - [x] 17.7 Implement credential storage using browser Credential Management API
+  - [x] 17.8 Add authentication to HTTP requests with proper headers
+  - [x] 17.9 Handle authentication errors with clear user-facing messages
+  - [x] 17.10 Create TypeScript API: `repo.setAuth(config)`
+  - [x] 17.11 Write unit tests for authentication providers
+  - [x] 17.12 Document authentication setup for GitHub, GitLab, etc.
 
-- [ ] 18.0 Implement clone operation
-  - [ ] 18.1 Implement `git clone <url> <path>` command structure
-  - [ ] 18.2 Fetch remote references from repository
-  - [ ] 18.3 Determine default branch (usually main or master)
-  - [ ] 18.4 Download packfile with all objects
-  - [ ] 18.5 Unpack objects into local object database
-  - [ ] 18.6 Create local branches tracking remote branches
-  - [ ] 18.7 Checkout default branch (HEAD) to working directory
-  - [ ] 18.8 Set up remote configuration (origin)
-  - [ ] 18.9 Handle shallow clone if requested (depth parameter)
-  - [ ] 18.10 Show progress information during clone
-  - [ ] 18.11 Create TypeScript API: `Repository.clone(url, path, options)`
-  - [ ] 18.12 Write integration tests for cloning public repositories
+- [x] 18.0 Implement clone operation
+  - [x] 18.1 Implement `git clone <url> <path>` command structure
+  - [x] 18.2 Fetch remote references from repository
+  - [x] 18.3 Determine default branch (usually main or master)
+  - [x] 18.4 Download packfile with all objects
+  - [x] 18.5 Unpack objects into local object database
+  - [x] 18.6 Create local branches tracking remote branches
+  - [x] 18.7 Checkout default branch (HEAD) to working directory
+  - [x] 18.8 Set up remote configuration (origin)
+  - [x] 18.9 Handle shallow clone if requested (depth parameter)
+  - [x] 18.10 Show progress information during clone
+  - [x] 18.11 Create TypeScript API: `Repository.clone(url, path, options)`
+  - [x] 18.12 Write integration tests for cloning public repositories
 
-- [ ] 19.0 Implement fetch and pull operations
-  - [ ] 19.1 Implement `git fetch` to retrieve remote changes
-  - [ ] 19.2 Update remote tracking branches (refs/remotes/origin/*)
-  - [ ] 19.3 Download new objects not present locally
-  - [ ] 19.4 Handle force updates and deletions
-  - [ ] 19.5 Implement fetch refspec parsing and handling
-  - [ ] 19.6 Implement `git pull` as fetch + merge
-  - [ ] 19.7 Support pull with rebase option
-  - [ ] 19.8 Handle fast-forward pulls
-  - [ ] 19.9 Handle merge conflicts during pull
-  - [ ] 19.10 Create TypeScript APIs: `repo.fetch(remote, options)`, `repo.pull(options)`
-  - [ ] 19.11 Write unit tests for fetch protocol
-  - [ ] 19.12 Write integration tests for fetch and pull workflows
+- [x] 19.0 Implement fetch and pull operations
+  - [x] 19.1 Implement `git fetch` to retrieve remote changes
+  - [x] 19.2 Update remote tracking branches (refs/remotes/origin/*)
+  - [x] 19.3 Download new objects not present locally
+  - [x] 19.4 Handle force updates and deletions
+  - [x] 19.5 Implement fetch refspec parsing and handling
+  - [x] 19.6 Implement `git pull` as fetch + merge
+  - [x] 19.7 Support pull with rebase option
+  - [x] 19.8 Handle fast-forward pulls
+  - [x] 19.9 Handle merge conflicts during pull
+  - [x] 19.10 Create TypeScript APIs: `repo.fetch(remote, options)`, `repo.pull(options)`
+  - [x] 19.11 Write unit tests for fetch protocol
+  - [x] 19.12 Write integration tests for fetch and pull workflows
 
-- [ ] 20.0 Implement push operation
-  - [ ] 20.1 Implement `git push` to send local commits to remote
-  - [ ] 20.2 Determine which commits need to be sent
-  - [ ] 20.3 Create packfile with objects to push
-  - [ ] 20.4 Send packfile to remote using POST request
-  - [ ] 20.5 Handle remote rejection (non-fast-forward)
-  - [ ] 20.6 Implement force push with safety warnings
-  - [ ] 20.7 Support pushing tags
-  - [ ] 20.8 Support deleting remote branches/tags
-  - [ ] 20.9 Handle authentication during push
-  - [ ] 20.10 Show progress information during push
-  - [ ] 20.11 Create TypeScript API: `repo.push(remote, branch, options)`
-  - [ ] 20.12 Write integration tests for push operations
+- [x] 20.0 Implement push operation
+  - [x] 20.1 Implement `git push` to send local commits to remote
+  - [x] 20.2 Determine which commits need to be sent
+  - [x] 20.3 Create packfile with objects to push
+  - [x] 20.4 Send packfile to remote using POST request
+  - [x] 20.5 Handle remote rejection (non-fast-forward)
+  - [x] 20.6 Implement force push with safety warnings
+  - [x] 20.7 Support pushing tags
+  - [x] 20.8 Support deleting remote branches/tags
+  - [x] 20.9 Handle authentication during push
+  - [x] 20.10 Show progress information during push
+  - [x] 20.11 Create TypeScript API: `repo.push(remote, branch, options)`
+  - [x] 20.12 Write integration tests for push operations
 
 ### Phase 5: CLI, Examples & Documentation
 
-- [ ] 21.0 Create full-featured CLI tool
-  - [ ] 21.1 Create `git-cli` package structure with bin entry point
-  - [ ] 21.2 Set up command-line argument parsing (use commander or yargs)
-  - [ ] 21.3 Implement `bgit init` command mirroring git init
-  - [ ] 21.4 Implement `bgit add` command with glob support
-  - [ ] 21.5 Implement `bgit commit` command with message flag
-  - [ ] 21.6 Implement `bgit status` command with colored output
-  - [ ] 21.7 Implement `bgit log` command with formatting options
-  - [ ] 21.8 Implement `bgit diff` command with unified diff output
-  - [ ] 21.9 Implement `bgit branch` command with create/delete/list
-  - [ ] 21.10 Implement `bgit checkout` command
-  - [ ] 21.11 Implement `bgit merge` command with conflict handling
-  - [ ] 21.12 Implement `bgit clone` command with progress display
-  - [ ] 21.13 Implement `bgit fetch`, `bgit pull`, `bgit push` commands
-  - [ ] 21.14 Add help documentation for all commands
-  - [ ] 21.15 Add version flag and about information
-  - [ ] 21.16 Create formatted output utilities (tables, colors, symbols)
+- [x] 21.0 Create full-featured CLI tool
+  - [x] 21.1 Create `git-cli` package structure with bin entry point
+  - [x] 21.2 Set up command-line argument parsing (use commander or yargs)
+  - [x] 21.3 Implement `bgit init` command mirroring git init
+  - [x] 21.4 Implement `bgit add` command with glob support
+  - [x] 21.5 Implement `bgit commit` command with message flag
+  - [x] 21.6 Implement `bgit status` command with colored output
+  - [x] 21.7 Implement `bgit log` command with formatting options
+  - [x] 21.8 Implement `bgit diff` command with unified diff output
+  - [x] 21.9 Implement `bgit branch` command with create/delete/list
+  - [x] 21.10 Implement `bgit checkout` command
+  - [x] 21.11 Implement `bgit merge` command with conflict handling
+  - [x] 21.12 Implement `bgit clone` command with progress display
+  - [x] 21.13 Implement `bgit fetch`, `bgit pull`, `bgit push` commands
+  - [x] 21.14 Add help documentation for all commands
+  - [x] 21.15 Add version flag and about information
+  - [x] 21.16 Create formatted output utilities (tables, colors, symbols)
   - [ ] 21.17 Write unit tests for CLI command parsing
   - [ ] 21.18 Write integration tests for CLI workflows
-  - [ ] 21.19 Make CLI executable with proper shebang and chmod
+  - [x] 21.19 Make CLI executable with proper shebang and chmod
 
-- [ ] 22.0 Create example applications
-  - [ ] 22.1 Create `basic-demo` example with simple HTML/JS interface
-  - [ ] 22.2 Implement basic operations in demo (init, add, commit, view log)
-  - [ ] 22.3 Add Vite configuration for building basic demo
-  - [ ] 22.4 Create `mini-ide` example with React
-  - [ ] 22.5 Implement file tree component for browsing repository
-  - [ ] 22.6 Implement code editor component (use Monaco or CodeMirror)
-  - [ ] 22.7 Implement Git panel with staging, commit, branch switching
-  - [ ] 22.8 Add diff viewer for file changes
-  - [ ] 22.9 Create `offline-docs` example with Markdown editor
-  - [ ] 22.10 Implement version history for documentation changes
+- [x] 22.0 Create example applications
+  - [x] 22.1 Create `basic-demo` example with simple HTML/JS interface
+  - [x] 22.2 Implement basic operations in demo (init, add, commit, view log)
+  - [x] 22.3 Add Vite configuration for building basic demo
+  - [x] 22.4 Create `mini-ide` example with React
+  - [x] 22.5 Implement file tree component for browsing repository
+  - [x] 22.6 Implement code editor component (use Monaco or CodeMirror)
+  - [x] 22.7 Implement Git panel with staging, commit, branch switching
+  - [x] 22.8 Add diff viewer for file changes
+  - [x] 22.9 Create `offline-docs` example with Markdown editor
+  - [x] 22.10 Implement version history for documentation changes
   - [ ] 22.11 Add search across documentation versions
-  - [ ] 22.12 Write README for each example with setup instructions
+  - [x] 22.12 Write README for each example with setup instructions
   - [ ] 22.13 Deploy examples to GitHub Pages or Vercel for live demos
 
 - [ ] 23.0 Write comprehensive documentation
