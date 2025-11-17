@@ -51,16 +51,34 @@ export interface CloneOptions {
 }
 
 /**
+<<<<<<< HEAD
+ * Push options
+ */
+export interface PushOptions {
+  /**
+   * Name of the remote to push to
+=======
  * Fetch options
  */
 export interface FetchOptions {
   /**
    * Name of the remote to fetch from
+>>>>>>> origin/main
    * @default "origin"
    */
   remote?: string;
 
   /**
+<<<<<<< HEAD
+   * Refspecs to push (e.g., "refs/heads/main:refs/heads/main")
+   * If empty, pushes current branch to remote
+   * @default []
+   */
+  refSpecs?: string[];
+
+  /**
+   * Allow non-fast-forward updates
+=======
    * Refspecs to fetch (default: fetch all branches)
    * @default []
    */
@@ -125,6 +143,7 @@ export interface PullOptions {
 
   /**
    * Force non-fast-forward updates during fetch
+>>>>>>> origin/main
    * @default false
    */
   force?: boolean;
@@ -141,6 +160,8 @@ export interface PullOptions {
 }
 
 /**
+<<<<<<< HEAD
+=======
  * Reference update information
  */
 export interface RefUpdate {
@@ -181,6 +202,7 @@ export interface PullResult {
 }
 
 /**
+>>>>>>> origin/main
  * Repository init options
  */
 export interface InitOptions {
@@ -393,6 +415,16 @@ export class Repository {
   }
 
   /**
+<<<<<<< HEAD
+   * Push local commits to a remote repository
+   *
+   * @param options - Push options
+   *
+   * @example
+   * ```ts
+   * // Push current branch to origin
+   * await repo.push({
+=======
    * Fetch objects and refs from a remote repository
    *
    * @param options - Fetch options
@@ -448,6 +480,7 @@ export class Repository {
    * const result = await repo.pull({
    *   remote: 'origin',
    *   branch: 'main',
+>>>>>>> origin/main
    *   auth: {
    *     method: AuthMethod.Token,
    *     token: 'ghp_xxxxxxxxxxxx'
@@ -455,6 +488,42 @@ export class Repository {
    *   onProgress: (msg) => console.log(msg)
    * });
    *
+<<<<<<< HEAD
+   * // Force push a specific branch
+   * await repo.push({
+   *   refSpecs: ['refs/heads/feature:refs/heads/feature'],
+   *   force: true,
+   *   auth: { method: AuthMethod.Token, token: 'ghp_xxxxxxxxxxxx' }
+   * });
+   *
+   * // Delete a remote branch
+   * await repo.push({
+   *   refSpecs: [':refs/heads/old-branch'],
+   *   auth: { method: AuthMethod.Token, token: 'ghp_xxxxxxxxxxxx' }
+   * });
+   * ```
+   */
+  async push(options: PushOptions = {}): Promise<void> {
+    try {
+      // Prepare push options
+      const pushOpts = {
+        remote: options.remote ?? 'origin',
+        refSpecs: options.refSpecs ?? [],
+        force: options.force ?? false,
+        auth: options.auth,
+      };
+
+      // Create progress callback wrapper
+      const progressCallback = options.onProgress
+        ? (msg: string) => options.onProgress!(msg)
+        : undefined;
+
+      // Call WASM push function
+      await this.wasmInstance.push(this.path, pushOpts, progressCallback);
+    } catch (error) {
+      throw new PushError(
+        `Failed to push: ${error instanceof Error ? error.message : String(error)}`,
+=======
    * if (result.alreadyUpToDate) {
    *   console.log('Already up to date');
    * } else if (result.fastForward) {
@@ -484,6 +553,7 @@ export class Repository {
     } catch (error) {
       throw new GitError(
         `Failed to pull: ${error instanceof Error ? error.message : String(error)}`,
+>>>>>>> origin/main
         error
       );
     }
@@ -514,6 +584,19 @@ export class CloneError extends GitError {
   ) {
     super(message, cause);
     this.name = 'CloneError';
+  }
+}
+
+/**
+ * Push-specific error
+ */
+export class PushError extends GitError {
+  constructor(
+    message: string,
+    cause?: unknown
+  ) {
+    super(message, cause);
+    this.name = 'PushError';
   }
 }
 
@@ -552,10 +635,14 @@ async function loadWASM(): Promise<any> {
     checkout: async (path: string, target: string) => {
       throw new Error('WASM not yet integrated');
     },
+<<<<<<< HEAD
+    push: async (path: string, opts: any, progress?: ProgressCallback) => {
+=======
     fetch: async (path: string, opts: any, progress?: ProgressCallback) => {
       throw new Error('WASM not yet integrated');
     },
     pull: async (path: string, opts: any, progress?: ProgressCallback) => {
+>>>>>>> origin/main
       throw new Error('WASM not yet integrated');
     },
   };
