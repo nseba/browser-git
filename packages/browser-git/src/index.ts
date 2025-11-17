@@ -6,6 +6,7 @@
 
 export * from './filesystem/index.js';
 export * from './types/index.js';
+export * from './repository.js';
 
 // Re-export diff-engine for convenient access
 export {
