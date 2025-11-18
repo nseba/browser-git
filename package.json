@@ -37,7 +37,15 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "analyze": "node scripts/analyze-bundle.js",
     "ci": "npm run lint && npm run type-check && npm run test:unit && npm run build",
-    "ci:full": "npm run lint && npm run type-check && npm run test:all && npm run bench:run && npm run build && npm run analyze"
+    "ci:full": "npm run lint && npm run type-check && npm run test:all && npm run bench:run && npm run build && npm run analyze",
+    "version:patch": "npm version patch --workspaces --no-git-tag-version",
+    "version:minor": "npm version minor --workspaces --no-git-tag-version",
+    "version:major": "npm version major --workspaces --no-git-tag-version",
+    "version:sync": "node scripts/sync-versions.js",
+    "prerelease": "npm run ci:full",
+    "release:prepare": "npm run version:sync && npm run build",
+    "release:publish": "npm publish --workspaces --access public",
+    "release:dry-run": "npm publish --workspaces --access public --dry-run"
   },
   "devDependencies": {
     "@playwright/test": "^1.40.0",

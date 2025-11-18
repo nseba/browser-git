@@ -511,19 +511,19 @@ Based on PRD: `0001-prd-browser-git.md`
   - [ ] 24.13 Add browser feature detection and graceful degradation
   - [ ] 24.14 Update browser compatibility documentation with test results
 
-- [ ] 25.0 Conduct security audit and prepare for release
-  - [ ] 25.1 Review code for common security vulnerabilities (OWASP Top 10)
-  - [ ] 25.2 Ensure no execution of arbitrary code (no eval, no Function constructor)
-  - [ ] 25.3 Validate and sanitize all user inputs (paths, URLs, commands)
-  - [ ] 25.4 Review remote URL handling to prevent SSRF attacks
-  - [ ] 25.5 Review credential storage and ensure no plaintext passwords
-  - [ ] 25.6 Verify CSP compatibility for WASM execution
-  - [ ] 25.7 Review CORS handling and error messages
+- [x] 25.0 Conduct security audit and prepare for release
+  - [x] 25.1 Review code for common security vulnerabilities (OWASP Top 10)
+  - [x] 25.2 Ensure no execution of arbitrary code (no eval, no Function constructor)
+  - [x] 25.3 Validate and sanitize all user inputs (paths, URLs, commands)
+  - [x] 25.4 Review remote URL handling to prevent SSRF attacks
+  - [x] 25.5 Review credential storage and ensure no plaintext passwords
+  - [x] 25.6 Verify CSP compatibility for WASM execution
+  - [x] 25.7 Review CORS handling and error messages
   - [ ] 25.8 Test with various malformed inputs and edge cases
-  - [ ] 25.9 Create SECURITY.md with vulnerability reporting process
-  - [ ] 25.10 Write release notes highlighting features and limitations
-  - [ ] 25.11 Create npm publish scripts with version bumping
-  - [ ] 25.12 Set up automated release workflow with GitHub Actions
+  - [x] 25.9 Create SECURITY.md with vulnerability reporting process
+  - [x] 25.10 Write release notes highlighting features and limitations
+  - [x] 25.11 Create npm publish scripts with version bumping
+  - [x] 25.12 Set up automated release workflow with GitHub Actions
   - [ ] 25.13 Prepare announcement blog post or documentation
   - [ ] 25.14 Publish all packages to npm registry
   - [ ] 25.15 Create GitHub release with binaries and changelog
