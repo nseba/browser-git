@@ -9,7 +9,20 @@
 export const sep = '/';
 
 /**
+ * Path traversal error
+ */
+export class PathTraversalError extends Error {
+  constructor(message: string, public readonly path: string) {
+    super(message);
+    this.name = 'PathTraversalError';
+  }
+}
+
+/**
  * Normalize a path, resolving '..' and '.' segments
+ *
+ * Security note: This function resolves '..' segments but does not prevent
+ * path traversal. Use `normalizeSafe` or `isPathSafe` for security-critical operations.
  */
 export function normalize(path: string): string {
   if (!path || path === '.') {
@@ -41,6 +54,68 @@ export function normalize(path: string): string {
   }
 
   return result.join('/');
+}
+
+/**
+ * Checks if a normalized path attempts to escape the root directory
+ *
+ * @param normalizedPath - Path that has already been normalized
+ * @returns true if path is safe (doesn't escape root), false otherwise
+ */
+export function isPathSafe(normalizedPath: string): boolean {
+  // Empty paths and current directory are safe
+  if (!normalizedPath || normalizedPath === '.') {
+    return true;
+  }
+
+  // If path starts with '..' or contains '..' after split, it escapes root
+  if (normalizedPath.startsWith('../') || normalizedPath === '..') {
+    return false;
+  }
+
+  const parts = normalizedPath.split('/');
+  return !parts.includes('..');
+}
+
+/**
+ * Normalizes a path and ensures it doesn't escape the root directory
+ *
+ * @param path - Path to normalize
+ * @param throwOnInvalid - Whether to throw error on invalid path (default: true)
+ * @returns Normalized path if safe
+ * @throws {PathTraversalError} If path attempts to escape root and throwOnInvalid is true
+ */
+export function normalizeSafe(path: string, throwOnInvalid = true): string {
+  const normalized = normalize(path);
+
+  if (!isPathSafe(normalized)) {
+    if (throwOnInvalid) {
+      throw new PathTraversalError(
+        `Path traversal detected: path attempts to escape root directory`,
+        path
+      );
+    }
+    // Return safe fallback
+    return '.';
+  }
+
+  return normalized;
+}
+
+/**
+ * Validates that a path is safe (doesn't contain path traversal)
+ *
+ * @param path - Path to validate
+ * @throws {PathTraversalError} If path is unsafe
+ */
+export function validatePath(path: string): void {
+  const normalized = normalize(path);
+  if (!isPathSafe(normalized)) {
+    throw new PathTraversalError(
+      `Invalid path: contains directory traversal sequences that escape root`,
+      path
+    );
+  }
 }
 
 /**
