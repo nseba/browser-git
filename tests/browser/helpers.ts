@@ -8,7 +8,8 @@ import { Page } from '@playwright/test';
  * Creates a simple test page with browser-git loaded
  */
 export async function createTestPage(page: Page): Promise<void> {
-  await page.goto('about:blank');
+  // Use setContent directly with a data URL to avoid about:blank security restrictions
+  await page.goto('data:text/html,<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body></body></html>');
 
   // Inject a minimal HTML structure
   await page.setContent(`
@@ -29,6 +30,12 @@ export async function createTestPage(page: Page): Promise<void> {
  * Checks if IndexedDB is available and working
  */
 export async function checkIndexedDB(page: Page): Promise<boolean> {
+  // Ensure we're on a page that allows storage access
+  const currentUrl = page.url();
+  if (currentUrl === 'about:blank' || currentUrl === '') {
+    await page.goto('data:text/html,<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body></body></html>');
+  }
+
   return await page.evaluate(async () => {
     if (typeof indexedDB === 'undefined') {
       return false;
@@ -98,46 +105,55 @@ export async function getStorageQuota(page: Page): Promise<{
  * Clears all browser storage (IndexedDB, localStorage, sessionStorage)
  */
 export async function clearAllStorage(page: Page): Promise<void> {
+  // Ensure we're on a page that allows storage access (not about:blank)
+  const currentUrl = page.url();
+  if (currentUrl === 'about:blank' || currentUrl === '') {
+    await page.goto('data:text/html,<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body></body></html>');
+  }
+
   await page.evaluate(async () => {
     // Clear localStorage
-    if (typeof localStorage !== 'undefined') {
-      try {
+    try {
+      if (typeof localStorage !== 'undefined') {
         localStorage.clear();
-      } catch {
-        // Ignore errors
       }
+    } catch (e) {
+      // Ignore SecurityError and other errors
+      console.log('localStorage clear error:', e);
     }
 
     // Clear sessionStorage
-    if (typeof sessionStorage !== 'undefined') {
-      try {
+    try {
+      if (typeof sessionStorage !== 'undefined') {
         sessionStorage.clear();
-      } catch {
-        // Ignore errors
       }
+    } catch (e) {
+      // Ignore SecurityError and other errors
+      console.log('sessionStorage clear error:', e);
     }
 
     // Clear IndexedDB
-    if (typeof indexedDB !== 'undefined') {
-      try {
+    try {
+      if (typeof indexedDB !== 'undefined') {
         const databases = await indexedDB.databases();
         for (const db of databases) {
           if (db.name) {
             indexedDB.deleteDatabase(db.name);
           }
         }
-      } catch {
-        // Ignore errors
       }
+    } catch (e) {
+      // Ignore SecurityError and other errors
+      console.log('IndexedDB clear error:', e);
     }
 
     // Clear OPFS if available
-    if (
-      typeof navigator !== 'undefined' &&
-      'storage' in navigator &&
-      'getDirectory' in navigator.storage
-    ) {
-      try {
+    try {
+      if (
+        typeof navigator !== 'undefined' &&
+        'storage' in navigator &&
+        'getDirectory' in navigator.storage
+      ) {
         const root = await (navigator.storage as any).getDirectory();
         const entries = [];
         for await (const entry of (root as any).values()) {
@@ -146,9 +162,10 @@ export async function clearAllStorage(page: Page): Promise<void> {
         for (const entry of entries) {
           await (root as any).removeEntry(entry.name, { recursive: true });
         }
-      } catch {
-        // Ignore errors
       }
+    } catch (e) {
+      // Ignore SecurityError and other errors
+      console.log('OPFS clear error:', e);
     }
   });
 }
