@@ -4,9 +4,9 @@
  * Provides controllable behavior for testing edge cases, errors, and timing
  */
 
-import { StorageAdapter, StorageAdapterOptions } from './types';
+import { StorageAdapter } from './interface.js';
 
-export interface MockStorageOptions extends StorageAdapterOptions {
+export interface MockStorageOptions {
   /**
    * Simulate delays for operations (in milliseconds)
    */
@@ -144,19 +144,32 @@ export class MockAdapter implements StorageAdapter {
     this.storage.delete(key);
   }
 
-  async has(key: string): Promise<boolean> {
-    this.trackCall('has', key);
+  async exists(key: string): Promise<boolean> {
+    this.trackCall('exists', key);
     await this.simulateDelay();
     this.checkFailure(key);
 
     return this.storage.has(key);
   }
 
-  async keys(): Promise<string[]> {
-    this.trackCall('keys');
+  async list(prefix?: string): Promise<string[]> {
+    this.trackCall('list', prefix);
     await this.simulateDelay();
 
-    return Array.from(this.storage.keys());
+    const keys = Array.from(this.storage.keys());
+    if (prefix) {
+      return keys.filter((key) => key.startsWith(prefix));
+    }
+    return keys;
+  }
+
+  // Convenience methods for backward compatibility
+  async has(key: string): Promise<boolean> {
+    return this.exists(key);
+  }
+
+  async keys(): Promise<string[]> {
+    return this.list();
   }
 
   async clear(): Promise<void> {
@@ -166,20 +179,21 @@ export class MockAdapter implements StorageAdapter {
     this.storage.clear();
   }
 
-  async getQuota(): Promise<{ used: number; available: number }> {
+  async getQuota(): Promise<{ usage: number; quota: number; percentage: number } | null> {
     this.trackCall('getQuota');
     await this.simulateDelay();
 
-    let used = 0;
+    let usage = 0;
     for (const [key, value] of this.storage.entries()) {
-      used += key.length + value.length;
+      usage += key.length * 2 + value.length; // 2 bytes per character for UTF-16 keys
     }
 
     const maxKeys = this.options.maxKeys || Infinity;
-    const available =
-      maxKeys === Infinity ? Infinity : (maxKeys - this.storage.size) * 1024;
+    const quota =
+      maxKeys === Infinity ? Number.MAX_SAFE_INTEGER : maxKeys * 1024;
+    const percentage = quota === Number.MAX_SAFE_INTEGER ? 0 : (usage / quota) * 100;
 
-    return { used, available };
+    return { usage, quota, percentage };
   }
 
   async transaction<T>(fn: () => Promise<T>): Promise<T> {
@@ -302,6 +316,6 @@ export class MockAdapter implements StorageAdapter {
     this.storage.clear();
     this.calls = [];
     this.options.failKeys?.clear();
-    this.options.failError = undefined;
+    delete this.options.failError;
   }
 }

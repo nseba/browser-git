@@ -83,7 +83,8 @@ describe('MockAdapter', () => {
       await adapter.get('test');
       const duration = Date.now() - start;
 
-      expect(duration).toBeGreaterThanOrEqual(50);
+      // Allow small timing tolerance (2ms) for setTimeout precision
+      expect(duration).toBeGreaterThanOrEqual(48);
     });
 
     it('should apply delay to all operations', async () => {
@@ -171,8 +172,9 @@ describe('MockAdapter', () => {
 
       const quota = await adapter.getQuota();
 
-      expect(quota.used).toBeGreaterThan(0);
-      expect(quota.available).toBeGreaterThan(0);
+      expect(quota).not.toBeNull();
+      expect(quota!.usage).toBeGreaterThan(0);
+      expect(quota!.quota).toBeGreaterThan(0);
     });
   });
 
@@ -338,7 +340,8 @@ describe('MockAdapter', () => {
       await adapter.get('test');
       const duration = Date.now() - start;
 
-      expect(duration).toBeGreaterThanOrEqual(50);
+      // Allow small timing tolerance (2ms) for setTimeout precision
+      expect(duration).toBeGreaterThanOrEqual(48);
     });
 
     it('should accept initial fail keys', async () => {
