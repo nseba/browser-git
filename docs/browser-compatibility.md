@@ -217,23 +217,129 @@ if (granted) {
 
 ## Feature Detection
 
-BrowserGit includes automatic feature detection to use the best available APIs:
+BrowserGit includes comprehensive automatic feature detection to use the best available APIs and provide detailed compatibility reports:
+
+### Quick Compatibility Check
 
 ```typescript
-import { detectBrowserCapabilities, checkMinimumRequirements } from 'browser-git';
+import { checkCompatibility, logCompatibilityReport } from '@browser-git/browser-git/utils/browser-compat';
 
-// Check if browser meets minimum requirements
-const requirements = await checkMinimumRequirements();
-if (!requirements.met) {
-  console.error('Missing features:', requirements.missing);
+// Check compatibility and get detailed results
+const result = await checkCompatibility();
+
+if (!result.compatible) {
+  console.error('Browser not compatible');
+  console.error('Missing features:', result.missingFeatures);
+  throw new Error(`Unsupported browser: ${result.missingFeatures.join(', ')}`);
 }
 
+// Show warnings to user
+if (result.warnings.length > 0) {
+  result.warnings.forEach(warning => console.warn(warning));
+}
+
+// Show recommendations
+if (result.recommendations.length > 0) {
+  console.log('Recommendations:', result.recommendations);
+}
+
+// Or get a formatted compatibility report
+await logCompatibilityReport();
+```
+
+### Detailed Capability Detection
+
+```typescript
+import { detectCapabilities, detectBrowser } from '@browser-git/browser-git/utils/browser-compat';
+
+// Detect browser
+const browser = detectBrowser();
+console.log(`${browser.name} ${browser.version} (${browser.engine})`);
+
 // Detect all capabilities
-const capabilities = await detectBrowserCapabilities();
+const capabilities = await detectCapabilities();
+console.log('WebAssembly:', capabilities.webAssembly);
 console.log('IndexedDB:', capabilities.indexedDB);
 console.log('OPFS:', capabilities.opfs);
-console.log('WASM:', capabilities.webAssembly);
-console.log('Compression:', capabilities.compressionStream);
+console.log('Web Crypto:', capabilities.webCrypto);
+console.log('SHA-1:', capabilities.sha1Support);
+console.log('SHA-256:', capabilities.sha256Support);
+console.log('CompressionStream:', capabilities.compressionStream);
+
+// Check storage quota
+if (capabilities.storageQuota) {
+  const { usage, quota, available, percentage } = capabilities.storageQuota;
+  console.log(`Storage: ${(usage / 1024 / 1024).toFixed(2)}MB / ${(quota / 1024 / 1024 / 1024).toFixed(2)}GB (${percentage.toFixed(1)}% used)`);
+  console.log(`Available: ${(available / 1024 / 1024).toFixed(2)}MB`);
+}
+```
+
+### Individual Feature Checks
+
+```typescript
+import {
+  hasWebAssembly,
+  hasIndexedDB,
+  hasOPFS,
+  hasLocalStorage,
+  hasWebCrypto,
+  hasHashAlgorithm,
+  hasCompressionStream,
+  getStorageQuota,
+  hasPersistentStorage,
+  requestPersistentStorage
+} from '@browser-git/browser-git/utils/browser-compat';
+
+// Check individual features
+const wasm = hasWebAssembly();
+const idb = await hasIndexedDB();
+const opfs = hasOPFS();
+const crypto = hasWebCrypto();
+const sha1 = await hasHashAlgorithm('SHA-1');
+const compression = hasCompressionStream();
+
+// Get storage information
+const quota = await getStorageQuota();
+const isPersistent = await hasPersistentStorage();
+
+// Request persistent storage
+const granted = await requestPersistentStorage();
+if (granted) {
+  console.log('Storage will not be automatically cleared');
+}
+```
+
+### Compatibility Report Example
+
+The `checkCompatibility()` function generates a comprehensive report:
+
+```
+=== Browser Compatibility Report ===
+
+Browser: Chrome 120
+Engine: Blink
+
+✅ Compatible - All required features are supported
+
+Core Features:
+  ✅ WebAssembly
+  ✅ Web Crypto API
+  ✅ SHA-1
+  ✅ SHA-256
+
+Storage Features:
+  ✅ IndexedDB
+  ✅ OPFS
+  ✅ localStorage
+  ✅ sessionStorage
+
+Storage Quota:
+  Total: 234.56 GB
+  Used: 15.32 MB (0.0%)
+  Available: 234.54 GB
+
+Recommendations:
+  💡 Use OPFS storage adapter for best performance
 ```
 
 ## Automatic Adapter Selection
