@@ -56,7 +56,7 @@ Thumbs.db
 .DS_Store
 
 # Package manager
-package-lock.json
+# Keeping package-lock.json for reproducible builds and CI caching
 yarn.lock
 pnpm-lock.yaml
 
