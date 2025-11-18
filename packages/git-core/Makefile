@@ -8,13 +8,17 @@ WASM_FILE := $(OUTPUT_DIR)/git-core.wasm
 WASM_EXEC := $(OUTPUT_DIR)/wasm_exec.js
 SOURCE := main.go
 
-# TinyGo build flags
+# TinyGo build flags for maximum optimization
 TINYGO_FLAGS := -target=wasm \
-	-opt=2 \
+	-opt=z \
 	-no-debug \
 	-panic=trap \
 	-scheduler=none \
 	-gc=leaking
+
+# Additional optimization with wasm-opt
+WASM_OPT := wasm-opt
+WASM_OPT_FLAGS := -Oz --enable-bulk-memory --enable-sign-ext
 
 # Development build flags (with debug info)
 TINYGO_DEV_FLAGS := -target=wasm \
@@ -30,7 +34,7 @@ COLOR_GREEN := \033[32m
 COLOR_BLUE := \033[34m
 COLOR_YELLOW := \033[33m
 
-.PHONY: all build build-dev clean test lint fmt help watch install-deps
+.PHONY: all build build-dev build-optimized clean test lint fmt help watch install-deps analyze-size
 
 # Default target
 all: build
@@ -41,9 +45,53 @@ build: install-deps
 	@mkdir -p $(OUTPUT_DIR)
 	@$(TINYGO) build $(TINYGO_FLAGS) -o $(WASM_FILE) $(SOURCE)
 	@echo "$(COLOR_GREEN)✓ WASM built successfully: $(WASM_FILE)$(COLOR_RESET)"
-	@echo "$(COLOR_BLUE)Size: $$(du -h $(WASM_FILE) | cut -f1)$(COLOR_RESET)"
+	@$(MAKE) analyze-size
 	@cp $$($(TINYGO) env TINYGOROOT)/targets/wasm_exec.js $(WASM_EXEC)
 	@echo "$(COLOR_GREEN)✓ wasm_exec.js copied to $(WASM_EXEC)$(COLOR_RESET)"
+
+# Optimized build with wasm-opt
+build-optimized: install-deps
+	@echo "$(COLOR_BLUE)Building WASM module (production with wasm-opt)...$(COLOR_RESET)"
+	@mkdir -p $(OUTPUT_DIR)
+	@$(TINYGO) build $(TINYGO_FLAGS) -o $(WASM_FILE).tmp $(SOURCE)
+	@if command -v $(WASM_OPT) > /dev/null 2>&1; then \
+		echo "$(COLOR_BLUE)Running wasm-opt for additional optimization...$(COLOR_RESET)"; \
+		$(WASM_OPT) $(WASM_OPT_FLAGS) $(WASM_FILE).tmp -o $(WASM_FILE); \
+		rm $(WASM_FILE).tmp; \
+		echo "$(COLOR_GREEN)✓ WASM optimized with wasm-opt$(COLOR_RESET)"; \
+	else \
+		echo "$(COLOR_YELLOW)⚠ wasm-opt not found, using unoptimized WASM$(COLOR_RESET)"; \
+		mv $(WASM_FILE).tmp $(WASM_FILE); \
+	fi
+	@echo "$(COLOR_GREEN)✓ WASM built successfully: $(WASM_FILE)$(COLOR_RESET)"
+	@$(MAKE) analyze-size
+	@cp $$($(TINYGO) env TINYGOROOT)/targets/wasm_exec.js $(WASM_EXEC)
+	@echo "$(COLOR_GREEN)✓ wasm_exec.js copied to $(WASM_EXEC)$(COLOR_RESET)"
+
+# Analyze WASM size
+analyze-size:
+	@if [ -f $(WASM_FILE) ]; then \
+		SIZE=$$(stat -f%z $(WASM_FILE) 2>/dev/null || stat -c%s $(WASM_FILE) 2>/dev/null); \
+		SIZE_KB=$$(echo "scale=2; $$SIZE / 1024" | bc); \
+		SIZE_MB=$$(echo "scale=2; $$SIZE / 1024 / 1024" | bc); \
+		echo "$(COLOR_BLUE)WASM Size Analysis:$(COLOR_RESET)"; \
+		echo "  Raw:     $$SIZE_KB KB ($$SIZE_MB MB)"; \
+		if command -v gzip > /dev/null 2>&1; then \
+			GZIP_SIZE=$$(gzip -c $(WASM_FILE) | wc -c); \
+			GZIP_KB=$$(echo "scale=2; $$GZIP_SIZE / 1024" | bc); \
+			GZIP_MB=$$(echo "scale=2; $$GZIP_SIZE / 1024 / 1024" | bc); \
+			RATIO=$$(echo "scale=1; $$SIZE / $$GZIP_SIZE" | bc); \
+			echo "  Gzipped: $$GZIP_KB KB ($$GZIP_MB MB)"; \
+			echo "  Ratio:   $$RATIO:1"; \
+			if [ $$(echo "$$GZIP_MB > 2" | bc) -eq 1 ]; then \
+				echo "$(COLOR_YELLOW)⚠ Warning: Gzipped size exceeds 2MB target$(COLOR_RESET)"; \
+			else \
+				echo "$(COLOR_GREEN)✓ Size meets 2MB target$(COLOR_RESET)"; \
+			fi \
+		fi \
+	else \
+		echo "$(COLOR_YELLOW)⚠ WASM file not found$(COLOR_RESET)"; \
+	fi
 
 # Development build (with source maps and less optimization)
 build-dev: install-deps
@@ -125,21 +173,25 @@ help:
 	@echo "$(COLOR_BOLD)BrowserGit WASM Build System$(COLOR_RESET)"
 	@echo ""
 	@echo "$(COLOR_BOLD)Available targets:$(COLOR_RESET)"
-	@echo "  $(COLOR_GREEN)build$(COLOR_RESET)           Build production WASM module (optimized)"
-	@echo "  $(COLOR_GREEN)build-dev$(COLOR_RESET)       Build development WASM module (with debug info)"
-	@echo "  $(COLOR_GREEN)clean$(COLOR_RESET)           Remove build artifacts"
-	@echo "  $(COLOR_GREEN)test$(COLOR_RESET)            Run Go unit tests"
-	@echo "  $(COLOR_GREEN)test-coverage$(COLOR_RESET)   Run tests with coverage report"
-	@echo "  $(COLOR_GREEN)lint$(COLOR_RESET)            Lint Go code with go vet"
-	@echo "  $(COLOR_GREEN)fmt$(COLOR_RESET)             Format Go code with go fmt"
-	@echo "  $(COLOR_GREEN)watch$(COLOR_RESET)           Watch for changes and rebuild (requires fswatch)"
-	@echo "  $(COLOR_GREEN)verify-tinygo$(COLOR_RESET)   Verify TinyGo installation"
-	@echo "  $(COLOR_GREEN)info$(COLOR_RESET)            Show build information"
-	@echo "  $(COLOR_GREEN)install-deps$(COLOR_RESET)    Install Go dependencies"
-	@echo "  $(COLOR_GREEN)help$(COLOR_RESET)            Show this help message"
+	@echo "  $(COLOR_GREEN)build$(COLOR_RESET)             Build production WASM module (optimized)"
+	@echo "  $(COLOR_GREEN)build-dev$(COLOR_RESET)         Build development WASM module (with debug info)"
+	@echo "  $(COLOR_GREEN)build-optimized$(COLOR_RESET)   Build with aggressive optimization (wasm-opt)"
+	@echo "  $(COLOR_GREEN)analyze-size$(COLOR_RESET)      Analyze WASM bundle size (raw and gzipped)"
+	@echo "  $(COLOR_GREEN)clean$(COLOR_RESET)             Remove build artifacts"
+	@echo "  $(COLOR_GREEN)test$(COLOR_RESET)              Run Go unit tests"
+	@echo "  $(COLOR_GREEN)test-coverage$(COLOR_RESET)     Run tests with coverage report"
+	@echo "  $(COLOR_GREEN)lint$(COLOR_RESET)              Lint Go code with go vet"
+	@echo "  $(COLOR_GREEN)fmt$(COLOR_RESET)               Format Go code with go fmt"
+	@echo "  $(COLOR_GREEN)watch$(COLOR_RESET)             Watch for changes and rebuild (requires fswatch)"
+	@echo "  $(COLOR_GREEN)verify-tinygo$(COLOR_RESET)     Verify TinyGo installation"
+	@echo "  $(COLOR_GREEN)info$(COLOR_RESET)              Show build information"
+	@echo "  $(COLOR_GREEN)install-deps$(COLOR_RESET)      Install Go dependencies"
+	@echo "  $(COLOR_GREEN)help$(COLOR_RESET)              Show this help message"
 	@echo ""
 	@echo "$(COLOR_BOLD)Examples:$(COLOR_RESET)"
-	@echo "  make build         # Build production WASM"
-	@echo "  make build-dev     # Build development WASM"
-	@echo "  make watch         # Watch and rebuild on changes"
-	@echo "  make test          # Run tests"
+	@echo "  make build            # Build production WASM"
+	@echo "  make build-optimized  # Build with maximum optimization"
+	@echo "  make build-dev        # Build development WASM"
+	@echo "  make analyze-size     # Check bundle size"
+	@echo "  make watch            # Watch and rebuild on changes"
+	@echo "  make test             # Run tests"
