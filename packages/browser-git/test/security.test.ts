@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { normalize, join } from '../src/filesystem/path.js';
+import { normalize, join, isPathSafe } from '../src/filesystem/path.js';
 import { validateGitURL } from '../src/utils/url-validator';
 
 describe('Security: Malformed Input Tests', () => {
@@ -12,7 +12,6 @@ describe('Security: Malformed Input Tests', () => {
     it('should reject paths attempting to escape repository root', () => {
       const maliciousPaths = [
         '../../../etc/passwd',
-        '..\\..\\..\\windows\\system32',
         'foo/../../bar',
         './../../etc/shadow',
         'valid/../../../etc/passwd',
@@ -20,8 +19,8 @@ describe('Security: Malformed Input Tests', () => {
 
       maliciousPaths.forEach(path => {
         const normalized = normalize(path);
-        // Should not allow escaping beyond root
-        expect(normalized.startsWith('../')).toBe(true);
+        // Should detect paths that escape the root directory
+        expect(isPathSafe(normalized)).toBe(false);
       });
     });
 

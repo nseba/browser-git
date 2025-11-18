@@ -93,8 +93,8 @@ function isPrivateIP(hostname: string): boolean {
     if (hostname.startsWith('fe80:') || hostname.startsWith('fe80::')) {
       return true;
     }
-    // Unique local (fc00::/7)
-    if (hostname.startsWith('fc') || hostname.startsWith('fd')) {
+    // Unique local (fc00::/7) - starts with fc or fd followed by hex digit
+    if (/^f[cd][0-9a-f]{0,2}:/i.test(hostname)) {
       return true;
     }
   }
@@ -140,6 +140,15 @@ export function validateGitURL(
     );
   }
 
+  // Check for directory traversal in the raw URL (before URL parsing normalizes it)
+  // This catches patterns like /user/../admin which the URL parser would normalize
+  if (url.includes('/..') || url.includes('\\..')) {
+    throw new URLValidationError(
+      'URL contains suspicious directory traversal pattern (..)',
+      url
+    );
+  }
+
   // Parse the URL
   let parsed: URL;
   try {
@@ -164,7 +173,13 @@ export function validateGitURL(
     );
   }
 
-  const hostname = parsed.hostname.toLowerCase();
+  // Get hostname and strip IPv6 brackets if present
+  let hostname = parsed.hostname.toLowerCase();
+  // IPv6 addresses in URLs are wrapped in brackets, e.g., [::1]
+  // Strip them for validation
+  if (hostname.startsWith('[') && hostname.endsWith(']')) {
+    hostname = hostname.slice(1, -1);
+  }
 
   // Check localhost
   if (opts.blockLocalhost && isLocalhost(hostname)) {
@@ -212,14 +227,6 @@ export function validateGitURL(
 
   // Additional checks for git URLs
   const path = parsed.pathname;
-
-  // Check for suspicious path patterns
-  if (path.includes('..')) {
-    throw new URLValidationError(
-      'URL path contains suspicious directory traversal pattern (..)',
-      url
-    );
-  }
 
   // Validate that URL looks like a git repository
   // Git URLs typically end with .git or have a path
@@ -290,6 +297,7 @@ export const GitHostingPresets = {
     allowHttp: true,
     blockPrivateIPs: false,
     blockLocalhost: false,
+    deniedDomains: [],
   }),
 };
 
