@@ -632,35 +632,35 @@ async function loadWASM(): Promise<any> {
   // TODO: Implement actual WASM loading
   // For now, return a mock instance
   wasmInstance = {
-    clone: async (url: string, path: string, opts: any, progress?: ProgressCallback) => {
+    clone: async (_url: string, _path: string, _opts: any, _progress?: ProgressCallback) => {
       // This will be implemented when we integrate with actual WASM
       throw new Error('WASM not yet integrated');
     },
-    init: async (path: string, opts: any) => {
+    init: async (_path: string, _opts: any) => {
       throw new Error('WASM not yet integrated');
     },
-    open: async (path: string) => {
+    open: async (_path: string) => {
       throw new Error('WASM not yet integrated');
     },
-    getCurrentBranch: async (path: string) => {
+    getCurrentBranch: async (_path: string) => {
       throw new Error('WASM not yet integrated');
     },
-    listBranches: async (path: string) => {
+    listBranches: async (_path: string) => {
       throw new Error('WASM not yet integrated');
     },
-    createBranch: async (path: string, name: string, startPoint?: string) => {
+    createBranch: async (_path: string, _name: string, _startPoint?: string) => {
       throw new Error('WASM not yet integrated');
     },
-    checkout: async (path: string, target: string) => {
+    checkout: async (_path: string, _target: string) => {
       throw new Error('WASM not yet integrated');
     },
-    fetch: async (path: string, opts: any, progress?: ProgressCallback) => {
+    fetch: async (_path: string, _opts: any, _progress?: ProgressCallback) => {
       throw new Error('WASM not yet integrated');
     },
-    pull: async (path: string, opts: any, progress?: ProgressCallback) => {
+    pull: async (_path: string, _opts: any, _progress?: ProgressCallback) => {
       throw new Error('WASM not yet integrated');
     },
-    push: async (path: string, opts: any, progress?: ProgressCallback) => {
+    push: async (_path: string, _opts: any, _progress?: ProgressCallback) => {
       throw new Error('WASM not yet integrated');
     },
   };

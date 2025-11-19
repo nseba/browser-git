@@ -74,22 +74,22 @@ export function detectBrowser(): { name: string; version: string; engine: string
   if (ua.includes('Chrome') && !ua.includes('Edg')) {
     name = 'Chrome';
     const match = ua.match(/Chrome\/(\d+)/);
-    if (match) version = match[1];
+    if (match?.[1]) version = match[1];
     engine = 'Blink';
   } else if (ua.includes('Edg/')) {
     name = 'Edge';
     const match = ua.match(/Edg\/(\d+)/);
-    if (match) version = match[1];
+    if (match?.[1]) version = match[1];
     engine = 'Blink';
   } else if (ua.includes('Firefox')) {
     name = 'Firefox';
     const match = ua.match(/Firefox\/(\d+)/);
-    if (match) version = match[1];
+    if (match?.[1]) version = match[1];
     engine = 'Gecko';
   } else if (ua.includes('Safari') && !ua.includes('Chrome')) {
     name = 'Safari';
     const match = ua.match(/Version\/(\d+)/);
-    if (match) version = match[1];
+    if (match?.[1]) version = match[1];
     engine = 'WebKit';
   }
 
@@ -302,7 +302,7 @@ export async function detectCapabilities(): Promise<BrowserCapabilities> {
     hasPersistentStorage(),
   ]);
 
-  return {
+  const capabilities: BrowserCapabilities = {
     browser,
     webAssembly: hasWebAssembly(),
     indexedDB,
@@ -323,8 +323,13 @@ export async function detectCapabilities(): Promise<BrowserCapabilities> {
     performanceAPI: typeof performance !== 'undefined',
     performanceMemory: typeof performance !== 'undefined' && 'memory' in performance,
     performanceObserver: typeof PerformanceObserver !== 'undefined',
-    storageQuota: storageQuota || undefined,
   };
+
+  if (storageQuota) {
+    capabilities.storageQuota = storageQuota;
+  }
+
+  return capabilities;
 }
 
 /**
@@ -368,7 +373,7 @@ export async function checkCompatibility(): Promise<CompatibilityResult> {
   }
 
   if (capabilities.storageQuota) {
-    const { available, quota, percentage } = capabilities.storageQuota;
+    const { available, percentage } = capabilities.storageQuota;
     if (percentage > 80) {
       warnings.push(`Storage is ${percentage.toFixed(1)}% full - consider clearing data`);
     }

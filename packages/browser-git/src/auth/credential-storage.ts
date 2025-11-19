@@ -112,7 +112,7 @@ class CredentialManagerBackend implements StorageBackend {
     if ('credentials' in navigator && 'PasswordCredential' in window) {
       try {
         const data = JSON.parse(value) as StoredCredentials;
-        if (data.username && (data.method === AuthMethod.Basic || data.method === 'basic')) {
+        if (data.username && data.method === AuthMethod.Basic) {
           // Note: PasswordCredential doesn't store the password in a retrievable way
           // This is just for browser's autofill
           const credential = new (window as any).PasswordCredential({
@@ -185,7 +185,9 @@ export class CredentialStorage {
 
       case AuthMethod.OAuth:
         credentials.accessToken = config.accessToken;
-        credentials.refreshToken = config.refreshToken || undefined;
+        if (config.refreshToken) {
+          credentials.refreshToken = config.refreshToken;
+        }
         break;
 
       default:
@@ -267,11 +269,14 @@ export class CredentialStorage {
       case AuthMethod.OAuth:
       case 'oauth':
         if (!credentials.accessToken) return null;
-        return {
+        const oauthConfig: AuthConfig = {
           method: AuthMethod.OAuth,
           accessToken: credentials.accessToken,
-          refreshToken: credentials.refreshToken,
         };
+        if (credentials.refreshToken) {
+          (oauthConfig as any).refreshToken = credentials.refreshToken;
+        }
+        return oauthConfig;
 
       default:
         return null;

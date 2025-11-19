@@ -144,8 +144,11 @@ export class PerformanceMonitor {
       operation,
       duration,
       timestamp: Date.now(),
-      metadata,
     };
+
+    if (metadata) {
+      metric.metadata = metadata;
+    }
 
     if (!this.metrics.has(operation)) {
       this.metrics.set(operation, []);
@@ -170,8 +173,8 @@ export class PerformanceMonitor {
     const count = durations.length;
     const totalDuration = durations.reduce((sum, d) => sum + d, 0);
     const avgDuration = totalDuration / count;
-    const minDuration = durations[0];
-    const maxDuration = durations[count - 1];
+    const minDuration = durations[0]!;
+    const maxDuration = durations[count - 1]!;
 
     const p50 = this.percentile(durations, 50);
     const p95 = this.percentile(durations, 95);
@@ -308,10 +311,10 @@ export class PerformanceMonitor {
     const weight = index - lower;
 
     if (lower === upper) {
-      return sortedValues[lower];
+      return sortedValues[lower]!;
     }
 
-    return sortedValues[lower] * (1 - weight) + sortedValues[upper] * weight;
+    return sortedValues[lower]! * (1 - weight) + sortedValues[upper]! * weight;
   }
 
   /**
@@ -395,7 +398,6 @@ export class BatchProcessor<T, R> {
       this.batch.push(item);
 
       // Store resolve/reject for this item
-      const index = this.batch.length - 1;
       (item as any).__resolve = resolve;
       (item as any).__reject = reject;
 
