@@ -13,18 +13,21 @@ export const diffCommand = new Command('diff')
   .action(async (paths: string[], options) => {
     try {
       const repo = await Repository.open(process.cwd());
-      const diffs = await repo.diff({
-        paths: paths.length > 0 ? paths : undefined,
+      const diffOptions: any = {
         cached: options.cached || options.staged,
         unified: parseInt(options.unified),
-      });
+      };
+      if (paths && paths.length > 0) {
+        diffOptions.paths = paths;
+      }
+      const diffs = await repo.diff(diffOptions);
 
       if (diffs.length === 0) {
         console.log('No changes');
         return;
       }
 
-      diffs.forEach(diff => {
+      diffs.forEach((diff: any) => {
         console.log(chalk.bold(`diff --git a/${diff.path} b/${diff.path}`));
 
         if (diff.oldMode !== diff.newMode) {
@@ -33,17 +36,17 @@ export const diffCommand = new Command('diff')
         }
 
         if (options.stat) {
-          const additions = diff.hunks.reduce((sum, h) => sum + h.additions, 0);
-          const deletions = diff.hunks.reduce((sum, h) => sum + h.deletions, 0);
+          const additions = diff.hunks.reduce((sum: number, h: any) => sum + h.additions, 0);
+          const deletions = diff.hunks.reduce((sum: number, h: any) => sum + h.deletions, 0);
           console.log(` ${diff.path} | ${additions + deletions} ${chalk.green('+'.repeat(additions))}${chalk.red('-'.repeat(deletions))}`);
         } else {
           console.log(chalk.bold(`--- a/${diff.path}`));
           console.log(chalk.bold(`+++ b/${diff.path}`));
 
-          diff.hunks.forEach(hunk => {
+          diff.hunks.forEach((hunk: any) => {
             console.log(chalk.cyan(`@@ -${hunk.oldStart},${hunk.oldLines} +${hunk.newStart},${hunk.newLines} @@`));
 
-            hunk.lines.forEach(line => {
+            hunk.lines.forEach((line: any) => {
               if (line.type === 'add') {
                 console.log(chalk.green(`+${line.content}`));
               } else if (line.type === 'delete') {

@@ -1,6 +1,6 @@
 import { Command } from 'commander';
-import { Repository } from '@browser-git/browser-git';
-import { success, error, warning, progress } from '../utils/output.js';
+import { Repository, AuthMethod } from '@browser-git/browser-git';
+import { success, error, progress } from '../utils/output.js';
 
 export const pullCommand = new Command('pull')
   .description('Fetch from and integrate with another repository or a local branch')
@@ -27,7 +27,7 @@ export const pullCommand = new Command('pull')
 
       if (options.username && options.token) {
         await repo.setAuth({
-          type: 'basic',
+          method: AuthMethod.Basic,
           username: options.username,
           password: options.token,
         });
@@ -40,23 +40,16 @@ export const pullCommand = new Command('pull')
         lastProgress = current;
       };
 
-      const result = await repo.pull(remote, pullOptions);
+      const result = await repo.pull({ ...pullOptions, remote });
 
       if (lastProgress > 0) console.log();
 
-      if (result.conflicts && result.conflicts.length > 0) {
-        warning(`Automatic merge failed. Fix conflicts and commit the result.`);
-        console.log('\nConflicts:');
-        result.conflicts.forEach(conflict => {
-          console.log(`  ${conflict.path}`);
-        });
-        process.exit(1);
-      } else if (result.fastForward) {
-        success(`Fast-forwarded to ${result.commitHash?.substring(0, 7)}`);
-      } else if (result.upToDate) {
+      if (result.alreadyUpToDate) {
         success('Already up to date');
+      } else if (result.fastForward) {
+        success(`Fast-forwarded`);
       } else {
-        success(`Pull completed with commit ${result.commitHash?.substring(0, 7)}`);
+        success(`Pull completed`);
       }
     } catch (err) {
       error(`Failed to pull: ${(err as Error).message}`);

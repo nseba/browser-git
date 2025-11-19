@@ -215,6 +215,124 @@ export interface PullResult {
 }
 
 /**
+ * Add options
+ */
+export interface AddOptions {
+  /** Force add ignored files */
+  force?: boolean;
+  /** Only update tracked files */
+  update?: boolean;
+}
+
+/**
+ * Commit options
+ */
+export interface CommitOptions {
+  /** Amend the previous commit */
+  amend?: boolean;
+  /** Allow empty commit */
+  allowEmpty?: boolean;
+  /** Override author */
+  author?: {
+    name: string;
+    email: string;
+  };
+}
+
+/**
+ * Status result
+ */
+export interface StatusResult {
+  /** Current branch name */
+  branch: string;
+  /** Modified files */
+  modified: string[];
+  /** Added/staged files */
+  added: string[];
+  /** Deleted files */
+  deleted: string[];
+  /** Untracked files */
+  untracked: string[];
+}
+
+/**
+ * Log options
+ */
+export interface LogOptions {
+  /** Maximum number of commits to return */
+  maxCount?: number;
+  /** Filter by author pattern */
+  author?: string;
+  /** Show commits since date */
+  since?: Date;
+  /** Show commits until date */
+  until?: Date;
+  /** Filter by commit message pattern */
+  grep?: string;
+}
+
+/**
+ * Commit info
+ */
+export interface CommitInfo {
+  /** Commit hash */
+  hash: string;
+  /** Commit message */
+  message: string;
+  /** Author info */
+  author: {
+    name: string;
+    email: string;
+  };
+  /** Commit date */
+  date: string;
+  /** Parent commit hashes */
+  parents: string[];
+}
+
+/**
+ * Diff options
+ */
+export interface DiffOptions {
+  /** Compare with specific commit/branch */
+  target?: string;
+  /** Show cached/staged changes */
+  cached?: boolean;
+  /** Limit diff to specific paths */
+  paths?: string[];
+  /** Number of context lines */
+  unified?: number;
+}
+
+/**
+ * Merge options
+ */
+export interface MergeOptions {
+  /** Create commit even if fast-forward is possible */
+  noFf?: boolean;
+  /** Alias for noFf */
+  noFastForward?: boolean;
+  /** Only allow fast-forward merge */
+  ffOnly?: boolean;
+  /** Alias for ffOnly */
+  fastForwardOnly?: boolean;
+  /** Custom merge message */
+  message?: string;
+}
+
+/**
+ * Checkout options
+ */
+export interface CheckoutOptions {
+  /** Create new branch */
+  create?: boolean;
+  /** Force checkout */
+  force?: boolean;
+  /** Paths to checkout */
+  paths?: string[];
+}
+
+/**
  * Repository init options
  */
 export interface InitOptions {
@@ -413,14 +531,168 @@ export class Repository {
   }
 
   /**
+   * Delete a branch
+   */
+  async deleteBranch(name: string, force?: boolean): Promise<void> {
+    try {
+      await this.wasmInstance.deleteBranch(this.path, name, force ?? false);
+    } catch (error) {
+      throw new GitError(
+        `Failed to delete branch: ${error instanceof Error ? error.message : String(error)}`,
+        error
+      );
+    }
+  }
+
+  /**
+   * Rename a branch
+   */
+  async renameBranch(oldName: string, newName: string): Promise<void> {
+    try {
+      await this.wasmInstance.renameBranch(this.path, oldName, newName);
+    } catch (error) {
+      throw new GitError(
+        `Failed to rename branch: ${error instanceof Error ? error.message : String(error)}`,
+        error
+      );
+    }
+  }
+
+  /**
    * Checkout a branch or commit
    */
-  async checkout(target: string): Promise<void> {
+  async checkout(target: string, options?: CheckoutOptions): Promise<void> {
     try {
-      await this.wasmInstance.checkout(this.path, target);
+      await this.wasmInstance.checkout(this.path, target, options ?? {});
     } catch (error) {
       throw new GitError(
         `Failed to checkout: ${error instanceof Error ? error.message : String(error)}`,
+        error
+      );
+    }
+  }
+
+  /**
+   * Add files to the staging area
+   */
+  async add(paths: string[], options?: AddOptions): Promise<void> {
+    try {
+      await this.wasmInstance.add(this.path, paths, options ?? {});
+    } catch (error) {
+      throw new GitError(
+        `Failed to add files: ${error instanceof Error ? error.message : String(error)}`,
+        error
+      );
+    }
+  }
+
+  /**
+   * Commit staged changes
+   */
+  async commit(message: string, options?: CommitOptions): Promise<string> {
+    try {
+      return await this.wasmInstance.commit(this.path, message, options ?? {});
+    } catch (error) {
+      throw new GitError(
+        `Failed to commit: ${error instanceof Error ? error.message : String(error)}`,
+        error
+      );
+    }
+  }
+
+  /**
+   * Get working tree status
+   */
+  async status(): Promise<StatusResult> {
+    try {
+      return await this.wasmInstance.status(this.path);
+    } catch (error) {
+      throw new GitError(
+        `Failed to get status: ${error instanceof Error ? error.message : String(error)}`,
+        error
+      );
+    }
+  }
+
+  /**
+   * Get commit history
+   */
+  async log(options?: LogOptions): Promise<CommitInfo[]> {
+    try {
+      return await this.wasmInstance.log(this.path, options ?? {});
+    } catch (error) {
+      throw new GitError(
+        `Failed to get log: ${error instanceof Error ? error.message : String(error)}`,
+        error
+      );
+    }
+  }
+
+  /**
+   * Get diff
+   */
+  async diff(options?: DiffOptions): Promise<any> {
+    try {
+      return await this.wasmInstance.diff(this.path, options ?? {});
+    } catch (error) {
+      throw new GitError(
+        `Failed to get diff: ${error instanceof Error ? error.message : String(error)}`,
+        error
+      );
+    }
+  }
+
+  /**
+   * Merge a branch
+   */
+  async merge(branch: string, options?: MergeOptions): Promise<any> {
+    try {
+      return await this.wasmInstance.merge(this.path, branch, options ?? {});
+    } catch (error) {
+      throw new GitError(
+        `Failed to merge: ${error instanceof Error ? error.message : String(error)}`,
+        error
+      );
+    }
+  }
+
+  /**
+   * Abort a merge in progress
+   */
+  async mergeAbort(): Promise<void> {
+    try {
+      await this.wasmInstance.mergeAbort(this.path);
+    } catch (error) {
+      throw new GitError(
+        `Failed to abort merge: ${error instanceof Error ? error.message : String(error)}`,
+        error
+      );
+    }
+  }
+
+  /**
+   * Set authentication configuration
+   */
+  async setAuth(auth: AuthConfig): Promise<void> {
+    try {
+      await this.wasmInstance.setAuth(this.path, auth);
+    } catch (error) {
+      throw new GitError(
+        `Failed to set auth: ${error instanceof Error ? error.message : String(error)}`,
+        error
+      );
+    }
+  }
+
+  /**
+   * List remote repositories
+   */
+  async listRemotes(): Promise<Array<{ name: string; url: string }>> {
+    try {
+      return await this.wasmInstance.listRemotes(this.path);
+    } catch (error) {
+      throw new GitError(
+        `Failed to list remotes: ${error instanceof Error ? error.message : String(error)}`,
         error
       );
     }
@@ -651,7 +923,40 @@ async function loadWASM(): Promise<any> {
     createBranch: async (_path: string, _name: string, _startPoint?: string) => {
       throw new Error('WASM not yet integrated');
     },
-    checkout: async (_path: string, _target: string) => {
+    deleteBranch: async (_path: string, _name: string, _force: boolean) => {
+      throw new Error('WASM not yet integrated');
+    },
+    renameBranch: async (_path: string, _oldName: string, _newName: string) => {
+      throw new Error('WASM not yet integrated');
+    },
+    checkout: async (_path: string, _target: string, _options?: CheckoutOptions) => {
+      throw new Error('WASM not yet integrated');
+    },
+    add: async (_path: string, _paths: string[], _options?: AddOptions) => {
+      throw new Error('WASM not yet integrated');
+    },
+    commit: async (_path: string, _message: string, _options?: CommitOptions) => {
+      throw new Error('WASM not yet integrated');
+    },
+    status: async (_path: string) => {
+      throw new Error('WASM not yet integrated');
+    },
+    log: async (_path: string, _options?: LogOptions) => {
+      throw new Error('WASM not yet integrated');
+    },
+    diff: async (_path: string, _options?: DiffOptions) => {
+      throw new Error('WASM not yet integrated');
+    },
+    merge: async (_path: string, _branch: string, _options?: MergeOptions) => {
+      throw new Error('WASM not yet integrated');
+    },
+    mergeAbort: async (_path: string) => {
+      throw new Error('WASM not yet integrated');
+    },
+    setAuth: async (_path: string, _auth: AuthConfig) => {
+      throw new Error('WASM not yet integrated');
+    },
+    listRemotes: async (_path: string) => {
       throw new Error('WASM not yet integrated');
     },
     fetch: async (_path: string, _opts: any, _progress?: ProgressCallback) => {

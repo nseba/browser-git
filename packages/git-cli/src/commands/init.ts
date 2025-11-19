@@ -11,11 +11,10 @@ export const initCommand = new Command('init')
   .option('--storage <backend>', 'storage backend (indexeddb, opfs, localstorage, memory)', 'indexeddb')
   .action(async (path: string, options) => {
     try {
-      const repo = await Repository.init(path, {
+      await Repository.init(path, {
         bare: options.bare,
         initialBranch: options.initialBranch,
         hashAlgorithm: options.hash,
-        storage: options.storage,
       });
 
       success(`Initialized empty Git repository in ${path}/.git/`);

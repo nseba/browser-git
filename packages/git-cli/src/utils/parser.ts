@@ -16,7 +16,7 @@ export function parseKeyValuePairs(args: string[]): Record<string, string> {
 
   args.forEach(arg => {
     const match = arg.match(/^([^=]+)=(.+)$/);
-    if (match) {
+    if (match && match[1] && match[2]) {
       result[match[1]] = match[2];
     }
   });
@@ -29,7 +29,7 @@ export function parseKeyValuePairs(args: string[]): Record<string, string> {
  */
 export function parseAuthor(authorString: string): { name: string; email: string } | null {
   const match = authorString.match(/^([^<]+)\s*<([^>]+)>$/);
-  if (!match) {
+  if (!match || !match[1] || !match[2]) {
     return null;
   }
 

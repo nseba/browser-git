@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 import { Repository } from '@browser-git/browser-git';
-import { error, dim } from '../utils/output.js';
+import { error } from '../utils/output.js';
 import { formatRelativeDate, shortHash, formatAuthor, truncate } from '../utils/parser.js';
 import chalk from 'chalk';
 
@@ -16,20 +16,22 @@ export const logCommand = new Command('log')
   .action(async (options) => {
     try {
       const repo = await Repository.open(process.cwd());
-      const logs = await repo.log({
+      const logOptions: any = {
         maxCount: parseInt(options.maxCount),
-        author: options.author,
-        since: options.since ? new Date(options.since) : undefined,
-        until: options.until ? new Date(options.until) : undefined,
-        grep: options.grep,
-      });
+      };
+      if (options.author) logOptions.author = options.author;
+      if (options.since) logOptions.since = new Date(options.since);
+      if (options.until) logOptions.until = new Date(options.until);
+      if (options.grep) logOptions.grep = options.grep;
+
+      const logs = await repo.log(logOptions);
 
       if (logs.length === 0) {
         console.log('No commits yet');
         return;
       }
 
-      logs.forEach((commit, index) => {
+      logs.forEach((commit: any, index: number) => {
         if (options.oneline) {
           console.log(chalk.yellow(shortHash(commit.hash)), truncate(commit.message, 60));
         } else {
@@ -38,7 +40,7 @@ export const logCommand = new Command('log')
           console.log(`Author: ${formatAuthor(commit.author)}`);
           console.log(`Date:   ${formatRelativeDate(new Date(commit.date))}`);
           console.log();
-          commit.message.split('\n').forEach(line => {
+          commit.message.split('\n').forEach((line: string) => {
             console.log(`    ${line}`);
           });
         }

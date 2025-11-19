@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { Repository } from '@browser-git/browser-git';
+import { Repository, AuthMethod } from '@browser-git/browser-git';
 import { success, error, progress } from '../utils/output.js';
 
 export const cloneCommand = new Command('clone')
@@ -20,12 +20,11 @@ export const cloneCommand = new Command('clone')
         depth: options.depth ? parseInt(options.depth) : undefined,
         branch: options.branch,
         bare: options.bare,
-        storage: options.storage,
       };
 
       if (options.username && options.token) {
         cloneOptions.auth = {
-          type: 'basic',
+          method: AuthMethod.Basic,
           username: options.username,
           password: options.token,
         };
@@ -38,7 +37,7 @@ export const cloneCommand = new Command('clone')
         lastProgress = current;
       };
 
-      const repo = await Repository.clone(url, targetDir, cloneOptions);
+      await Repository.clone(url, targetDir, cloneOptions);
 
       if (lastProgress > 0) {
         console.log(); // New line after progress

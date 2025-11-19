@@ -82,13 +82,13 @@ export function highlight(message: string): void {
 export function table(rows: string[][]): void {
   if (rows.length === 0) return;
 
-  const columnWidths = rows[0].map((_, colIndex) =>
+  const columnWidths = rows[0]!.map((_, colIndex) =>
     Math.max(...rows.map(row => row[colIndex]?.length || 0))
   );
 
   rows.forEach(row => {
     const formattedRow = row
-      .map((cell, index) => cell.padEnd(columnWidths[index]))
+      .map((cell, index) => cell.padEnd(columnWidths[index] || 0))
       .join('  ');
     console.log(formattedRow);
   });
