@@ -8,34 +8,15 @@ import { Page } from '@playwright/test';
  * Creates a simple test page with browser-git loaded
  */
 export async function createTestPage(page: Page): Promise<void> {
-  // Use setContent directly with a data URL to avoid about:blank security restrictions
-  await page.goto('data:text/html,<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body></body></html>');
-
-  // Inject a minimal HTML structure
-  await page.setContent(`
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="UTF-8">
-        <title>Browser Git Test</title>
-      </head>
-      <body>
-        <div id="app"></div>
-      </body>
-    </html>
-  `);
+  // Navigate to the test page served via HTTP
+  // This provides a secure context for Web Crypto API and storage APIs
+  await page.goto('/test-page.html', { waitUntil: 'domcontentloaded' });
 }
 
 /**
  * Checks if IndexedDB is available and working
  */
 export async function checkIndexedDB(page: Page): Promise<boolean> {
-  // Ensure we're on a page that allows storage access
-  const currentUrl = page.url();
-  if (currentUrl === 'about:blank' || currentUrl === '') {
-    await page.goto('data:text/html,<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body></body></html>');
-  }
-
   return await page.evaluate(async () => {
     if (typeof indexedDB === 'undefined') {
       return false;
@@ -105,12 +86,6 @@ export async function getStorageQuota(page: Page): Promise<{
  * Clears all browser storage (IndexedDB, localStorage, sessionStorage)
  */
 export async function clearAllStorage(page: Page): Promise<void> {
-  // Ensure we're on a page that allows storage access (not about:blank)
-  const currentUrl = page.url();
-  if (currentUrl === 'about:blank' || currentUrl === '') {
-    await page.goto('data:text/html,<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body></body></html>');
-  }
-
   await page.evaluate(async () => {
     // Clear localStorage
     try {

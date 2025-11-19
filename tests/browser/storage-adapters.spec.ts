@@ -56,7 +56,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
 
   test.describe('IndexedDB Adapter', () => {
     test('should create and open database', async ({ cleanPage }) => {
-      await cleanPage.goto('about:blank');
+      // cleanPage already navigates to the test page via fixture, no need to goto again
 
       const result = await cleanPage.evaluate(async () => {
         return new Promise<{ success: boolean; error?: string }>((resolve) => {
@@ -86,7 +86,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
     });
 
     test('should write and read data', async ({ cleanPage }) => {
-      await cleanPage.goto('about:blank');
+      // cleanPage already navigates to the test page via fixture, no need to goto again
 
       const result = await cleanPage.evaluate(async () => {
         return new Promise<{ success: boolean; data?: string }>((resolve) => {
@@ -143,7 +143,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
     });
 
     test('should handle large binary data', async ({ cleanPage }) => {
-      await cleanPage.goto('about:blank');
+      // cleanPage already navigates to the test page via fixture, no need to goto again
 
       const result = await cleanPage.evaluate(async () => {
         return new Promise<{ success: boolean; size?: number }>((resolve) => {
@@ -200,7 +200,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
     });
 
     test('should handle concurrent transactions', async ({ cleanPage }) => {
-      await cleanPage.goto('about:blank');
+      // cleanPage already navigates to the test page via fixture, no need to goto again
 
       const result = await cleanPage.evaluate(async () => {
         return new Promise<{ success: boolean; count?: number }>((resolve) => {
@@ -256,8 +256,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
 
   test.describe('localStorage Adapter', () => {
     test('should write and read data', async ({ cleanPage }) => {
-      await cleanPage.goto('http://localhost:3000');
-
+      // cleanPage fixture already sets up the test page, no need to navigate
       const result = await cleanPage.evaluate(() => {
         try {
           localStorage.setItem('test-key', 'test-value');
@@ -274,8 +273,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
     });
 
     test('should handle size limits gracefully', async ({ cleanPage }) => {
-      await cleanPage.goto('http://localhost:3000');
-
+      // cleanPage fixture already sets up the test page, no need to navigate
       const result = await cleanPage.evaluate(() => {
         try {
           // Try to store 10MB (likely to exceed quota in most browsers)
@@ -300,8 +298,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
     });
 
     test('should handle JSON serialization', async ({ cleanPage }) => {
-      await cleanPage.goto('http://localhost:3000');
-
+      // cleanPage fixture already sets up the test page, no need to navigate
       const result = await cleanPage.evaluate(() => {
         try {
           const obj = { foo: 'bar', num: 42, arr: [1, 2, 3] };
@@ -325,7 +322,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
     test('should create and write files', async ({ cleanPage, browserName }) => {
       test.skip(browserName === 'webkit', 'OPFS not supported in WebKit');
 
-      await cleanPage.goto('about:blank');
+      // cleanPage already navigates to the test page via fixture, no need to goto again
       const hasOPFS = await checkOPFS(cleanPage);
 
       test.skip(!hasOPFS, 'OPFS not available');
@@ -360,7 +357,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
     test('should create directory hierarchy', async ({ cleanPage, browserName }) => {
       test.skip(browserName === 'webkit', 'OPFS not supported in WebKit');
 
-      await cleanPage.goto('about:blank');
+      // cleanPage already navigates to the test page via fixture, no need to goto again
       const hasOPFS = await checkOPFS(cleanPage);
 
       test.skip(!hasOPFS, 'OPFS not available');
@@ -393,7 +390,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
 
   test.describe('Performance Comparison', () => {
     test('should measure IndexedDB write performance', async ({ cleanPage }) => {
-      await cleanPage.goto('about:blank');
+      // cleanPage already navigates to the test page via fixture, no need to goto again
 
       const result = await cleanPage.evaluate(async () => {
         const dbName = 'perf-test';
@@ -435,8 +432,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
     });
 
     test('should measure localStorage write performance', async ({ cleanPage }) => {
-      await cleanPage.goto('http://localhost:3000');
-
+      // cleanPage fixture already sets up the test page, no need to navigate
       const result = await cleanPage.evaluate(() => {
         const start = performance.now();
 

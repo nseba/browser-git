@@ -33,7 +33,7 @@ export default defineConfig({
   // Shared settings for all the projects below
   use: {
     // Base URL to use in actions like `await page.goto('/')`
-    // baseURL: 'http://localhost:5173',
+    baseURL: 'http://localhost:5173',
 
     // Collect trace when retrying the failed test
     trace: 'on-first-retry',
@@ -43,6 +43,15 @@ export default defineConfig({
 
     // Video on failure
     video: 'retain-on-failure',
+
+    // Launch options for all browsers
+    launchOptions: {
+      args: [
+        '--disable-dev-shm-usage', // overcome limited resource problems
+        '--disable-web-security', // allow cross-origin requests for testing
+        '--disable-features=IsolateOrigins,site-per-process', // disable site isolation
+      ],
+    },
   },
 
   // Configure projects for major browsers
@@ -74,9 +83,10 @@ export default defineConfig({
   ],
 
   // Run your local dev server before starting the tests
-  // webServer: {
-  //   command: 'npm run dev',
-  //   url: 'http://localhost:5173',
-  //   reuseExistingServer: !process.env.CI,
-  // },
+  webServer: {
+    command: 'npx http-server tests/browser -p 5173 --cors -s -c-1',
+    url: 'http://localhost:5173/test-page.html',
+    reuseExistingServer: !process.env.CI,
+    timeout: 120 * 1000,
+  },
 });
