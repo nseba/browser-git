@@ -10,9 +10,9 @@
     "bgit": "./dist/cli.js"
   },
   "scripts": {
-    "build": "tsc",
-    "build:watch": "tsc --watch",
-    "clean": "rm -rf dist",
+    "build": "tsc --build",
+    "build:watch": "tsc --build --watch",
+    "clean": "rm -rf dist *.tsbuildinfo",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "type-check": "tsc --noEmit"

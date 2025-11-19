@@ -26,6 +26,9 @@ export type TestFixtures = {
  */
 export const test = base.extend<TestFixtures>({
   cleanPage: async ({ page }, use) => {
+    // Set up test page first to ensure proper context
+    await createTestPage(page);
+
     // Clear all storage before test
     await clearAllStorage(page);
 
@@ -33,19 +36,27 @@ export const test = base.extend<TestFixtures>({
     await use(page);
 
     // Clean up after test
-    await clearAllStorage(page);
+    try {
+      await clearAllStorage(page);
+    } catch (e) {
+      // Page might be closed or navigated, ignore cleanup errors
+    }
   },
 
   testPage: async ({ page }, use) => {
-    // Clear storage and set up test page
-    await clearAllStorage(page);
+    // Set up test page and clear storage
     await createTestPage(page);
+    await clearAllStorage(page);
 
     // Use the page
     await use(page);
 
     // Clean up after test
-    await clearAllStorage(page);
+    try {
+      await clearAllStorage(page);
+    } catch (e) {
+      // Page might be closed or navigated, ignore cleanup errors
+    }
   },
 });
 
