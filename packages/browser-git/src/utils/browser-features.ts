@@ -402,28 +402,28 @@ export function detectBrowser(): BrowserInfo {
   if (ua.includes('Chrome') && !ua.includes('Edg')) {
     name = 'Chrome';
     const match = ua.match(/Chrome\/(\d+)/);
-    if (match) version = match[1];
+    if (match?.[1]) version = match[1];
     engine = 'Blink';
   }
   // Edge
   else if (ua.includes('Edg/')) {
     name = 'Edge';
     const match = ua.match(/Edg\/(\d+)/);
-    if (match) version = match[1];
+    if (match?.[1]) version = match[1];
     engine = 'Blink';
   }
   // Firefox
   else if (ua.includes('Firefox')) {
     name = 'Firefox';
     const match = ua.match(/Firefox\/(\d+)/);
-    if (match) version = match[1];
+    if (match?.[1]) version = match[1];
     engine = 'Gecko';
   }
   // Safari
   else if (ua.includes('Safari') && !ua.includes('Chrome')) {
     name = 'Safari';
     const match = ua.match(/Version\/(\d+)/);
-    if (match) version = match[1];
+    if (match?.[1]) version = match[1];
     engine = 'WebKit';
   }
 

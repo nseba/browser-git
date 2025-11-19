@@ -14,10 +14,10 @@ export const checkoutCommand = new Command('checkout')
       const repo = await Repository.open(process.cwd());
 
       if (options.create || options.forceCreate) {
-        await repo.createBranch(target, { force: options.forceCreate });
+        await repo.createBranch(target);
         await repo.checkout(target, { force: options.force });
         success(`Switched to a new branch '${target}'`);
-      } else if (paths.length > 0) {
+      } else if (paths && paths.length > 0) {
         await repo.checkout(target, { paths, force: options.force });
         success(`Restored ${paths.length} file(s) from ${target}`);
       } else {

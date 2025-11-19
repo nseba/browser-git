@@ -151,11 +151,14 @@ export function createAuthConfig(options: AuthOptions): AuthConfig {
   }
 
   if (options.accessToken) {
-    return {
+    const config: AuthConfig = {
       method: AuthMethod.OAuth,
       accessToken: options.accessToken,
-      refreshToken: options.refreshToken,
     };
+    if (options.refreshToken) {
+      (config as any).refreshToken = options.refreshToken;
+    }
+    return config;
   }
 
   if (options.username && options.password) {
@@ -167,11 +170,16 @@ export function createAuthConfig(options: AuthOptions): AuthConfig {
   }
 
   if (options.headers || options.handler) {
-    return {
+    const config: AuthConfig = {
       method: AuthMethod.Custom,
-      headers: options.headers,
-      handler: options.handler,
     };
+    if (options.headers) {
+      (config as any).headers = options.headers;
+    }
+    if (options.handler) {
+      (config as any).handler = options.handler;
+    }
+    return config;
   }
 
   return {

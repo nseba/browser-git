@@ -18,7 +18,7 @@ export const branchCommand = new Command('branch')
       // Delete branch
       if (options.delete || options.forceDelete) {
         const toDelete = options.delete || options.forceDelete;
-        await repo.deleteBranch(toDelete, { force: !!options.forceDelete });
+        await repo.deleteBranch(toDelete, !!options.forceDelete);
         success(`Deleted branch ${toDelete}`);
         return;
       }
@@ -39,12 +39,9 @@ export const branchCommand = new Command('branch')
       }
 
       // List branches
-      const branches = await repo.listBranches({
-        all: options.all,
-        remote: options.remote,
-      });
+      const branches = await repo.listBranches();
 
-      const currentBranch = await repo.currentBranch();
+      const currentBranch = await repo.getCurrentBranch();
 
       branches.forEach(branch => {
         if (branch === currentBranch) {

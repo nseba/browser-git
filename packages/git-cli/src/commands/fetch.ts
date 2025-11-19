@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { Repository } from '@browser-git/browser-git';
+import { Repository, AuthMethod } from '@browser-git/browser-git';
 import { success, error, progress } from '../utils/output.js';
 
 export const fetchCommand = new Command('fetch')
@@ -26,7 +26,7 @@ export const fetchCommand = new Command('fetch')
 
       if (options.username && options.token) {
         await repo.setAuth({
-          type: 'basic',
+          method: AuthMethod.Basic,
           username: options.username,
           password: options.token,
         });
@@ -41,13 +41,13 @@ export const fetchCommand = new Command('fetch')
 
       if (options.all) {
         const remotes = await repo.listRemotes();
-        for (const remoteName of remotes) {
-          await repo.fetch(remoteName, fetchOptions);
+        for (const remoteObj of remotes) {
+          await repo.fetch({ ...fetchOptions, remote: remoteObj.name });
         }
         if (lastProgress > 0) console.log();
         success(`Fetched from all remotes`);
       } else {
-        await repo.fetch(remote, fetchOptions);
+        await repo.fetch({ ...fetchOptions, remote });
         if (lastProgress > 0) console.log();
         success(`Fetched from ${remote}`);
       }

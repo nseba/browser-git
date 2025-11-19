@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { Repository } from '@browser-git/browser-git';
+import { Repository, AuthMethod } from '@browser-git/browser-git';
 import { success, error, warning, progress } from '../utils/output.js';
 
 export const pushCommand = new Command('push')
@@ -35,7 +35,7 @@ export const pushCommand = new Command('push')
 
       if (options.username && options.token) {
         await repo.setAuth({
-          type: 'basic',
+          method: AuthMethod.Basic,
           username: options.username,
           password: options.token,
         });
@@ -48,14 +48,11 @@ export const pushCommand = new Command('push')
         lastProgress = current;
       };
 
-      const result = await repo.push(remote, pushOptions);
+      await repo.push({ ...pushOptions, remote });
 
       if (lastProgress > 0) console.log();
 
-      if (result.rejected) {
-        error('Push rejected. Use --force to force push (may cause data loss)');
-        process.exit(1);
-      } else if (options.delete) {
+      if (options.delete) {
         success(`Deleted remote branch ${refspec}`);
       } else {
         success(`Pushed to ${remote}`);

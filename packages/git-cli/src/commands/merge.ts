@@ -28,7 +28,7 @@ export const mergeCommand = new Command('merge')
       if (result.conflicts && result.conflicts.length > 0) {
         warning(`Automatic merge failed. Fix conflicts and commit the result.`);
         console.log('\nConflicts:');
-        result.conflicts.forEach(conflict => {
+        result.conflicts.forEach((conflict: any) => {
           console.log(`  ${conflict.path}`);
         });
         process.exit(1);
