@@ -5,25 +5,17 @@
 import { Page } from '@playwright/test';
 
 /**
+ * Test page URL that provides proper security context for storage APIs.
+ * This URL is served by the Playwright web server configured in playwright.config.ts.
+ */
+export const TEST_PAGE_URL = 'http://localhost:3456/test-page.html';
+
+/**
  * Creates a simple test page with browser-git loaded
  */
 export async function createTestPage(page: Page): Promise<void> {
-  // Use setContent directly with a data URL to avoid about:blank security restrictions
-  await page.goto('data:text/html,<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body></body></html>');
-
-  // Inject a minimal HTML structure
-  await page.setContent(`
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="UTF-8">
-        <title>Browser Git Test</title>
-      </head>
-      <body>
-        <div id="app"></div>
-      </body>
-    </html>
-  `);
+  // Navigate to the test page served by Playwright's web server
+  await page.goto(TEST_PAGE_URL);
 }
 
 /**
@@ -32,8 +24,8 @@ export async function createTestPage(page: Page): Promise<void> {
 export async function checkIndexedDB(page: Page): Promise<boolean> {
   // Ensure we're on a page that allows storage access
   const currentUrl = page.url();
-  if (currentUrl === 'about:blank' || currentUrl === '') {
-    await page.goto('data:text/html,<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body></body></html>');
+  if (currentUrl === 'about:blank' || currentUrl === '' || !currentUrl.startsWith('http')) {
+    await page.goto(TEST_PAGE_URL);
   }
 
   return await page.evaluate(async () => {
@@ -107,8 +99,8 @@ export async function getStorageQuota(page: Page): Promise<{
 export async function clearAllStorage(page: Page): Promise<void> {
   // Ensure we're on a page that allows storage access (not about:blank)
   const currentUrl = page.url();
-  if (currentUrl === 'about:blank' || currentUrl === '') {
-    await page.goto('data:text/html,<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body></body></html>');
+  if (currentUrl === 'about:blank' || currentUrl === '' || !currentUrl.startsWith('http')) {
+    await page.goto(TEST_PAGE_URL);
   }
 
   await page.evaluate(async () => {

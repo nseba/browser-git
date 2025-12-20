@@ -4,7 +4,7 @@
  */
 
 import { test, expect } from './fixtures';
-import { checkIndexedDB, checkOPFS, getStorageQuota, setupConsoleLogging } from './helpers';
+import { checkIndexedDB, checkOPFS, getStorageQuota, setupConsoleLogging, TEST_PAGE_URL } from './helpers';
 
 test.describe('Storage Adapters - Cross Browser', () => {
   test.beforeEach(async ({ page }) => {
@@ -13,7 +13,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
 
   test.describe('Feature Detection', () => {
     test('should detect IndexedDB availability', async ({ page }) => {
-      await page.goto('about:blank');
+      await page.goto(TEST_PAGE_URL);
       const hasIndexedDB = await checkIndexedDB(page);
 
       // IndexedDB should be available in all modern browsers
@@ -21,7 +21,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
     });
 
     test('should report OPFS availability', async ({ page, browserName }) => {
-      await page.goto('about:blank');
+      await page.goto(TEST_PAGE_URL);
       const hasOPFS = await checkOPFS(page);
 
       // OPFS may not be available in all browsers
@@ -32,7 +32,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
     });
 
     test('should have localStorage API', async ({ page }) => {
-      await page.goto('about:blank');
+      await page.goto(TEST_PAGE_URL);
 
       const hasLocalStorage = await page.evaluate(() => {
         return typeof localStorage !== 'undefined';
@@ -42,7 +42,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
     });
 
     test('should report storage quota', async ({ page }) => {
-      await page.goto('about:blank');
+      await page.goto(TEST_PAGE_URL);
       const quota = await getStorageQuota(page);
 
       if (quota) {
@@ -56,7 +56,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
 
   test.describe('IndexedDB Adapter', () => {
     test('should create and open database', async ({ cleanPage }) => {
-      await cleanPage.goto('about:blank');
+      await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         return new Promise<{ success: boolean; error?: string }>((resolve) => {
@@ -86,7 +86,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
     });
 
     test('should write and read data', async ({ cleanPage }) => {
-      await cleanPage.goto('about:blank');
+      await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         return new Promise<{ success: boolean; data?: string }>((resolve) => {
@@ -143,7 +143,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
     });
 
     test('should handle large binary data', async ({ cleanPage }) => {
-      await cleanPage.goto('about:blank');
+      await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         return new Promise<{ success: boolean; size?: number }>((resolve) => {
@@ -200,7 +200,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
     });
 
     test('should handle concurrent transactions', async ({ cleanPage }) => {
-      await cleanPage.goto('about:blank');
+      await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         return new Promise<{ success: boolean; count?: number }>((resolve) => {
@@ -256,7 +256,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
 
   test.describe('localStorage Adapter', () => {
     test('should write and read data', async ({ cleanPage }) => {
-      await cleanPage.goto('http://localhost:3000');
+      await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(() => {
         try {
@@ -274,7 +274,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
     });
 
     test('should handle size limits gracefully', async ({ cleanPage }) => {
-      await cleanPage.goto('http://localhost:3000');
+      await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(() => {
         try {
@@ -300,7 +300,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
     });
 
     test('should handle JSON serialization', async ({ cleanPage }) => {
-      await cleanPage.goto('http://localhost:3000');
+      await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(() => {
         try {
@@ -325,7 +325,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
     test('should create and write files', async ({ cleanPage, browserName }) => {
       test.skip(browserName === 'webkit', 'OPFS not supported in WebKit');
 
-      await cleanPage.goto('about:blank');
+      await cleanPage.goto(TEST_PAGE_URL);
       const hasOPFS = await checkOPFS(cleanPage);
 
       test.skip(!hasOPFS, 'OPFS not available');
@@ -360,7 +360,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
     test('should create directory hierarchy', async ({ cleanPage, browserName }) => {
       test.skip(browserName === 'webkit', 'OPFS not supported in WebKit');
 
-      await cleanPage.goto('about:blank');
+      await cleanPage.goto(TEST_PAGE_URL);
       const hasOPFS = await checkOPFS(cleanPage);
 
       test.skip(!hasOPFS, 'OPFS not available');
@@ -393,7 +393,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
 
   test.describe('Performance Comparison', () => {
     test('should measure IndexedDB write performance', async ({ cleanPage }) => {
-      await cleanPage.goto('about:blank');
+      await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         const dbName = 'perf-test';
@@ -435,7 +435,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
     });
 
     test('should measure localStorage write performance', async ({ cleanPage }) => {
-      await cleanPage.goto('http://localhost:3000');
+      await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(() => {
         const start = performance.now();

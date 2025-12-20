@@ -4,7 +4,7 @@
  */
 
 import { test, expect } from './fixtures';
-import { setupConsoleLogging, measurePerformance } from './helpers';
+import { setupConsoleLogging, measurePerformance, TEST_PAGE_URL } from './helpers';
 
 test.describe('Git Operations Performance - Cross Browser', () => {
   test.beforeEach(async ({ page }) => {
@@ -13,7 +13,7 @@ test.describe('Git Operations Performance - Cross Browser', () => {
 
   test.describe('Repository Initialization', () => {
     test('should initialize repository quickly', async ({ cleanPage }) => {
-      await cleanPage.goto('about:blank');
+      await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         const start = performance.now();
@@ -38,7 +38,7 @@ test.describe('Git Operations Performance - Cross Browser', () => {
 
   test.describe('Commit Operations', () => {
     test('should create commit in < 50ms (target)', async ({ cleanPage, browserName }) => {
-      await cleanPage.goto('about:blank');
+      await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         // Simulate commit creation
@@ -103,7 +103,7 @@ test.describe('Git Operations Performance - Cross Browser', () => {
     });
 
     test('should handle multiple commits efficiently', async ({ cleanPage }) => {
-      await cleanPage.goto('about:blank');
+      await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         const commitCount = 100;
@@ -154,7 +154,7 @@ test.describe('Git Operations Performance - Cross Browser', () => {
     });
 
     test('should hash commit objects efficiently', async ({ cleanPage }) => {
-      await cleanPage.goto('about:blank');
+      await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         const iterations = 1000;
@@ -186,7 +186,7 @@ test.describe('Git Operations Performance - Cross Browser', () => {
 
   test.describe('Checkout Operations', () => {
     test('should checkout branch in < 200ms (target)', async ({ cleanPage, browserName }) => {
-      await cleanPage.goto('about:blank');
+      await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         // Simulate checkout operation
@@ -242,7 +242,7 @@ test.describe('Git Operations Performance - Cross Browser', () => {
     });
 
     test('should update working directory efficiently', async ({ cleanPage }) => {
-      await cleanPage.goto('about:blank');
+      await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         const fileCount = 100;
@@ -276,7 +276,7 @@ test.describe('Git Operations Performance - Cross Browser', () => {
 
   test.describe('Clone Operations', () => {
     test('should clone repository in < 5s for 100 commits (target)', async ({ cleanPage, browserName }) => {
-      await cleanPage.goto('about:blank');
+      await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         const commitCount = 100;
@@ -335,7 +335,7 @@ test.describe('Git Operations Performance - Cross Browser', () => {
     });
 
     test('should handle packfile processing efficiently', async ({ cleanPage }) => {
-      await cleanPage.goto('about:blank');
+      await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         const objectCount = 200;
@@ -372,7 +372,7 @@ test.describe('Git Operations Performance - Cross Browser', () => {
 
   test.describe('Memory Usage', () => {
     test('should track memory usage during operations', async ({ cleanPage, browserName }) => {
-      await cleanPage.goto('about:blank');
+      await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         const getMemory = (): number => {
@@ -420,7 +420,7 @@ test.describe('Git Operations Performance - Cross Browser', () => {
     });
 
     test('should measure peak memory during large operation', async ({ cleanPage }) => {
-      await cleanPage.goto('about:blank');
+      await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         const getMemory = (): number => {
@@ -483,7 +483,7 @@ test.describe('Git Operations Performance - Cross Browser', () => {
 
   test.describe('Diff Operations', () => {
     test('should compute diff efficiently', async ({ cleanPage }) => {
-      await cleanPage.goto('about:blank');
+      await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         const original = 'line 1\nline 2\nline 3\nline 4\nline 5\n';
@@ -530,7 +530,7 @@ test.describe('Git Operations Performance - Cross Browser', () => {
 
   test.describe('Compression Performance', () => {
     test('should compress data efficiently', async ({ cleanPage }) => {
-      await cleanPage.goto('about:blank');
+      await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         const encoder = new TextEncoder();

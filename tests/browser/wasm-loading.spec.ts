@@ -4,7 +4,7 @@
  */
 
 import { test, expect } from './fixtures';
-import { setupConsoleLogging } from './helpers';
+import { setupConsoleLogging, TEST_PAGE_URL } from './helpers';
 
 test.describe('WASM Loading - Cross Browser', () => {
   test.beforeEach(async ({ page }) => {
@@ -13,7 +13,7 @@ test.describe('WASM Loading - Cross Browser', () => {
 
   test.describe('WebAssembly Support', () => {
     test('should have WebAssembly support', async ({ page }) => {
-      await page.goto('about:blank');
+      await page.goto(TEST_PAGE_URL);
 
       const hasWasm = await page.evaluate(() => {
         return typeof WebAssembly !== 'undefined';
@@ -23,7 +23,7 @@ test.describe('WASM Loading - Cross Browser', () => {
     });
 
     test('should support WebAssembly.instantiate', async ({ page }) => {
-      await page.goto('about:blank');
+      await page.goto(TEST_PAGE_URL);
 
       const hasInstantiate = await page.evaluate(() => {
         return typeof WebAssembly.instantiate === 'function';
@@ -33,7 +33,7 @@ test.describe('WASM Loading - Cross Browser', () => {
     });
 
     test('should support WebAssembly.instantiateStreaming', async ({ page, browserName }) => {
-      await page.goto('about:blank');
+      await page.goto(TEST_PAGE_URL);
 
       const hasInstantiateStreaming = await page.evaluate(() => {
         return typeof WebAssembly.instantiateStreaming === 'function';
@@ -45,7 +45,7 @@ test.describe('WASM Loading - Cross Browser', () => {
     });
 
     test('should support WebAssembly memory', async ({ page }) => {
-      await page.goto('about:blank');
+      await page.goto(TEST_PAGE_URL);
 
       const result = await page.evaluate(() => {
         try {
@@ -68,7 +68,7 @@ test.describe('WASM Loading - Cross Browser', () => {
     });
 
     test('should support WebAssembly table', async ({ page }) => {
-      await page.goto('about:blank');
+      await page.goto(TEST_PAGE_URL);
 
       const result = await page.evaluate(() => {
         try {
@@ -93,7 +93,7 @@ test.describe('WASM Loading - Cross Browser', () => {
 
   test.describe('WASM Instantiation', () => {
     test('should instantiate simple WASM module', async ({ page }) => {
-      await page.goto('about:blank');
+      await page.goto(TEST_PAGE_URL);
 
       const result = await page.evaluate(async () => {
         // Simple WASM module that exports an add function
@@ -122,7 +122,7 @@ test.describe('WASM Loading - Cross Browser', () => {
     });
 
     test('should measure WASM instantiation time', async ({ page }) => {
-      await page.goto('about:blank');
+      await page.goto(TEST_PAGE_URL);
 
       const result = await page.evaluate(async () => {
         const wasmBytes = new Uint8Array([
@@ -153,7 +153,7 @@ test.describe('WASM Loading - Cross Browser', () => {
     });
 
     test('should handle WASM memory growth', async ({ page }) => {
-      await page.goto('about:blank');
+      await page.goto(TEST_PAGE_URL);
 
       const result = await page.evaluate(async () => {
         // WASM module with memory that can grow
@@ -193,7 +193,7 @@ test.describe('WASM Loading - Cross Browser', () => {
 
   test.describe('WASM Performance', () => {
     test('should measure memory allocation performance', async ({ page }) => {
-      await page.goto('about:blank');
+      await page.goto(TEST_PAGE_URL);
 
       const result = await page.evaluate(() => {
         const iterations = 1000;
@@ -220,7 +220,7 @@ test.describe('WASM Loading - Cross Browser', () => {
     });
 
     test('should measure function call overhead', async ({ page }) => {
-      await page.goto('about:blank');
+      await page.goto(TEST_PAGE_URL);
 
       const result = await page.evaluate(async () => {
         const wasmBytes = new Uint8Array([
@@ -263,7 +263,7 @@ test.describe('WASM Loading - Cross Browser', () => {
     });
 
     test('should measure data transfer JS<->WASM', async ({ page }) => {
-      await page.goto('about:blank');
+      await page.goto(TEST_PAGE_URL);
 
       const result = await page.evaluate(async () => {
         // WASM module with memory export
@@ -311,7 +311,7 @@ test.describe('WASM Loading - Cross Browser', () => {
 
   test.describe('WASM Error Handling', () => {
     test('should handle invalid WASM bytes', async ({ page }) => {
-      await page.goto('about:blank');
+      await page.goto(TEST_PAGE_URL);
 
       const result = await page.evaluate(async () => {
         const invalidBytes = new Uint8Array([0x00, 0x01, 0x02, 0x03]);
@@ -329,7 +329,7 @@ test.describe('WASM Loading - Cross Browser', () => {
     });
 
     test('should handle out of bounds memory access', async ({ page }) => {
-      await page.goto('about:blank');
+      await page.goto(TEST_PAGE_URL);
 
       const result = await page.evaluate(async () => {
         // WASM module with memory
@@ -362,7 +362,7 @@ test.describe('WASM Loading - Cross Browser', () => {
 
   test.describe('Browser-Specific WASM Features', () => {
     test('should report WASM features', async ({ page, browserName }) => {
-      await page.goto('about:blank');
+      await page.goto(TEST_PAGE_URL);
 
       const features = await page.evaluate(() => {
         return {

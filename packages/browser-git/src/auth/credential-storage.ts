@@ -267,16 +267,17 @@ export class CredentialStorage {
         };
 
       case AuthMethod.OAuth:
-      case 'oauth':
+      case 'oauth': {
         if (!credentials.accessToken) return null;
         const oauthConfig: AuthConfig = {
           method: AuthMethod.OAuth,
           accessToken: credentials.accessToken,
         };
         if (credentials.refreshToken) {
-          (oauthConfig as any).refreshToken = credentials.refreshToken;
+          (oauthConfig as unknown as { refreshToken: string }).refreshToken = credentials.refreshToken;
         }
         return oauthConfig;
+      }
 
       default:
         return null;
