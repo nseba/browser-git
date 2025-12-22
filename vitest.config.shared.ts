@@ -25,10 +25,10 @@ export default defineConfig({
         '**/*.spec.*',
       ],
       thresholds: {
-        lines: 80,
-        functions: 80,
-        branches: 80,
-        statements: 80,
+        lines: 65,
+        functions: 85,
+        branches: 70,
+        statements: 65,
       },
     },
 

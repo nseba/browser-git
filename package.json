@@ -10,7 +10,11 @@
   "scripts": {
     "build": "npm run build:packages",
     "build:wasm": "cd packages/git-core && make build",
-    "build:packages": "npm run build -ws --if-present",
+    "build:packages": "npm run build:deps && npm run build:main && npm run build:cli && npm run build:examples",
+    "build:deps": "npm run build -w @browser-git/storage-adapters -w @browser-git/diff-engine",
+    "build:main": "npm run build -w @browser-git/browser-git",
+    "build:cli": "npm run build -w @browser-git/git-cli",
+    "build:examples": "npm run build -w browser-git-basic-demo -w browser-git-mini-ide -w browser-git-offline-docs --if-present",
     "dev": "npm run dev -ws --if-present",
     "dev:wasm": "cd packages/git-core && make watch",
     "clean": "npm run clean -ws --if-present && rm -rf dist coverage playwright-report test-results",
