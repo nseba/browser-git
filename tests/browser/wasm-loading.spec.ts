@@ -304,8 +304,9 @@ test.describe('WASM Loading - Cross Browser', () => {
       });
 
       console.log('JS<->WASM data transfer performance:', result);
-      expect(result.writeTime).toBeGreaterThan(0);
-      expect(result.readTime).toBeGreaterThan(0);
+      // In fast CI environments, these may complete in less than 1ms
+      expect(result.writeTime).toBeGreaterThanOrEqual(0);
+      expect(result.readTime).toBeGreaterThanOrEqual(0);
     });
   });
 
