@@ -28,6 +28,7 @@ Git-Protocol: version=2
 ```
 
 **Query Parameters:**
+
 - `service=git-upload-pack` - For fetch/clone operations
 - `service=git-receive-pack` - For push operations
 
@@ -44,6 +45,7 @@ Cache-Control: no-cache
 ```
 
 **Key Elements:**
+
 - **Content-Type**: Must match the service type
 - **Pkt-line format**: Each line is prefixed with a 4-character hex length
 - **Service line**: First line announces the service
@@ -71,6 +73,7 @@ The server advertises all available references (branches, tags) and their curren
 ```
 
 **Common Capabilities:**
+
 - `multi_ack` / `multi_ack_detailed` - Acknowledges multiple "have" lines
 - `thin-pack` - Server can send thin packs (with missing bases)
 - `side-band` / `side-band-64k` - Multiplexed output streams
@@ -121,6 +124,7 @@ Git-Protocol: version=2
 ```
 
 **Want/Have Negotiation:**
+
 1. **want**: Client lists commits it wants
 2. **have**: Client lists commits it already has
 3. **done**: Client signals end of negotiation
@@ -188,6 +192,7 @@ PACK[packfile data]
 ```
 
 **Reference Update Format:**
+
 - `<old-hash> <new-hash> <ref-name>` - Update ref
 - `0{40} <new-hash> <ref-name>` - Create ref
 - `<old-hash> 0{40} <ref-name>` - Delete ref
@@ -202,6 +207,7 @@ Content-Type: application/x-git-receive-pack-result
 ```
 
 **Status Report Format:**
+
 ```
 0025unpack ok
 0019ok refs/heads/main
@@ -239,15 +245,15 @@ The Git protocol uses a custom framing format called "pkt-line".
 ```javascript
 // Encode
 function encodePktLine(data) {
-  if (data === null) return '0000';  // Flush packet
+  if (data === null) return "0000"; // Flush packet
   const length = data.length + 4;
-  return length.toString(16).padStart(4, '0') + data;
+  return length.toString(16).padStart(4, "0") + data;
 }
 
 // Decode
 function decodePktLine(line) {
   const length = parseInt(line.substring(0, 4), 16);
-  if (length === 0) return null;  // Flush packet
+  if (length === 0) return null; // Flush packet
   return line.substring(4, length);
 }
 ```
@@ -279,6 +285,7 @@ Each object in a packfile has:
 #### Type and Size Header
 
 Uses a variable-length encoding:
+
 - **Byte 1 bits:**
   - Bit 7: More bytes follow (MSB)
   - Bits 6-4: Object type (3 bits)
@@ -286,6 +293,7 @@ Uses a variable-length encoding:
 - **Subsequent bytes:** Size continuation (7 bits per byte, MSB indicates more bytes)
 
 **Object Types:**
+
 - 1: `OBJ_COMMIT`
 - 2: `OBJ_TREE`
 - 3: `OBJ_BLOB`
@@ -306,6 +314,7 @@ Git uses delta compression to save space.
 ```
 
 The offset is encoded in a special variable-length format:
+
 ```
 c = byte & 0x7f;
 while (byte & 0x80) {
@@ -333,6 +342,7 @@ After decompression, delta data contains instructions:
 ```
 
 **Instructions:**
+
 - **Copy from source:** `cmd & 0x80` is set
   - Encodes offset and size to copy from base object
 - **Insert new data:** `cmd & 0x80` is clear
@@ -350,6 +360,7 @@ When `side-band` or `side-band-64k` capability is active, the server multiplexes
 ```
 
 **Channels:**
+
 - **1**: Packfile data
 - **2**: Progress messages (stderr)
 - **3**: Error messages (fatal errors)
@@ -377,6 +388,7 @@ Authorization: Bearer <token>
 ```
 
 For GitHub:
+
 ```
 Authorization: token <github-personal-access-token>
 ```
@@ -404,13 +416,13 @@ Access-Control-Max-Age: 86400
 
 ```javascript
 fetch(url, {
-  method: 'POST',
+  method: "POST",
   headers: {
-    'Content-Type': 'application/x-git-upload-pack-request',
-    'Git-Protocol': 'version=2'
+    "Content-Type": "application/x-git-upload-pack-request",
+    "Git-Protocol": "version=2",
   },
-  credentials: 'include',  // For authentication
-  mode: 'cors'
+  credentials: "include", // For authentication
+  mode: "cors",
 });
 ```
 
@@ -438,6 +450,7 @@ The proxy adds necessary CORS headers.
 ### Git Protocol Errors
 
 Errors in pkt-line format:
+
 ```
 0028ERR error message here
 ```
@@ -483,12 +496,14 @@ Git-Protocol: version=2
 ## Implementation Checklist
 
 ### Phase 1: Discovery
+
 - [ ] Implement GET info/refs request
 - [ ] Parse pkt-line format
 - [ ] Parse reference advertisement
 - [ ] Parse capabilities
 
 ### Phase 2: Fetch/Clone
+
 - [ ] Implement POST git-upload-pack
 - [ ] Generate want/have lists
 - [ ] Implement negotiation loop
@@ -496,6 +511,7 @@ Git-Protocol: version=2
 - [ ] Handle side-band output
 
 ### Phase 3: Packfile Processing
+
 - [ ] Parse packfile header
 - [ ] Decode object entries
 - [ ] Handle delta objects (OFS_DELTA, REF_DELTA)
@@ -504,12 +520,14 @@ Git-Protocol: version=2
 - [ ] Store objects in object database
 
 ### Phase 4: Push
+
 - [ ] Implement POST git-receive-pack
 - [ ] Generate reference updates
 - [ ] Create packfile with new objects
 - [ ] Parse status report
 
 ### Phase 5: Error Handling
+
 - [ ] Detect CORS issues
 - [ ] Handle authentication errors
 - [ ] Validate packfiles
@@ -526,18 +544,21 @@ Git-Protocol: version=2
 ## Testing Strategy
 
 ### Unit Tests
+
 - Pkt-line encoding/decoding
 - Reference parsing
 - Packfile header parsing
 - Delta instruction parsing
 
 ### Integration Tests
+
 - Fetch from public repository (e.g., small GitHub repo)
 - Parse real packfiles
 - Handle various ref formats
 - Test error conditions
 
 ### Test Repositories
+
 - Use small, public repositories for testing
 - Create local test server with known state
 - Test with different Git versions
@@ -563,12 +584,14 @@ Git-Protocol: version=2
 ## Browser Compatibility
 
 ### Supported APIs
+
 - Fetch API (all modern browsers)
 - ArrayBuffer / Uint8Array
 - TextDecoder / TextEncoder
 - Streams API (for large packfiles)
 
 ### Limitations
+
 - CORS restrictions (may need proxy)
 - No SSH support (HTTP/HTTPS only)
 - Memory limits for large repositories

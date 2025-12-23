@@ -5,16 +5,16 @@
  */
 
 // Export types
-export * from './types.js';
-export * from './interface.js';
+export * from "./types.js";
+export * from "./interface.js";
 
 // Export implementations
-export { MyersDiffEngine } from './diff-engine.js';
-export { DiffEngineFactory, diffEngineFactory } from './factory.js';
+export { MyersDiffEngine } from "./diff-engine.js";
+export { DiffEngineFactory, diffEngineFactory } from "./factory.js";
 
 // Export utilities
-export * from './utils/index.js';
+export * from "./utils/index.js";
 
 // Convenience export: default diff engine
-import { MyersDiffEngine } from './diff-engine.js';
+import { MyersDiffEngine } from "./diff-engine.js";
 export default MyersDiffEngine;

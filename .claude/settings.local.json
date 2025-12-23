@@ -1,23 +1,20 @@
 {
   "permissions": {
     "allow": [
-      "Bash(yarn lint:*)",
-      "Bash(yarn nx run-many:*)",
       "Bash(mkdir:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
       "Bash(tee:*)",
-      "Bash(yarn install:*)",
-      "Bash(node -e:*)",
-      "Bash(git reset:*)",
       "Skill(execute-tasks)",
       "Bash(find:*)",
       "Bash(cat:*)",
-      "Bash(yarn nx lint:*)",
-      "Bash(yarn nx test:*)",
-      "Bash(yarn nx build:*)",
-      "Bash(yarn tsc:*)",
-      "Bash(grep:*)"
+      "Bash(yarn:*)",
+      "Bash(grep:*)",
+      "Bash(git:*)",
+      "mcp__github__list_pull_requests",
+      "Bash(gh:*)",
+      "Bash(jq:*)",
+      "Bash(echo:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)"
     ],
     "deny": [],
     "ask": []

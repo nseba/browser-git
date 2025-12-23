@@ -2,7 +2,7 @@
  * Node.js-like file system API for browser storage
  */
 
-import type { StorageAdapter } from '@browser-git/storage-adapters';
+import type { StorageAdapter } from "@browser-git/storage-adapters";
 import type {
   Stats,
   MkdirOptions,
@@ -13,8 +13,8 @@ import type {
   FSWatcher,
   FSWatchCallback,
   FSChangeEvent,
-} from '../types/fs.js';
-import { normalize, dirname, join } from './path.js';
+} from "../types/fs.js";
+import { normalize, dirname, join } from "./path.js";
 
 /**
  * File system errors
@@ -23,34 +23,50 @@ export class FSError extends Error {
   constructor(
     message: string,
     public readonly code: string,
-    public readonly path?: string
+    public readonly path?: string,
   ) {
     super(message);
-    this.name = 'FSError';
+    this.name = "FSError";
   }
 
   static ENOENT(path: string): FSError {
-    return new FSError(`ENOENT: no such file or directory, '${path}'`, 'ENOENT', path);
+    return new FSError(
+      `ENOENT: no such file or directory, '${path}'`,
+      "ENOENT",
+      path,
+    );
   }
 
   static EEXIST(path: string): FSError {
-    return new FSError(`EEXIST: file already exists, '${path}'`, 'EEXIST', path);
+    return new FSError(
+      `EEXIST: file already exists, '${path}'`,
+      "EEXIST",
+      path,
+    );
   }
 
   static ENOTDIR(path: string): FSError {
-    return new FSError(`ENOTDIR: not a directory, '${path}'`, 'ENOTDIR', path);
+    return new FSError(`ENOTDIR: not a directory, '${path}'`, "ENOTDIR", path);
   }
 
   static EISDIR(path: string): FSError {
-    return new FSError(`EISDIR: illegal operation on a directory, '${path}'`, 'EISDIR', path);
+    return new FSError(
+      `EISDIR: illegal operation on a directory, '${path}'`,
+      "EISDIR",
+      path,
+    );
   }
 
   static ENOTEMPTY(path: string): FSError {
-    return new FSError(`ENOTEMPTY: directory not empty, '${path}'`, 'ENOTEMPTY', path);
+    return new FSError(
+      `ENOTEMPTY: directory not empty, '${path}'`,
+      "ENOTEMPTY",
+      path,
+    );
   }
 
   static EINVAL(message: string): FSError {
-    return new FSError(`EINVAL: ${message}`, 'EINVAL');
+    return new FSError(`EINVAL: ${message}`, "EINVAL");
   }
 }
 
@@ -69,9 +85,9 @@ interface FileMetadata {
 /**
  * Internal storage keys
  */
-const METADATA_PREFIX = '__meta__/';
-const DATA_PREFIX = '__data__/';
-const DIR_MARKER = '__dir__';
+const METADATA_PREFIX = "__meta__/";
+const DATA_PREFIX = "__data__/";
+const DIR_MARKER = "__dir__";
 
 /**
  * File system implementation using storage adapter
@@ -85,10 +101,13 @@ export class FileSystem {
    * Read file contents
    */
   async readFile(path: string): Promise<Uint8Array>;
-  async readFile(path: string, options: { encoding: Encoding }): Promise<string>;
   async readFile(
     path: string,
-    options?: ReadFileOptions
+    options: { encoding: Encoding },
+  ): Promise<string>;
+  async readFile(
+    path: string,
+    options?: ReadFileOptions,
   ): Promise<Uint8Array | string> {
     const normalizedPath = normalize(path);
     const meta = await this.getMetadata(normalizedPath);
@@ -125,18 +144,18 @@ export class FileSystem {
   async writeFile(
     path: string,
     data: string | Uint8Array,
-    options?: WriteFileOptions
+    options?: WriteFileOptions,
   ): Promise<void> {
     const normalizedPath = normalize(path);
     const dirPath = dirname(normalizedPath);
 
     // Create parent directories if recursive option is set
-    if (options?.recursive && dirPath !== '.' && dirPath !== '/') {
+    if (options?.recursive && dirPath !== "." && dirPath !== "/") {
       await this.mkdir(dirPath, { recursive: true });
     }
 
     // Check if parent directory exists
-    if (dirPath !== '.' && dirPath !== '/') {
+    if (dirPath !== "." && dirPath !== "/") {
       const parentMeta = await this.getMetadata(dirPath);
       if (!parentMeta) {
         throw FSError.ENOENT(dirPath);
@@ -154,8 +173,8 @@ export class FileSystem {
 
     // Encode data if string
     const bytes =
-      typeof data === 'string'
-        ? this.encode(data, options?.encoding || 'utf8')
+      typeof data === "string"
+        ? this.encode(data, options?.encoding || "utf8")
         : data;
 
     // Write data
@@ -179,7 +198,7 @@ export class FileSystem {
 
     // Emit change event
     this.emitChange({
-      type: existingMeta ? 'modify' : 'create',
+      type: existingMeta ? "modify" : "create",
       path: normalizedPath,
       timestamp: now,
     });
@@ -203,7 +222,11 @@ export class FileSystem {
     // Create parent directories if recursive
     if (options?.recursive) {
       const parentPath = dirname(normalizedPath);
-      if (parentPath !== '.' && parentPath !== '/' && parentPath !== normalizedPath) {
+      if (
+        parentPath !== "." &&
+        parentPath !== "/" &&
+        parentPath !== normalizedPath
+      ) {
         const parentMeta = await this.getMetadata(parentPath);
         if (!parentMeta) {
           await this.mkdir(parentPath, { recursive: true });
@@ -212,7 +235,7 @@ export class FileSystem {
     } else {
       // Check parent exists
       const parentPath = dirname(normalizedPath);
-      if (parentPath !== '.' && parentPath !== '/') {
+      if (parentPath !== "." && parentPath !== "/") {
         const parentMeta = await this.getMetadata(parentPath);
         if (!parentMeta) {
           throw FSError.ENOENT(parentPath);
@@ -224,7 +247,7 @@ export class FileSystem {
     }
 
     // Create directory marker
-    const dataKey = DATA_PREFIX + normalizedPath + '/' + DIR_MARKER;
+    const dataKey = DATA_PREFIX + normalizedPath + "/" + DIR_MARKER;
     await this.storage.set(dataKey, new Uint8Array(0));
 
     // Create metadata
@@ -242,7 +265,7 @@ export class FileSystem {
 
     // Emit change event
     this.emitChange({
-      type: 'create',
+      type: "create",
       path: normalizedPath,
       timestamp: now,
     });
@@ -264,7 +287,7 @@ export class FileSystem {
     }
 
     // List all keys with data prefix
-    const prefix = DATA_PREFIX + normalizedPath + '/';
+    const prefix = DATA_PREFIX + normalizedPath + "/";
     const allKeys = await this.storage.list(DATA_PREFIX);
 
     // Filter keys that are direct children
@@ -276,7 +299,7 @@ export class FileSystem {
         if (relative === DIR_MARKER) continue;
 
         // Get first path segment
-        const parts = relative.split('/');
+        const parts = relative.split("/");
         if (parts[0]) {
           children.add(parts[0]);
         }
@@ -314,7 +337,7 @@ export class FileSystem {
 
     // Emit change event
     this.emitChange({
-      type: 'delete',
+      type: "delete",
       path: normalizedPath,
       timestamp: Date.now(),
     });
@@ -356,7 +379,7 @@ export class FileSystem {
     }
 
     // Delete directory marker and metadata
-    const dataKey = DATA_PREFIX + normalizedPath + '/' + DIR_MARKER;
+    const dataKey = DATA_PREFIX + normalizedPath + "/" + DIR_MARKER;
     const metaKey = METADATA_PREFIX + normalizedPath;
 
     await this.storage.delete(dataKey);
@@ -364,7 +387,7 @@ export class FileSystem {
 
     // Emit change event
     this.emitChange({
-      type: 'delete',
+      type: "delete",
       path: normalizedPath,
       timestamp: Date.now(),
     });
@@ -465,7 +488,7 @@ export class FileSystem {
         try {
           callback(event);
         } catch (error) {
-          console.error('Error in file watcher callback:', error);
+          console.error("Error in file watcher callback:", error);
         }
       }
     }
@@ -476,11 +499,11 @@ export class FileSystem {
    */
   private encode(str: string, encoding: Encoding): Uint8Array {
     switch (encoding) {
-      case 'utf8':
-      case 'utf-8':
+      case "utf8":
+      case "utf-8":
         return new TextEncoder().encode(str);
 
-      case 'base64': {
+      case "base64": {
         const binary = atob(str);
         const bytes = new Uint8Array(binary.length);
         for (let i = 0; i < binary.length; i++) {
@@ -489,7 +512,7 @@ export class FileSystem {
         return bytes;
       }
 
-      case 'hex': {
+      case "hex": {
         const bytes = new Uint8Array(str.length / 2);
         for (let i = 0; i < bytes.length; i++) {
           bytes[i] = parseInt(str.substring(i * 2, i * 2 + 2), 16);
@@ -497,7 +520,7 @@ export class FileSystem {
         return bytes;
       }
 
-      case 'binary': {
+      case "binary": {
         const bytes = new Uint8Array(str.length);
         for (let i = 0; i < str.length; i++) {
           bytes[i] = str.charCodeAt(i) & 0xff;
@@ -515,26 +538,26 @@ export class FileSystem {
    */
   private decode(bytes: Uint8Array, encoding: Encoding): string {
     switch (encoding) {
-      case 'utf8':
-      case 'utf-8':
+      case "utf8":
+      case "utf-8":
         return new TextDecoder().decode(bytes);
 
-      case 'base64': {
+      case "base64": {
         const binary = Array.from(bytes)
           .map((byte) => String.fromCharCode(byte))
-          .join('');
+          .join("");
         return btoa(binary);
       }
 
-      case 'hex':
+      case "hex":
         return Array.from(bytes)
-          .map((byte) => byte.toString(16).padStart(2, '0'))
-          .join('');
+          .map((byte) => byte.toString(16).padStart(2, "0"))
+          .join("");
 
-      case 'binary':
+      case "binary":
         return Array.from(bytes)
           .map((byte) => String.fromCharCode(byte))
-          .join('');
+          .join("");
 
       default:
         throw FSError.EINVAL(`Unknown encoding: ${encoding}`);

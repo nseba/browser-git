@@ -37,22 +37,26 @@ By participating in this project, you agree to maintain a respectful and inclusi
 
 1. Fork the repository on GitHub
 2. Clone your fork locally:
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/browser-git.git
    cd browser-git
    ```
 
 3. Add the upstream repository:
+
    ```bash
    git remote add upstream https://github.com/nseba/browser-git.git
    ```
 
 4. Install dependencies:
+
    ```bash
    yarn install
    ```
 
 5. Build the project:
+
    ```bash
    yarn build
    ```
@@ -75,6 +79,7 @@ git checkout -b fix/your-bug-fix
 ```
 
 Branch naming conventions:
+
 - `feature/` - New features
 - `fix/` - Bug fixes
 - `docs/` - Documentation changes
@@ -87,11 +92,13 @@ Branch naming conventions:
 1. Make your changes in the appropriate package
 2. Write or update tests for your changes
 3. Run tests locally:
+
    ```bash
    yarn test
    ```
 
 4. Run linting and type checking:
+
    ```bash
    yarn lint
    yarn typecheck
@@ -169,6 +176,7 @@ browser-git/
 - Follow functional programming principles where appropriate
 
 Example:
+
 ```typescript
 /**
  * Initializes a new Git repository.
@@ -180,7 +188,7 @@ Example:
  */
 export async function init(
   path: string,
-  options: InitOptions
+  options: InitOptions,
 ): Promise<Repository> {
   // Implementation
 }
@@ -222,24 +230,24 @@ export async function init(
 Use Vitest for TypeScript tests:
 
 ```typescript
-import { describe, it, expect, beforeEach } from 'vitest';
-import { Repository } from '../src/repository';
+import { describe, it, expect, beforeEach } from "vitest";
+import { Repository } from "../src/repository";
 
-describe('Repository', () => {
+describe("Repository", () => {
   let repo: Repository;
 
   beforeEach(async () => {
-    repo = await Repository.init('/test-repo', { storage: 'memory' });
+    repo = await Repository.init("/test-repo", { storage: "memory" });
   });
 
-  it('should initialize with correct default branch', () => {
-    expect(repo.currentBranch()).toBe('main');
+  it("should initialize with correct default branch", () => {
+    expect(repo.currentBranch()).toBe("main");
   });
 
-  it('should commit changes successfully', async () => {
-    await repo.add(['file.txt']);
-    const commit = await repo.commit('Test commit');
-    expect(commit.message).toBe('Test commit');
+  it("should commit changes successfully", async () => {
+    await repo.add(["file.txt"]);
+    const commit = await repo.commit("Test commit");
+    expect(commit.message).toBe("Test commit");
   });
 });
 ```
@@ -336,17 +344,20 @@ Fixes #456
 ### Before Submitting
 
 1. Update your branch with latest upstream:
+
    ```bash
    git fetch upstream
    git rebase upstream/main
    ```
 
 2. Ensure all tests pass:
+
    ```bash
    yarn test
    ```
 
 3. Verify code quality:
+
    ```bash
    yarn lint
    yarn typecheck
@@ -359,6 +370,7 @@ Fixes #456
 ### Submitting a Pull Request
 
 1. Push your branch to your fork:
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -411,6 +423,7 @@ Releases are handled by maintainers:
 ## Recognition
 
 Contributors will be recognized in:
+
 - Project README.md
 - Release notes
 - GitHub contributors page

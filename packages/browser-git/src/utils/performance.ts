@@ -63,7 +63,7 @@ export class PerformanceMonitor {
   async measure<T>(
     operation: string,
     fn: () => Promise<T>,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<T> {
     if (!this.enabled) {
       return fn();
@@ -91,7 +91,7 @@ export class PerformanceMonitor {
   measureSync<T>(
     operation: string,
     fn: () => T,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): T {
     if (!this.enabled) {
       return fn();
@@ -134,7 +134,7 @@ export class PerformanceMonitor {
   recordMetric(
     operation: string,
     duration: number,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): void {
     if (!this.enabled) {
       return;
@@ -226,7 +226,7 @@ export class PerformanceMonitor {
     };
 
     // Chrome/Edge specific
-    if (typeof performance !== 'undefined' && 'memory' in performance) {
+    if (typeof performance !== "undefined" && "memory" in performance) {
       const memory = (performance as any).memory;
       snapshot.heapUsed = memory.usedJSHeapSize;
       snapshot.heapTotal = memory.totalJSHeapSize;
@@ -258,9 +258,9 @@ export class PerformanceMonitor {
     const operations = this.getOperations();
     const lines: string[] = [];
 
-    lines.push('Performance Report');
-    lines.push('=================');
-    lines.push('');
+    lines.push("Performance Report");
+    lines.push("=================");
+    lines.push("");
 
     for (const operation of operations) {
       const stats = this.getStats(operation);
@@ -275,10 +275,10 @@ export class PerformanceMonitor {
       lines.push(`  P50: ${stats.p50.toFixed(2)}ms`);
       lines.push(`  P95: ${stats.p95.toFixed(2)}ms`);
       lines.push(`  P99: ${stats.p99.toFixed(2)}ms`);
-      lines.push('');
+      lines.push("");
     }
 
-    return lines.join('\n');
+    return lines.join("\n");
   }
 
   /**
@@ -296,7 +296,7 @@ export class PerformanceMonitor {
    * Get current timestamp
    */
   private now(): number {
-    return typeof performance !== 'undefined' && performance.now
+    return typeof performance !== "undefined" && performance.now
       ? performance.now()
       : Date.now();
   }
@@ -336,7 +336,7 @@ export class PerformanceMonitor {
 
     if (target && duration > target) {
       console.warn(
-        `Performance warning: ${operation} took ${duration.toFixed(2)}ms (target: ${target}ms)`
+        `Performance warning: ${operation} took ${duration.toFixed(2)}ms (target: ${target}ms)`,
       );
     }
   }
@@ -354,15 +354,14 @@ export function measured(operation?: string) {
   return function (
     target: any,
     propertyKey: string,
-    descriptor: PropertyDescriptor
+    descriptor: PropertyDescriptor,
   ) {
     const originalMethod = descriptor.value;
     const opName = operation || `${target.constructor.name}.${propertyKey}`;
 
     descriptor.value = async function (...args: any[]) {
-      return performanceMonitor.measure(
-        opName,
-        () => originalMethod.apply(this, args)
+      return performanceMonitor.measure(opName, () =>
+        originalMethod.apply(this, args),
       );
     };
 
@@ -383,7 +382,7 @@ export class BatchProcessor<T, R> {
   constructor(
     processor: (items: T[]) => Promise<R[]>,
     batchSize: number = 100,
-    batchDelay: number = 10
+    batchDelay: number = 10,
   ) {
     this.processor = processor;
     this.batchSize = batchSize;
@@ -409,7 +408,10 @@ export class BatchProcessor<T, R> {
         if (this.timeout !== null) {
           clearTimeout(this.timeout);
         }
-        this.timeout = setTimeout(() => this.processBatch(), this.batchDelay) as any;
+        this.timeout = setTimeout(
+          () => this.processBatch(),
+          this.batchDelay,
+        ) as any;
       }
     });
   }
@@ -465,7 +467,7 @@ export class BatchProcessor<T, R> {
  */
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
-  wait: number
+  wait: number,
 ): (...args: Parameters<T>) => void {
   let timeout: number | null = null;
 
@@ -485,7 +487,7 @@ export function debounce<T extends (...args: any[]) => any>(
  */
 export function throttle<T extends (...args: any[]) => any>(
   func: T,
-  limit: number
+  limit: number,
 ): (...args: Parameters<T>) => void {
   let inThrottle: boolean = false;
 
@@ -503,9 +505,7 @@ export function throttle<T extends (...args: any[]) => any>(
 /**
  * Memoize function results
  */
-export function memoize<T extends (...args: any[]) => any>(
-  func: T
-): T {
+export function memoize<T extends (...args: any[]) => any>(func: T): T {
   const cache = new Map<string, any>();
 
   return function (this: any, ...args: Parameters<T>): ReturnType<T> {

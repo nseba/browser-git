@@ -3,13 +3,13 @@
  */
 export enum ChangeType {
   /** Content was added */
-  Add = 'add',
+  Add = "add",
   /** Content was deleted */
-  Delete = 'delete',
+  Delete = "delete",
   /** Content was modified */
-  Modify = 'modify',
+  Modify = "modify",
   /** Content remained unchanged (context) */
-  Equal = 'equal',
+  Equal = "equal",
 }
 
 /**
@@ -95,7 +95,7 @@ export interface DiffOptions {
  */
 export interface FormatOptions {
   /** Format style (unified, side-by-side, etc.) */
-  format?: 'unified' | 'side-by-side' | 'json';
+  format?: "unified" | "side-by-side" | "json";
   /** Number of context lines (default: 3) */
   context?: number;
   /** Whether to show line numbers */

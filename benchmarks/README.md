@@ -27,6 +27,7 @@ Benchmarks for storage adapter implementations:
 - **Delete Performance**: Measures deletion speed
 
 Adapters tested:
+
 - MemoryAdapter
 - IndexedDBAdapter
 - LocalStorageAdapter
@@ -44,6 +45,7 @@ Benchmarks for filesystem operations:
 ## Interpreting Results
 
 Benchmark results show:
+
 - **ops/sec**: Operations per second (higher is better)
 - **avg time**: Average execution time (lower is better)
 - **min/max**: Fastest and slowest times
@@ -54,11 +56,13 @@ Benchmark results show:
 Expected performance targets:
 
 ### Storage Adapters
+
 - MemoryAdapter: >10,000 ops/sec for small data
 - IndexedDBAdapter: >1,000 ops/sec for small data
 - LocalStorageAdapter: >500 ops/sec for small data
 
 ### Filesystem
+
 - Small file operations (<1KB): >5,000 ops/sec
 - Medium file operations (10KB): >1,000 ops/sec
 - Large file operations (100KB): >100 ops/sec
@@ -75,7 +79,7 @@ Benchmarks can be run in CI to track performance over time:
 - name: Store benchmark results
   uses: benchmark-action/github-action-benchmark@v1
   with:
-    tool: 'vitest'
+    tool: "vitest"
     output-file-path: benchmarks.json
 ```
 
@@ -86,10 +90,10 @@ Benchmarks can be run in CI to track performance over time:
 3. Write benchmark suites:
 
 ```typescript
-import { bench, describe } from 'vitest';
+import { bench, describe } from "vitest";
 
-describe('My Component', () => {
-  bench('operation name', async () => {
+describe("My Component", () => {
+  bench("operation name", async () => {
     // Code to benchmark
   });
 });

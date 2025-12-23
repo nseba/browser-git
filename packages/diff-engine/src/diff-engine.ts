@@ -1,5 +1,5 @@
-import * as Diff from 'diff';
-import type { IDiffEngine } from './interface.js';
+import * as Diff from "diff";
+import type { IDiffEngine } from "./interface.js";
 import type {
   DiffResult,
   DiffOptions,
@@ -9,17 +9,10 @@ import type {
   DiffHunk,
   Change,
   WordChange,
-} from './types.js';
-import { ChangeType } from './types.js';
-import {
-  splitLines,
-  normalizeWhitespace,
-} from './utils/text.js';
-import {
-  isBinary,
-  uint8ArrayToString,
-  formatSize,
-} from './utils/binary.js';
+} from "./types.js";
+import { ChangeType } from "./types.js";
+import { splitLines, normalizeWhitespace } from "./utils/text.js";
+import { isBinary, uint8ArrayToString, formatSize } from "./utils/binary.js";
 
 /**
  * Myers diff algorithm implementation using the `diff` library
@@ -31,7 +24,7 @@ export class MyersDiffEngine implements IDiffEngine {
   diff(
     oldText: string,
     newText: string,
-    options: DiffOptions = {}
+    options: DiffOptions = {},
   ): DiffResult | BinaryDiffResult {
     // Apply whitespace normalization if requested
     let oldProcessed = oldText;
@@ -85,7 +78,7 @@ export class MyersDiffEngine implements IDiffEngine {
   diffFiles(
     oldFile: Uint8Array,
     newFile: Uint8Array,
-    options: DiffOptions = {}
+    options: DiffOptions = {},
   ): DiffResult | BinaryDiffResult {
     // Check for binary content
     if (isBinary(oldFile) || isBinary(newFile)) {
@@ -111,7 +104,7 @@ export class MyersDiffEngine implements IDiffEngine {
   diffWords(
     oldLine: string,
     newLine: string,
-    options: DiffOptions = {}
+    options: DiffOptions = {},
   ): LineWithWordChanges {
     const diffResult = Diff.diffWords(oldLine, newLine, {
       ignoreCase: options.ignoreCase,
@@ -124,8 +117,8 @@ export class MyersDiffEngine implements IDiffEngine {
       const type = part.added
         ? ChangeType.Add
         : part.removed
-        ? ChangeType.Delete
-        : ChangeType.Equal;
+          ? ChangeType.Delete
+          : ChangeType.Equal;
 
       words.push({
         type,
@@ -148,20 +141,20 @@ export class MyersDiffEngine implements IDiffEngine {
    */
   format(
     diff: DiffResult | BinaryDiffResult,
-    options: FormatOptions = {}
+    options: FormatOptions = {},
   ): string {
     if (diff.isBinary) {
       return this.formatBinaryDiff(diff as BinaryDiffResult);
     }
 
-    const format = options.format || 'unified';
+    const format = options.format || "unified";
 
     switch (format) {
-      case 'unified':
+      case "unified":
         return this.formatUnified(diff as DiffResult, options);
-      case 'side-by-side':
+      case "side-by-side":
         return this.formatSideBySide(diff as DiffResult, options);
-      case 'json':
+      case "json":
         return JSON.stringify(diff, null, 2);
       default:
         return this.formatUnified(diff as DiffResult, options);
@@ -227,8 +220,8 @@ export class MyersDiffEngine implements IDiffEngine {
       }
 
       // Preserve trailing newline from original text
-      const patchedText = result.join('\n');
-      return oldText.endsWith('\n') ? patchedText + '\n' : patchedText;
+      const patchedText = result.join("\n");
+      return oldText.endsWith("\n") ? patchedText + "\n" : patchedText;
     } catch (error) {
       return null;
     }
@@ -239,7 +232,7 @@ export class MyersDiffEngine implements IDiffEngine {
    */
   private convertToHunks(
     diffResult: Diff.Change[],
-    options: DiffOptions
+    options: DiffOptions,
   ): DiffHunk[] {
     const context = options.context ?? 3;
     const hunks: DiffHunk[] = [];
@@ -252,14 +245,14 @@ export class MyersDiffEngine implements IDiffEngine {
       const type = part.added
         ? ChangeType.Add
         : part.removed
-        ? ChangeType.Delete
-        : ChangeType.Equal;
+          ? ChangeType.Delete
+          : ChangeType.Equal;
 
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
 
         // Skip empty last line from split
-        if (i === lines.length - 1 && line === '') {
+        if (i === lines.length - 1 && line === "") {
           continue;
         }
 
@@ -300,8 +293,13 @@ export class MyersDiffEngine implements IDiffEngine {
         } else {
           // Context line - add to current hunk or start new one
           if (currentHunk.changes.length > 0) {
-            const lastChange = currentHunk.changes[currentHunk.changes.length - 1];
-            if (lastChange && lastChange.type === ChangeType.Equal && (lastChange.count ?? 1) < context * 2) {
+            const lastChange =
+              currentHunk.changes[currentHunk.changes.length - 1];
+            if (
+              lastChange &&
+              lastChange.type === ChangeType.Equal &&
+              (lastChange.count ?? 1) < context * 2
+            ) {
               // Add to existing context
               lastChange.count = (lastChange.count ?? 1) + 1;
               currentHunk.oldLines++;
@@ -332,8 +330,8 @@ export class MyersDiffEngine implements IDiffEngine {
    */
   private formatUnified(diff: DiffResult, options: FormatOptions): string {
     const lines: string[] = [];
-    const oldPrefix = options.oldPrefix || '-';
-    const newPrefix = options.newPrefix || '+';
+    const oldPrefix = options.oldPrefix || "-";
+    const newPrefix = options.newPrefix || "+";
 
     if (diff.oldPath && diff.newPath) {
       lines.push(`--- ${diff.oldPath}`);
@@ -342,7 +340,7 @@ export class MyersDiffEngine implements IDiffEngine {
 
     for (const hunk of diff.hunks) {
       lines.push(
-        `@@ -${hunk.oldStart},${hunk.oldLines} +${hunk.newStart},${hunk.newLines} @@`
+        `@@ -${hunk.oldStart},${hunk.oldLines} +${hunk.newStart},${hunk.newLines} @@`,
       );
 
       for (const change of hunk.changes) {
@@ -350,15 +348,15 @@ export class MyersDiffEngine implements IDiffEngine {
           change.type === ChangeType.Add
             ? newPrefix
             : change.type === ChangeType.Delete
-            ? oldPrefix
-            : ' ';
+              ? oldPrefix
+              : " ";
 
-        const value = change.value ?? '';
+        const value = change.value ?? "";
         lines.push(`${prefix}${value}`);
       }
     }
 
-    return lines.join('\n');
+    return lines.join("\n");
   }
 
   /**
@@ -369,25 +367,27 @@ export class MyersDiffEngine implements IDiffEngine {
     const width = 80;
 
     for (const hunk of diff.hunks) {
-      lines.push(`@@ -${hunk.oldStart},${hunk.oldLines} +${hunk.newStart},${hunk.newLines} @@`);
-      lines.push('');
+      lines.push(
+        `@@ -${hunk.oldStart},${hunk.oldLines} +${hunk.newStart},${hunk.newLines} @@`,
+      );
+      lines.push("");
 
       for (const change of hunk.changes) {
-        const line = change.value ? change.value.padEnd(width) : '';
+        const line = change.value ? change.value.padEnd(width) : "";
         const indicator =
           change.type === ChangeType.Add
-            ? '+'
+            ? "+"
             : change.type === ChangeType.Delete
-            ? '-'
-            : ' ';
+              ? "-"
+              : " ";
 
         lines.push(`${indicator} ${line}`);
       }
 
-      lines.push('');
+      lines.push("");
     }
 
-    return lines.join('\n');
+    return lines.join("\n");
   }
 
   /**

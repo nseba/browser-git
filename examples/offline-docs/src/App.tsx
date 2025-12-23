@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { Repository } from '@browser-git/browser-git';
-import { marked } from 'marked';
-import DocumentList from './components/DocumentList';
-import MarkdownEditor from './components/MarkdownEditor';
-import VersionHistory from './components/VersionHistory';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import { Repository } from "@browser-git/browser-git";
+import { marked } from "marked";
+import DocumentList from "./components/DocumentList";
+import MarkdownEditor from "./components/MarkdownEditor";
+import VersionHistory from "./components/VersionHistory";
+import "./App.css";
 
 const App: React.FC = () => {
   const [repo, setRepo] = useState<Repository | null>(null);
   const [docs, setDocs] = useState<string[]>([]);
   const [currentDoc, setCurrentDoc] = useState<string | null>(null);
-  const [content, setContent] = useState<string>('');
+  const [content, setContent] = useState<string>("");
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
   useEffect(() => {
@@ -21,24 +21,24 @@ const App: React.FC = () => {
     try {
       let repository: Repository;
       try {
-        repository = await Repository.open('/offline-docs');
+        repository = await Repository.open("/offline-docs");
       } catch {
-        repository = await Repository.init('/offline-docs', {
-          storage: 'indexeddb',
-          initialBranch: 'main',
+        repository = await Repository.init("/offline-docs", {
+          storage: "indexeddb",
+          initialBranch: "main",
         });
 
         // Create initial documentation
-        await repository.fs.writeFile('README.md', getInitialReadme());
-        await repository.add(['README.md']);
-        await repository.commit('Initial documentation', {
-          author: { name: 'Docs Admin', email: 'admin@docs.local' },
+        await repository.fs.writeFile("README.md", getInitialReadme());
+        await repository.add(["README.md"]);
+        await repository.commit("Initial documentation", {
+          author: { name: "Docs Admin", email: "admin@docs.local" },
         });
       }
       setRepo(repository);
       await refreshDocs(repository);
     } catch (error) {
-      console.error('Failed to initialize repository:', error);
+      console.error("Failed to initialize repository:", error);
     }
   };
 
@@ -81,11 +81,11 @@ console.log('Hello, BrowserGit!');
 
   const refreshDocs = async (repository: Repository) => {
     try {
-      const files = await repository.fs.readdir('/');
-      const mdFiles = files.filter(f => f.endsWith('.md'));
+      const files = await repository.fs.readdir("/");
+      const mdFiles = files.filter((f) => f.endsWith(".md"));
       setDocs(mdFiles);
     } catch (error) {
-      console.error('Failed to read docs:', error);
+      console.error("Failed to read docs:", error);
     }
   };
 
@@ -93,26 +93,26 @@ console.log('Hello, BrowserGit!');
     if (!repo) return;
 
     try {
-      const docContent = await repo.fs.readFile(docName, 'utf-8');
+      const docContent = await repo.fs.readFile(docName, "utf-8");
       setCurrentDoc(docName);
       setContent(docContent);
       setIsEditing(false);
     } catch (error) {
-      console.error('Failed to read document:', error);
+      console.error("Failed to read document:", error);
     }
   };
 
   const handleNewDoc = async () => {
-    const docName = prompt('Enter document name (e.g., guide.md):');
+    const docName = prompt("Enter document name (e.g., guide.md):");
     if (!docName || !repo) return;
 
-    if (!docName.endsWith('.md')) {
-      alert('Document name must end with .md');
+    if (!docName.endsWith(".md")) {
+      alert("Document name must end with .md");
       return;
     }
 
     try {
-      const template = `# ${docName.replace('.md', '')}\n\nYour content here...`;
+      const template = `# ${docName.replace(".md", "")}\n\nYour content here...`;
       await repo.fs.writeFile(docName, template);
       await refreshDocs(repo);
       setCurrentDoc(docName);
@@ -126,17 +126,17 @@ console.log('Hello, BrowserGit!');
   const handleSave = async () => {
     if (!repo || !currentDoc) return;
 
-    const commitMsg = prompt('Commit message:', `Update ${currentDoc}`);
+    const commitMsg = prompt("Commit message:", `Update ${currentDoc}`);
     if (!commitMsg) return;
 
     try {
       await repo.fs.writeFile(currentDoc, content);
       await repo.add([currentDoc]);
       await repo.commit(commitMsg, {
-        author: { name: 'Docs User', email: 'user@docs.local' },
+        author: { name: "Docs User", email: "user@docs.local" },
       });
       setIsEditing(false);
-      alert('Document saved and committed!');
+      alert("Document saved and committed!");
     } catch (error) {
       alert(`Failed to save: ${(error as Error).message}`);
     }
@@ -146,7 +146,7 @@ console.log('Hello, BrowserGit!');
     try {
       return marked(markdown) as string;
     } catch (error) {
-      return '<p>Error rendering markdown</p>';
+      return "<p>Error rendering markdown</p>";
     }
   };
 
@@ -159,7 +159,7 @@ console.log('Hello, BrowserGit!');
           {currentDoc && (
             <>
               <button onClick={() => setIsEditing(!isEditing)}>
-                {isEditing ? 'Preview' : 'Edit'}
+                {isEditing ? "Preview" : "Edit"}
               </button>
               {isEditing && (
                 <button onClick={handleSave} className="save-btn">

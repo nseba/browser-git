@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Repository } from '@browser-git/browser-git';
+import React, { useState, useEffect } from "react";
+import { Repository } from "@browser-git/browser-git";
 
 interface VersionHistoryProps {
   repo: Repository | null;
   currentDoc: string | null;
 }
 
-const VersionHistory: React.FC<VersionHistoryProps> = ({ repo, currentDoc }) => {
+const VersionHistory: React.FC<VersionHistoryProps> = ({
+  repo,
+  currentDoc,
+}) => {
   const [commits, setCommits] = useState<any[]>([]);
 
   useEffect(() => {
@@ -24,7 +27,7 @@ const VersionHistory: React.FC<VersionHistoryProps> = ({ repo, currentDoc }) => 
       const log = await repo.log({ maxCount: 20 });
       setCommits(log);
     } catch (error) {
-      console.error('Failed to load history:', error);
+      console.error("Failed to load history:", error);
     }
   };
 
@@ -32,14 +35,14 @@ const VersionHistory: React.FC<VersionHistoryProps> = ({ repo, currentDoc }) => 
     if (!repo || !currentDoc) return;
 
     const confirmed = window.confirm(
-      `Restore ${currentDoc} to version ${commit.hash.substring(0, 7)}?`
+      `Restore ${currentDoc} to version ${commit.hash.substring(0, 7)}?`,
     );
 
     if (!confirmed) return;
 
     try {
       await repo.checkout(commit.hash, { paths: [currentDoc] });
-      alert('Document restored! Reload the page to see changes.');
+      alert("Document restored! Reload the page to see changes.");
       window.location.reload();
     } catch (error) {
       alert(`Failed to restore: ${(error as Error).message}`);
@@ -55,7 +58,7 @@ const VersionHistory: React.FC<VersionHistoryProps> = ({ repo, currentDoc }) => 
       <h3>Version History</h3>
       {currentDoc ? (
         commits.length > 0 ? (
-          commits.map(commit => (
+          commits.map((commit) => (
             <div
               key={commit.hash}
               className="commit-item"
@@ -63,17 +66,23 @@ const VersionHistory: React.FC<VersionHistoryProps> = ({ repo, currentDoc }) => 
               title="Click to restore this version"
             >
               <div className="commit-hash">{commit.hash.substring(0, 7)}</div>
-              <div className="commit-message">{commit.message.split('\n')[0]}</div>
+              <div className="commit-message">
+                {commit.message.split("\n")[0]}
+              </div>
               <div className="commit-meta">
                 {commit.author.name} • {formatDate(commit.date)}
               </div>
             </div>
           ))
         ) : (
-          <div style={{ color: '#999', fontSize: '0.85rem' }}>No commits yet</div>
+          <div style={{ color: "#999", fontSize: "0.85rem" }}>
+            No commits yet
+          </div>
         )
       ) : (
-        <div style={{ color: '#999', fontSize: '0.85rem' }}>Select a document</div>
+        <div style={{ color: "#999", fontSize: "0.85rem" }}>
+          Select a document
+        </div>
       )}
     </div>
   );

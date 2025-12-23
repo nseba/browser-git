@@ -4,13 +4,13 @@
  * Browser-based Git implementation with file system API
  */
 
-export * from './filesystem/index.js';
-export * from './types/index.js';
-export * from './repository.js';
+export * from "./filesystem/index.js";
+export * from "./types/index.js";
+export * from "./repository.js";
 
 // Browser feature detection and performance monitoring
-export * from './utils/browser-features.js';
-export * from './utils/performance.js';
+export * from "./utils/browser-features.js";
+export * from "./utils/performance.js";
 
 // Re-export diff-engine for convenient access
 export {
@@ -28,4 +28,4 @@ export {
   type Change,
   type WordChange,
   type LineWithWordChanges,
-} from '@browser-git/diff-engine';
+} from "@browser-git/diff-engine";

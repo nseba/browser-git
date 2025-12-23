@@ -1,9 +1,5 @@
-import type {
-  StorageAdapter,
-  
-  StorageQuota,
-} from './interface.js';
-import { StorageError, StorageErrorCode } from './interface.js';
+import type { StorageAdapter, StorageQuota } from "./interface.js";
+import { StorageError, StorageErrorCode } from "./interface.js";
 
 /**
  * IndexedDB storage adapter.
@@ -11,11 +7,11 @@ import { StorageError, StorageErrorCode } from './interface.js';
  */
 export class IndexedDBAdapter implements StorageAdapter {
   private dbName: string;
-  private storeName = 'storage';
+  private storeName = "storage";
   private db: IDBDatabase | null = null;
   private initPromise: Promise<void> | null = null;
 
-  constructor(name: string = 'browser-git') {
+  constructor(name: string = "browser-git") {
     this.dbName = `bg-${name}`;
   }
 
@@ -32,12 +28,12 @@ export class IndexedDBAdapter implements StorageAdapter {
     }
 
     this.initPromise = new Promise<void>((resolve, reject) => {
-      if (typeof indexedDB === 'undefined') {
+      if (typeof indexedDB === "undefined") {
         reject(
           new StorageError(
-            'IndexedDB is not available in this environment',
-            StorageErrorCode.NOT_SUPPORTED
-          )
+            "IndexedDB is not available in this environment",
+            StorageErrorCode.NOT_SUPPORTED,
+          ),
         );
         return;
       }
@@ -47,10 +43,10 @@ export class IndexedDBAdapter implements StorageAdapter {
       request.onerror = () => {
         reject(
           new StorageError(
-            'Failed to open IndexedDB',
+            "Failed to open IndexedDB",
             StorageErrorCode.OPERATION_FAILED,
-            request.error
-          )
+            request.error,
+          ),
         );
       };
 
@@ -76,14 +72,14 @@ export class IndexedDBAdapter implements StorageAdapter {
    * Get a transaction for the object store.
    */
   private async getTransaction(
-    mode: IDBTransactionMode
+    mode: IDBTransactionMode,
   ): Promise<IDBObjectStore> {
     await this.init();
 
     if (!this.db) {
       throw new StorageError(
-        'Database not initialized',
-        StorageErrorCode.OPERATION_FAILED
+        "Database not initialized",
+        StorageErrorCode.OPERATION_FAILED,
       );
     }
 
@@ -93,7 +89,7 @@ export class IndexedDBAdapter implements StorageAdapter {
 
   async get(key: string): Promise<Uint8Array | null> {
     try {
-      const store = await this.getTransaction('readonly');
+      const store = await this.getTransaction("readonly");
       const request = store.get(key);
 
       return new Promise<Uint8Array | null>((resolve, reject) => {
@@ -111,8 +107,8 @@ export class IndexedDBAdapter implements StorageAdapter {
             new StorageError(
               `Failed to get key: ${key}`,
               StorageErrorCode.OPERATION_FAILED,
-              request.error
-            )
+              request.error,
+            ),
           );
         };
       });
@@ -123,14 +119,14 @@ export class IndexedDBAdapter implements StorageAdapter {
       throw new StorageError(
         `Failed to get key: ${key}`,
         StorageErrorCode.OPERATION_FAILED,
-        error
+        error,
       );
     }
   }
 
   async set(key: string, value: Uint8Array): Promise<void> {
     try {
-      const store = await this.getTransaction('readwrite');
+      const store = await this.getTransaction("readwrite");
       const request = store.put(value.buffer, key);
 
       return new Promise<void>((resolve, reject) => {
@@ -141,23 +137,23 @@ export class IndexedDBAdapter implements StorageAdapter {
         request.onerror = () => {
           // Check for quota exceeded error
           if (
-            request.error?.name === 'QuotaExceededError' ||
-            request.error?.name === 'NS_ERROR_DOM_QUOTA_REACHED'
+            request.error?.name === "QuotaExceededError" ||
+            request.error?.name === "NS_ERROR_DOM_QUOTA_REACHED"
           ) {
             reject(
               new StorageError(
-                'Storage quota exceeded',
+                "Storage quota exceeded",
                 StorageErrorCode.QUOTA_EXCEEDED,
-                request.error
-              )
+                request.error,
+              ),
             );
           } else {
             reject(
               new StorageError(
                 `Failed to set key: ${key}`,
                 StorageErrorCode.OPERATION_FAILED,
-                request.error
-              )
+                request.error,
+              ),
             );
           }
         };
@@ -169,14 +165,14 @@ export class IndexedDBAdapter implements StorageAdapter {
       throw new StorageError(
         `Failed to set key: ${key}`,
         StorageErrorCode.OPERATION_FAILED,
-        error
+        error,
       );
     }
   }
 
   async delete(key: string): Promise<void> {
     try {
-      const store = await this.getTransaction('readwrite');
+      const store = await this.getTransaction("readwrite");
       const request = store.delete(key);
 
       return new Promise<void>((resolve, reject) => {
@@ -189,8 +185,8 @@ export class IndexedDBAdapter implements StorageAdapter {
             new StorageError(
               `Failed to delete key: ${key}`,
               StorageErrorCode.OPERATION_FAILED,
-              request.error
-            )
+              request.error,
+            ),
           );
         };
       });
@@ -201,14 +197,14 @@ export class IndexedDBAdapter implements StorageAdapter {
       throw new StorageError(
         `Failed to delete key: ${key}`,
         StorageErrorCode.OPERATION_FAILED,
-        error
+        error,
       );
     }
   }
 
   async list(prefix?: string): Promise<string[]> {
     try {
-      const store = await this.getTransaction('readonly');
+      const store = await this.getTransaction("readonly");
       const request = store.getAllKeys();
 
       return new Promise<string[]>((resolve, reject) => {
@@ -225,10 +221,10 @@ export class IndexedDBAdapter implements StorageAdapter {
         request.onerror = () => {
           reject(
             new StorageError(
-              'Failed to list keys',
+              "Failed to list keys",
               StorageErrorCode.OPERATION_FAILED,
-              request.error
-            )
+              request.error,
+            ),
           );
         };
       });
@@ -237,16 +233,16 @@ export class IndexedDBAdapter implements StorageAdapter {
         throw error;
       }
       throw new StorageError(
-        'Failed to list keys',
+        "Failed to list keys",
         StorageErrorCode.OPERATION_FAILED,
-        error
+        error,
       );
     }
   }
 
   async exists(key: string): Promise<boolean> {
     try {
-      const store = await this.getTransaction('readonly');
+      const store = await this.getTransaction("readonly");
       const request = store.getKey(key);
 
       return new Promise<boolean>((resolve, reject) => {
@@ -259,8 +255,8 @@ export class IndexedDBAdapter implements StorageAdapter {
             new StorageError(
               `Failed to check existence of key: ${key}`,
               StorageErrorCode.OPERATION_FAILED,
-              request.error
-            )
+              request.error,
+            ),
           );
         };
       });
@@ -271,14 +267,14 @@ export class IndexedDBAdapter implements StorageAdapter {
       throw new StorageError(
         `Failed to check existence of key: ${key}`,
         StorageErrorCode.OPERATION_FAILED,
-        error
+        error,
       );
     }
   }
 
   async clear(): Promise<void> {
     try {
-      const store = await this.getTransaction('readwrite');
+      const store = await this.getTransaction("readwrite");
       const request = store.clear();
 
       return new Promise<void>((resolve, reject) => {
@@ -289,10 +285,10 @@ export class IndexedDBAdapter implements StorageAdapter {
         request.onerror = () => {
           reject(
             new StorageError(
-              'Failed to clear storage',
+              "Failed to clear storage",
               StorageErrorCode.OPERATION_FAILED,
-              request.error
-            )
+              request.error,
+            ),
           );
         };
       });
@@ -301,9 +297,9 @@ export class IndexedDBAdapter implements StorageAdapter {
         throw error;
       }
       throw new StorageError(
-        'Failed to clear storage',
+        "Failed to clear storage",
         StorageErrorCode.OPERATION_FAILED,
-        error
+        error,
       );
     }
   }

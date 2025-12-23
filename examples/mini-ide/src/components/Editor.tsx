@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface EditorProps {
   filename: string | null;
@@ -9,9 +9,7 @@ interface EditorProps {
 const Editor: React.FC<EditorProps> = ({ filename, content, onChange }) => {
   return (
     <div className="editor">
-      <div className="editor-header">
-        {filename || 'No file selected'}
-      </div>
+      <div className="editor-header">{filename || "No file selected"}</div>
       <textarea
         value={content}
         onChange={(e) => onChange(e.target.value)}

@@ -1,9 +1,5 @@
-import type {
-  StorageAdapter,
-  
-  StorageQuota,
-} from './interface.js';
-import { StorageError, StorageErrorCode } from './interface.js';
+import type { StorageAdapter, StorageQuota } from "./interface.js";
+import { StorageError, StorageErrorCode } from "./interface.js";
 
 /**
  * LocalStorage adapter.
@@ -14,7 +10,7 @@ export class LocalStorageAdapter implements StorageAdapter {
   private prefix: string;
   private readonly maxSize = 5 * 1024 * 1024; // 5MB approximate limit
 
-  constructor(name: string = 'browser-git') {
+  constructor(name: string = "browser-git") {
     this.prefix = `bg-${name}:`;
   }
 
@@ -53,7 +49,7 @@ export class LocalStorageAdapter implements StorageAdapter {
   private encode(data: Uint8Array): string {
     const binary = Array.from(data)
       .map((byte) => String.fromCharCode(byte))
-      .join('');
+      .join("");
     return btoa(binary);
   }
 
@@ -71,10 +67,10 @@ export class LocalStorageAdapter implements StorageAdapter {
 
   async get(key: string): Promise<Uint8Array | null> {
     try {
-      if (typeof localStorage === 'undefined') {
+      if (typeof localStorage === "undefined") {
         throw new StorageError(
-          'localStorage is not available',
-          StorageErrorCode.NOT_SUPPORTED
+          "localStorage is not available",
+          StorageErrorCode.NOT_SUPPORTED,
         );
       }
 
@@ -93,17 +89,17 @@ export class LocalStorageAdapter implements StorageAdapter {
       throw new StorageError(
         `Failed to get key: ${key}`,
         StorageErrorCode.OPERATION_FAILED,
-        error
+        error,
       );
     }
   }
 
   async set(key: string, value: Uint8Array): Promise<void> {
     try {
-      if (typeof localStorage === 'undefined') {
+      if (typeof localStorage === "undefined") {
         throw new StorageError(
-          'localStorage is not available',
-          StorageErrorCode.NOT_SUPPORTED
+          "localStorage is not available",
+          StorageErrorCode.NOT_SUPPORTED,
         );
       }
 
@@ -113,8 +109,8 @@ export class LocalStorageAdapter implements StorageAdapter {
 
       if (this.getUsageEstimate() + estimatedSize > this.maxSize) {
         throw new StorageError(
-          'Storage quota would be exceeded',
-          StorageErrorCode.QUOTA_EXCEEDED
+          "Storage quota would be exceeded",
+          StorageErrorCode.QUOTA_EXCEEDED,
         );
       }
 
@@ -127,30 +123,30 @@ export class LocalStorageAdapter implements StorageAdapter {
 
       // Check for quota exceeded errors
       if (
-        (error as {name?: string}).name === 'QuotaExceededError' ||
-        (error as {name?: string}).name === 'NS_ERROR_DOM_QUOTA_REACHED'
+        (error as { name?: string }).name === "QuotaExceededError" ||
+        (error as { name?: string }).name === "NS_ERROR_DOM_QUOTA_REACHED"
       ) {
         throw new StorageError(
-          'Storage quota exceeded',
+          "Storage quota exceeded",
           StorageErrorCode.QUOTA_EXCEEDED,
-          error
+          error,
         );
       }
 
       throw new StorageError(
         `Failed to set key: ${key}`,
         StorageErrorCode.OPERATION_FAILED,
-        error
+        error,
       );
     }
   }
 
   async delete(key: string): Promise<void> {
     try {
-      if (typeof localStorage === 'undefined') {
+      if (typeof localStorage === "undefined") {
         throw new StorageError(
-          'localStorage is not available',
-          StorageErrorCode.NOT_SUPPORTED
+          "localStorage is not available",
+          StorageErrorCode.NOT_SUPPORTED,
         );
       }
 
@@ -163,17 +159,17 @@ export class LocalStorageAdapter implements StorageAdapter {
       throw new StorageError(
         `Failed to delete key: ${key}`,
         StorageErrorCode.OPERATION_FAILED,
-        error
+        error,
       );
     }
   }
 
   async list(prefix?: string): Promise<string[]> {
     try {
-      if (typeof localStorage === 'undefined') {
+      if (typeof localStorage === "undefined") {
         throw new StorageError(
-          'localStorage is not available',
-          StorageErrorCode.NOT_SUPPORTED
+          "localStorage is not available",
+          StorageErrorCode.NOT_SUPPORTED,
         );
       }
 
@@ -196,19 +192,19 @@ export class LocalStorageAdapter implements StorageAdapter {
         throw error;
       }
       throw new StorageError(
-        'Failed to list keys',
+        "Failed to list keys",
         StorageErrorCode.OPERATION_FAILED,
-        error
+        error,
       );
     }
   }
 
   async exists(key: string): Promise<boolean> {
     try {
-      if (typeof localStorage === 'undefined') {
+      if (typeof localStorage === "undefined") {
         throw new StorageError(
-          'localStorage is not available',
-          StorageErrorCode.NOT_SUPPORTED
+          "localStorage is not available",
+          StorageErrorCode.NOT_SUPPORTED,
         );
       }
 
@@ -221,17 +217,17 @@ export class LocalStorageAdapter implements StorageAdapter {
       throw new StorageError(
         `Failed to check existence of key: ${key}`,
         StorageErrorCode.OPERATION_FAILED,
-        error
+        error,
       );
     }
   }
 
   async clear(): Promise<void> {
     try {
-      if (typeof localStorage === 'undefined') {
+      if (typeof localStorage === "undefined") {
         throw new StorageError(
-          'localStorage is not available',
-          StorageErrorCode.NOT_SUPPORTED
+          "localStorage is not available",
+          StorageErrorCode.NOT_SUPPORTED,
         );
       }
 
@@ -253,9 +249,9 @@ export class LocalStorageAdapter implements StorageAdapter {
         throw error;
       }
       throw new StorageError(
-        'Failed to clear storage',
+        "Failed to clear storage",
         StorageErrorCode.OPERATION_FAILED,
-        error
+        error,
       );
     }
   }
@@ -278,13 +274,13 @@ export class LocalStorageAdapter implements StorageAdapter {
    */
   static isSupported(): boolean {
     try {
-      if (typeof localStorage === 'undefined') {
+      if (typeof localStorage === "undefined") {
         return false;
       }
 
       // Test if we can actually write to localStorage
-      const testKey = '__bg_test__';
-      localStorage.setItem(testKey, 'test');
+      const testKey = "__bg_test__";
+      localStorage.setItem(testKey, "test");
       localStorage.removeItem(testKey);
       return true;
     } catch {

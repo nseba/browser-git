@@ -12,6 +12,7 @@ Generate detailed, executable task lists from Product Requirements Documents wit
 ### When to Use
 
 Activate this skill when:
+
 - User points to a specific PRD file
 - User asks to "generate tasks from PRD"
 - User says "create implementation plan"
@@ -46,11 +47,11 @@ Activate this skill when:
    - Break down each parent into actionable steps
    - Include implementation details
    - Add quality verification steps for EACH parent task:
-     * Lint verification sub-task
-     * Test suite verification sub-task
-     * Build verification sub-task
-     * System functionality check
-     * Docker/Helm update if needed
+     - Lint verification sub-task
+     - Test suite verification sub-task
+     - Build verification sub-task
+     - System functionality check
+     - Docker/Helm update if needed
 
 6. **Identify Relevant Files**
    - List all files to create or modify
@@ -64,6 +65,7 @@ Activate this skill when:
 ### Task Structure Requirements
 
 Each parent task MUST include these final sub-tasks:
+
 ```markdown
 - [ ] X.Y Run linter and verify zero warnings
 - [ ] X.Y+1 Run full test suite and verify all tests pass
@@ -76,6 +78,7 @@ Each parent task MUST include these final sub-tasks:
 ### Execution Model
 
 **CRITICAL:** The task list enables automated execution:
+
 - Execute ALL sub-tasks under a parent automatically
 - Do NOT require permission between sub-tasks
 - ONLY pause for confirmation between parent tasks
@@ -111,7 +114,7 @@ Each parent task MUST include these final sub-tasks:
 - [ ] 2.0 Parent Task Title
   - [ ] 2.1 Sub-task description
   - [ ] 2.2 Sub-task description
-  ...
+        ...
 ```
 
 ## Examples
@@ -119,11 +122,13 @@ Each parent task MUST include these final sub-tasks:
 ### Example 1: Template System (Already Completed)
 
 **User Input:**
+
 ```
 Generate tasks from the prompt template PRD
 ```
 
 **Phase 1 Output (Parent Tasks):**
+
 ```markdown
 - [ ] 1.0 Create Prompt Template System
 - [ ] 2.0 Implement Configuration Management
@@ -140,6 +145,7 @@ Ready to generate sub-tasks? Respond with 'Go' to proceed.
 **User:** "Go"
 
 **Phase 2 Output (With Sub-Tasks):**
+
 ```markdown
 - [ ] 1.0 Create Prompt Template System
   - [ ] 1.1 Add dependencies to package.json
@@ -163,17 +169,20 @@ Ready to generate sub-tasks? Respond with 'Go' to proceed.
 ### Example 2: Simple Feature
 
 **User Input:**
+
 ```
 Generate tasks from 0005-prd-export-data.md
 ```
 
 **Analysis:**
+
 - PRD specifies JSON/CSV export
 - Needs new API endpoint
 - Requires background job for large exports
 - UI button in dashboard
 
 **Parent Tasks:**
+
 ```markdown
 - [ ] 1.0 Implement Export API Endpoint
 - [ ] 2.0 Create Background Export Job
@@ -182,6 +191,7 @@ Generate tasks from 0005-prd-export-data.md
 ```
 
 **Sub-Tasks for Task 1.0:**
+
 ```markdown
 - [ ] 1.0 Implement Export API Endpoint
   - [ ] 1.1 Create export service in libs/export/
@@ -199,17 +209,20 @@ Generate tasks from 0005-prd-export-data.md
 ### Example 3: Complex Integration
 
 **User Input:**
+
 ```
 Generate tasks for the real-time collaboration PRD
 ```
 
 **Codebase Analysis Findings:**
+
 - Existing WebSocket infrastructure in libs/websocket
 - Current project model in libs/project-models
 - Need conflict resolution strategy
 - Redis already available for pub/sub
 
 **Parent Tasks:**
+
 ```markdown
 - [ ] 1.0 Design Operational Transform System
 - [ ] 2.0 Implement WebSocket Collaboration Layer

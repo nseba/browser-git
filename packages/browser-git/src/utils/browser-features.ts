@@ -96,7 +96,7 @@ export async function detectBrowserCapabilities(): Promise<BrowserCapabilities> 
  */
 export function checkIndexedDB(): boolean {
   try {
-    return typeof indexedDB !== 'undefined' && indexedDB !== null;
+    return typeof indexedDB !== "undefined" && indexedDB !== null;
   } catch {
     return false;
   }
@@ -108,9 +108,9 @@ export function checkIndexedDB(): boolean {
 export async function checkOPFS(): Promise<boolean> {
   try {
     if (
-      typeof navigator !== 'undefined' &&
-      'storage' in navigator &&
-      'getDirectory' in (navigator.storage as any)
+      typeof navigator !== "undefined" &&
+      "storage" in navigator &&
+      "getDirectory" in (navigator.storage as any)
     ) {
       // Try to actually access OPFS
       const root = await (navigator.storage as any).getDirectory();
@@ -127,12 +127,12 @@ export async function checkOPFS(): Promise<boolean> {
  */
 export function checkLocalStorage(): boolean {
   try {
-    if (typeof localStorage === 'undefined') {
+    if (typeof localStorage === "undefined") {
       return false;
     }
     // Try to actually use it
-    const testKey = '__storage_test__';
-    localStorage.setItem(testKey, 'test');
+    const testKey = "__storage_test__";
+    localStorage.setItem(testKey, "test");
     localStorage.removeItem(testKey);
     return true;
   } catch {
@@ -145,12 +145,12 @@ export function checkLocalStorage(): boolean {
  */
 export function checkSessionStorage(): boolean {
   try {
-    if (typeof sessionStorage === 'undefined') {
+    if (typeof sessionStorage === "undefined") {
       return false;
     }
     // Try to actually use it
-    const testKey = '__storage_test__';
-    sessionStorage.setItem(testKey, 'test');
+    const testKey = "__storage_test__";
+    sessionStorage.setItem(testKey, "test");
     sessionStorage.removeItem(testKey);
     return true;
   } catch {
@@ -163,7 +163,10 @@ export function checkSessionStorage(): boolean {
  */
 export function checkWebAssembly(): boolean {
   try {
-    return typeof WebAssembly !== 'undefined' && typeof WebAssembly.instantiate === 'function';
+    return (
+      typeof WebAssembly !== "undefined" &&
+      typeof WebAssembly.instantiate === "function"
+    );
   } catch {
     return false;
   }
@@ -175,9 +178,9 @@ export function checkWebAssembly(): boolean {
 export function checkWasmStreaming(): boolean {
   try {
     return (
-      typeof WebAssembly !== 'undefined' &&
-      typeof WebAssembly.instantiateStreaming === 'function' &&
-      typeof WebAssembly.compileStreaming === 'function'
+      typeof WebAssembly !== "undefined" &&
+      typeof WebAssembly.instantiateStreaming === "function" &&
+      typeof WebAssembly.compileStreaming === "function"
     );
   } catch {
     return false;
@@ -190,14 +193,15 @@ export function checkWasmStreaming(): boolean {
 export async function checkWasmThreads(): Promise<boolean> {
   try {
     // Threads require SharedArrayBuffer
-    if (typeof SharedArrayBuffer === 'undefined') {
+    if (typeof SharedArrayBuffer === "undefined") {
       return false;
     }
 
     // Try to create a WASM module with threads
     // This is a simple test module with shared memory
     const source = new Uint8Array([
-      0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, 0x05, 0x04, 0x01, 0x03, 0x01, 0x01,
+      0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, 0x05, 0x04, 0x01, 0x03,
+      0x01, 0x01,
     ]);
 
     const module = await WebAssembly.instantiate(source);
@@ -229,7 +233,7 @@ export async function checkWasmSIMD(): Promise<boolean> {
  */
 export function checkCompressionStream(): boolean {
   try {
-    return typeof CompressionStream !== 'undefined';
+    return typeof CompressionStream !== "undefined";
   } catch {
     return false;
   }
@@ -240,7 +244,7 @@ export function checkCompressionStream(): boolean {
  */
 export function checkDecompressionStream(): boolean {
   try {
-    return typeof DecompressionStream !== 'undefined';
+    return typeof DecompressionStream !== "undefined";
   } catch {
     return false;
   }
@@ -251,7 +255,7 @@ export function checkDecompressionStream(): boolean {
  */
 export function checkWebCrypto(): boolean {
   try {
-    return typeof crypto !== 'undefined' && crypto !== null;
+    return typeof crypto !== "undefined" && crypto !== null;
   } catch {
     return false;
   }
@@ -263,9 +267,9 @@ export function checkWebCrypto(): boolean {
 export function checkSubtleCrypto(): boolean {
   try {
     return (
-      typeof crypto !== 'undefined' &&
+      typeof crypto !== "undefined" &&
       crypto !== null &&
-      'subtle' in crypto &&
+      "subtle" in crypto &&
       crypto.subtle !== null
     );
   } catch {
@@ -278,7 +282,7 @@ export function checkSubtleCrypto(): boolean {
  */
 export function checkWorkers(): boolean {
   try {
-    return typeof Worker !== 'undefined';
+    return typeof Worker !== "undefined";
   } catch {
     return false;
   }
@@ -289,7 +293,7 @@ export function checkWorkers(): boolean {
  */
 export function checkSharedArrayBuffer(): boolean {
   try {
-    return typeof SharedArrayBuffer !== 'undefined';
+    return typeof SharedArrayBuffer !== "undefined";
   } catch {
     return false;
   }
@@ -300,7 +304,7 @@ export function checkSharedArrayBuffer(): boolean {
  */
 export function checkStorageManager(): boolean {
   try {
-    return typeof navigator !== 'undefined' && 'storage' in navigator;
+    return typeof navigator !== "undefined" && "storage" in navigator;
   } catch {
     return false;
   }
@@ -327,7 +331,10 @@ export async function checkPersistentStorage(): Promise<boolean> {
  */
 export function checkPerformanceAPI(): boolean {
   try {
-    return typeof performance !== 'undefined' && typeof performance.now === 'function';
+    return (
+      typeof performance !== "undefined" &&
+      typeof performance.now === "function"
+    );
   } catch {
     return false;
   }
@@ -338,7 +345,7 @@ export function checkPerformanceAPI(): boolean {
  */
 export function checkPerformanceMemory(): boolean {
   try {
-    return typeof performance !== 'undefined' && 'memory' in performance;
+    return typeof performance !== "undefined" && "memory" in performance;
   } catch {
     return false;
   }
@@ -390,47 +397,47 @@ export async function requestPersistentStorage(): Promise<boolean> {
  * Detect browser information
  */
 export function detectBrowser(): BrowserInfo {
-  const ua = typeof navigator !== 'undefined' ? navigator.userAgent : '';
-  const platform = typeof navigator !== 'undefined' ? navigator.platform : '';
+  const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
+  const platform = typeof navigator !== "undefined" ? navigator.platform : "";
 
   // Detect browser name and version
-  let name = 'Unknown';
-  let version = 'Unknown';
-  let engine = 'Unknown';
+  let name = "Unknown";
+  let version = "Unknown";
+  let engine = "Unknown";
 
   // Chrome/Chromium
-  if (ua.includes('Chrome') && !ua.includes('Edg')) {
-    name = 'Chrome';
+  if (ua.includes("Chrome") && !ua.includes("Edg")) {
+    name = "Chrome";
     const match = ua.match(/Chrome\/(\d+)/);
     if (match?.[1]) version = match[1];
-    engine = 'Blink';
+    engine = "Blink";
   }
   // Edge
-  else if (ua.includes('Edg/')) {
-    name = 'Edge';
+  else if (ua.includes("Edg/")) {
+    name = "Edge";
     const match = ua.match(/Edg\/(\d+)/);
     if (match?.[1]) version = match[1];
-    engine = 'Blink';
+    engine = "Blink";
   }
   // Firefox
-  else if (ua.includes('Firefox')) {
-    name = 'Firefox';
+  else if (ua.includes("Firefox")) {
+    name = "Firefox";
     const match = ua.match(/Firefox\/(\d+)/);
     if (match?.[1]) version = match[1];
-    engine = 'Gecko';
+    engine = "Gecko";
   }
   // Safari
-  else if (ua.includes('Safari') && !ua.includes('Chrome')) {
-    name = 'Safari';
+  else if (ua.includes("Safari") && !ua.includes("Chrome")) {
+    name = "Safari";
     const match = ua.match(/Version\/(\d+)/);
     if (match?.[1]) version = match[1];
-    engine = 'WebKit';
+    engine = "WebKit";
   }
 
   // Detect mobile
   const mobile =
     /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua) ||
-    platform.includes('Mobile');
+    platform.includes("Mobile");
 
   return {
     name,
@@ -445,27 +452,27 @@ export function detectBrowser(): BrowserInfo {
  * Get recommended storage adapter based on browser capabilities
  */
 export async function getRecommendedStorageAdapter(
-  capabilities?: BrowserCapabilities
-): Promise<'opfs' | 'indexeddb' | 'localstorage' | 'memory'> {
+  capabilities?: BrowserCapabilities,
+): Promise<"opfs" | "indexeddb" | "localstorage" | "memory"> {
   const caps = capabilities || (await detectBrowserCapabilities());
 
   // Prefer OPFS for best performance
   if (caps.opfs) {
-    return 'opfs';
+    return "opfs";
   }
 
   // IndexedDB for structured data
   if (caps.indexedDB) {
-    return 'indexeddb';
+    return "indexeddb";
   }
 
   // LocalStorage as fallback (limited capacity)
   if (caps.localStorage) {
-    return 'localstorage';
+    return "localstorage";
   }
 
   // Memory only (no persistence)
-  return 'memory';
+  return "memory";
 }
 
 /**
@@ -480,11 +487,11 @@ export async function checkMinimumRequirements(): Promise<{
 
   // Required features
   if (!capabilities.webAssembly) {
-    missing.push('WebAssembly');
+    missing.push("WebAssembly");
   }
 
   if (!capabilities.subtleCrypto) {
-    missing.push('SubtleCrypto (for SHA-1 hashing)');
+    missing.push("SubtleCrypto (for SHA-1 hashing)");
   }
 
   // At least one storage option
@@ -493,7 +500,7 @@ export async function checkMinimumRequirements(): Promise<{
     !capabilities.opfs &&
     !capabilities.localStorage
   ) {
-    missing.push('Storage (IndexedDB, OPFS, or localStorage)');
+    missing.push("Storage (IndexedDB, OPFS, or localStorage)");
   }
 
   return {
@@ -506,13 +513,13 @@ export async function checkMinimumRequirements(): Promise<{
  * Format bytes to human-readable string
  */
 export function formatBytes(bytes: number): string {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) return "0 Bytes";
 
   const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 }
 
 /**

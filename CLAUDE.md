@@ -9,6 +9,7 @@ browser-git is a full-featured Git implementation for browsers using Go + WebAss
 ## Commands
 
 ### Development
+
 ```bash
 npm install                      # Install dependencies
 npm run build                    # Build all packages
@@ -17,6 +18,7 @@ npm run dev                      # Watch mode for all packages
 ```
 
 ### Testing
+
 ```bash
 npm run test                     # Run unit tests (all packages)
 npm run test:watch               # Watch mode for unit tests
@@ -33,6 +35,7 @@ cd packages/browser-git && npm test
 ```
 
 ### Linting & Type Checking
+
 ```bash
 npm run lint                     # ESLint check
 npm run lint:fix                 # ESLint auto-fix
@@ -42,6 +45,7 @@ npm run format                   # Prettier fix
 ```
 
 ### Benchmarks
+
 ```bash
 npm run bench                    # Run all benchmarks
 npm run bench:run                # Run benchmarks once (no watch)
@@ -49,6 +53,7 @@ npm run bench -- benchmarks/storage-adapters.bench.ts  # Specific benchmark
 ```
 
 ### CI
+
 ```bash
 npm run ci                       # lint + type-check + test:unit + build
 npm run ci:full                  # Full CI including browser tests and benchmarks
@@ -71,18 +76,21 @@ This project includes custom skills for structured feature development:
 The monorepo uses npm workspaces with 4 main packages:
 
 **@browser-git/storage-adapters** (`packages/storage-adapters/`)
+
 - Storage backend abstraction layer
 - Implementations: `IndexedDBAdapter`, `OPFSAdapter`, `LocalStorageAdapter`, `MemoryAdapter`, `MockAdapter`
 - All adapters implement `StorageAdapter` interface (get/set/delete/list/exists/clear)
 - Uses jsdom for testing browser APIs
 
 **@browser-git/diff-engine** (`packages/diff-engine/`)
+
 - Pluggable diff engine with Myers algorithm
 - `MyersDiffEngine` for text diffs, binary diff utilities
 - `DiffEngineFactory` for creating diff engine instances
 - Exports types: `DiffResult`, `DiffHunk`, `Change`, `DiffOptions`
 
 **@browser-git/browser-git** (`packages/browser-git/`)
+
 - Main library - high-level Git repository API
 - `Repository` class: clone, init, open, add, commit, status, log, diff, merge, checkout, fetch, pull, push
 - `FileSystem` class: browser-compatible filesystem API
@@ -91,16 +99,19 @@ The monorepo uses npm workspaces with 4 main packages:
 - Depends on storage-adapters and diff-engine
 
 **@browser-git/git-cli** (`packages/git-cli/`)
+
 - CLI wrapper around browser-git
 - Commands: init, add, commit, status, log, diff, branch, checkout, merge, clone, fetch, pull, push
 - Binaries: `browser-git`, `bgit`
 
 **git-core** (`packages/git-core/`)
+
 - Go/TinyGo WASM module for core Git operations
 - Build with `make build` (production) or `make build-dev` (development)
 - Outputs to `packages/browser-git/dist/git-core.wasm`
 
 ### Key Dependencies Between Packages
+
 ```
 git-cli → browser-git → storage-adapters
                       → diff-engine
@@ -108,17 +119,20 @@ browser-git ←(loads)← git-core.wasm
 ```
 
 ### Test Organization
+
 - Unit tests: `packages/*/test/*.test.ts` (vitest, jsdom environment)
 - Browser tests: `tests/browser/*.spec.ts` (Playwright)
 - Security tests: `tests/security/*.test.ts`
 - Benchmarks: `benchmarks/*.bench.ts`
 
 ### TypeScript Configuration
+
 - Base config: `tsconfig.base.json` (ES2020, ESNext modules, strict mode)
 - Each package has its own `tsconfig.json` extending base
 - Incremental builds with composite projects
 
 ### Storage Adapter Selection
+
 - IndexedDB: Primary storage, recommended for most use cases
 - OPFS: Best performance on modern browsers (Chrome 86+, Firefox 111+, Safari 15.2+)
 - LocalStorage: Limited capacity fallback

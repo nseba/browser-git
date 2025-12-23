@@ -48,6 +48,7 @@ npm run version:sync
 ### 3. Update Changelog
 
 Edit `CHANGELOG.md` to:
+
 - Add release date for the new version
 - Move items from `[Unreleased]` to the new version section
 - Add release notes highlighting key changes
@@ -70,6 +71,7 @@ npm run ci:full
 ```
 
 This runs:
+
 - Linting
 - Type checking
 - All unit tests
@@ -87,6 +89,7 @@ npm run release:prepare
 ```
 
 This will:
+
 - Sync versions
 - Build all packages
 - Prepare artifacts for publishing
@@ -100,6 +103,7 @@ npm run release:dry-run
 ```
 
 Review the output to ensure:
+
 - All packages are included
 - Versions are correct
 - Files to be published are correct
@@ -365,5 +369,6 @@ Thanks to all contributors who made this release possible!
 ## Support
 
 For questions about the release process:
+
 - Open an issue: https://github.com/user/browser-git/issues
 - Contact maintainers: [list of maintainer contacts]

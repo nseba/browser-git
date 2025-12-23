@@ -3,28 +3,42 @@
  * Provides common test scenarios and utilities
  */
 
-import { FileSystem } from '../src/filesystem/fs';
-import { StorageAdapter } from '@browser-git/storage-adapters';
+import { FileSystem } from "../src/filesystem/fs";
+import { StorageAdapter } from "@browser-git/storage-adapters";
 
 /**
  * Creates a test directory structure with files
  */
 export async function createTestStructure(fs: FileSystem): Promise<void> {
   // Create directory structure
-  await fs.mkdir('project/src', { recursive: true });
-  await fs.mkdir('project/tests', { recursive: true });
-  await fs.mkdir('project/docs', { recursive: true });
+  await fs.mkdir("project/src", { recursive: true });
+  await fs.mkdir("project/tests", { recursive: true });
+  await fs.mkdir("project/docs", { recursive: true });
 
   // Create files
-  await fs.writeFile('project/README.md', '# Test Project\n', { encoding: 'utf8' });
-  await fs.writeFile('project/src/index.ts', 'export {};\n', { encoding: 'utf8' });
-  await fs.writeFile('project/src/utils.ts', 'export const add = (a: number, b: number) => a + b;\n', {
-    encoding: 'utf8',
+  await fs.writeFile("project/README.md", "# Test Project\n", {
+    encoding: "utf8",
   });
-  await fs.writeFile('project/tests/index.test.ts', 'describe("test", () => {});\n', {
-    encoding: 'utf8',
+  await fs.writeFile("project/src/index.ts", "export {};\n", {
+    encoding: "utf8",
   });
-  await fs.writeFile('project/docs/API.md', '# API Documentation\n', { encoding: 'utf8' });
+  await fs.writeFile(
+    "project/src/utils.ts",
+    "export const add = (a: number, b: number) => a + b;\n",
+    {
+      encoding: "utf8",
+    },
+  );
+  await fs.writeFile(
+    "project/tests/index.test.ts",
+    'describe("test", () => {});\n',
+    {
+      encoding: "utf8",
+    },
+  );
+  await fs.writeFile("project/docs/API.md", "# API Documentation\n", {
+    encoding: "utf8",
+  });
 }
 
 /**
@@ -33,17 +47,17 @@ export async function createTestStructure(fs: FileSystem): Promise<void> {
 export async function createLargeFile(
   fs: FileSystem,
   path: string,
-  sizeInKB: number
+  sizeInKB: number,
 ): Promise<void> {
   const chunkSize = 1024; // 1KB
-  const content = 'x'.repeat(chunkSize);
+  const content = "x".repeat(chunkSize);
 
   for (let i = 0; i < sizeInKB; i++) {
     if (i === 0) {
-      await fs.writeFile(path, content, { encoding: 'utf8' });
+      await fs.writeFile(path, content, { encoding: "utf8" });
     } else {
-      const existing = await fs.readFile(path, { encoding: 'utf8' });
-      await fs.writeFile(path, existing + content, { encoding: 'utf8' });
+      const existing = await fs.readFile(path, { encoding: "utf8" });
+      await fs.writeFile(path, existing + content, { encoding: "utf8" });
     }
   }
 }
@@ -51,13 +65,16 @@ export async function createLargeFile(
 /**
  * Creates a deep nested directory structure
  */
-export async function createDeepStructure(fs: FileSystem, depth: number): Promise<void> {
-  let path = 'deep';
+export async function createDeepStructure(
+  fs: FileSystem,
+  depth: number,
+): Promise<void> {
+  let path = "deep";
   for (let i = 0; i < depth; i++) {
     path += `/level${i}`;
   }
   await fs.mkdir(path, { recursive: true });
-  await fs.writeFile(`${path}/file.txt`, 'deep file', { encoding: 'utf8' });
+  await fs.writeFile(`${path}/file.txt`, "deep file", { encoding: "utf8" });
 }
 
 /**
@@ -66,17 +83,17 @@ export async function createDeepStructure(fs: FileSystem, depth: number): Promis
 export async function assertFileContent(
   fs: FileSystem,
   path: string,
-  expectedContent: string
+  expectedContent: string,
 ): Promise<void> {
   const exists = await fs.exists(path);
   if (!exists) {
     throw new Error(`File does not exist: ${path}`);
   }
 
-  const content = await fs.readFile(path, { encoding: 'utf8' });
+  const content = await fs.readFile(path, { encoding: "utf8" });
   if (content !== expectedContent) {
     throw new Error(
-      `File content mismatch.\nExpected: ${expectedContent}\nActual: ${content}`
+      `File content mismatch.\nExpected: ${expectedContent}\nActual: ${content}`,
     );
   }
 }
@@ -87,7 +104,7 @@ export async function assertFileContent(
 export async function assertDirectoryContains(
   fs: FileSystem,
   path: string,
-  expectedEntries: string[]
+  expectedEntries: string[],
 ): Promise<void> {
   const exists = await fs.exists(path);
   if (!exists) {
@@ -110,11 +127,14 @@ export async function assertDirectoryContains(
 /**
  * Recursively deletes all files and directories
  */
-export async function cleanupFileSystem(fs: FileSystem, rootPath: string = '.'): Promise<void> {
+export async function cleanupFileSystem(
+  fs: FileSystem,
+  rootPath: string = ".",
+): Promise<void> {
   try {
     const entries = await fs.readdir(rootPath);
     for (const entry of entries) {
-      const fullPath = rootPath === '.' ? entry : `${rootPath}/${entry}`;
+      const fullPath = rootPath === "." ? entry : `${rootPath}/${entry}`;
       const stat = await fs.stat(fullPath);
       if (stat.isDirectory) {
         await cleanupFileSystem(fs, fullPath);
@@ -131,7 +151,9 @@ export async function cleanupFileSystem(fs: FileSystem, rootPath: string = '.'):
 /**
  * Measures execution time of an async function
  */
-export async function measureTime<T>(fn: () => Promise<T>): Promise<{ result: T; time: number }> {
+export async function measureTime<T>(
+  fn: () => Promise<T>,
+): Promise<{ result: T; time: number }> {
   const start = performance.now();
   const result = await fn();
   const time = performance.now() - start;
@@ -151,14 +173,14 @@ export interface FileTree {
 export async function createFileTree(
   fs: FileSystem,
   tree: FileTree,
-  basePath: string = ''
+  basePath: string = "",
 ): Promise<void> {
   for (const [name, content] of Object.entries(tree)) {
     const path = basePath ? `${basePath}/${name}` : name;
 
-    if (typeof content === 'string') {
+    if (typeof content === "string") {
       // It's a file
-      await fs.writeFile(path, content, { encoding: 'utf8' });
+      await fs.writeFile(path, content, { encoding: "utf8" });
     } else {
       // It's a directory
       await fs.mkdir(path, { recursive: true });
@@ -170,12 +192,15 @@ export async function createFileTree(
 /**
  * Gets all files recursively from a directory
  */
-export async function getAllFiles(fs: FileSystem, path: string = '.'): Promise<string[]> {
+export async function getAllFiles(
+  fs: FileSystem,
+  path: string = ".",
+): Promise<string[]> {
   const files: string[] = [];
   const entries = await fs.readdir(path);
 
   for (const entry of entries) {
-    const fullPath = path === '.' ? entry : `${path}/${entry}`;
+    const fullPath = path === "." ? entry : `${path}/${entry}`;
     const stat = await fs.stat(fullPath);
 
     if (stat.isDirectory) {
@@ -195,7 +220,7 @@ export async function getAllFiles(fs: FileSystem, path: string = '.'): Promise<s
 export async function waitFor(
   condition: () => boolean | Promise<boolean>,
   timeout: number = 5000,
-  interval: number = 100
+  interval: number = 100,
 ): Promise<void> {
   const start = Date.now();
 
@@ -203,7 +228,7 @@ export async function waitFor(
     if (await condition()) {
       return;
     }
-    await new Promise(resolve => setTimeout(resolve, interval));
+    await new Promise((resolve) => setTimeout(resolve, interval));
   }
 
   throw new Error(`Timeout waiting for condition after ${timeout}ms`);
@@ -223,11 +248,11 @@ export function createSpy<T extends (...args: any[]) => any>(): T & {
     calls.push(args);
   }) as any;
 
-  Object.defineProperty(spy, 'calls', {
+  Object.defineProperty(spy, "calls", {
     get: () => calls,
   });
 
-  Object.defineProperty(spy, 'callCount', {
+  Object.defineProperty(spy, "callCount", {
     get: () => calls.length,
   });
 
@@ -243,28 +268,28 @@ export function createSpy<T extends (...args: any[]) => any>(): T & {
  */
 export async function assertThrows(
   fn: () => Promise<any>,
-  expectedError: string | RegExp
+  expectedError: string | RegExp,
 ): Promise<void> {
   try {
     await fn();
-    throw new Error('Expected function to throw an error');
+    throw new Error("Expected function to throw an error");
   } catch (error) {
     if (error instanceof Error) {
-      if (typeof expectedError === 'string') {
+      if (typeof expectedError === "string") {
         if (!error.message.includes(expectedError)) {
           throw new Error(
-            `Expected error message to include "${expectedError}", got "${error.message}"`
+            `Expected error message to include "${expectedError}", got "${error.message}"`,
           );
         }
       } else {
         if (!expectedError.test(error.message)) {
           throw new Error(
-            `Expected error message to match ${expectedError}, got "${error.message}"`
+            `Expected error message to match ${expectedError}, got "${error.message}"`,
           );
         }
       }
     } else {
-      throw new Error('Caught error is not an Error instance');
+      throw new Error("Caught error is not an Error instance");
     }
   }
 }

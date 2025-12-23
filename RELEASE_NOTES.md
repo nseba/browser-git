@@ -11,6 +11,7 @@ BrowserGit v0.1.0 is the initial pre-release of a pure browser-based Git impleme
 ### Features
 
 #### Core Git Operations
+
 - ✅ **Repository Management**
   - Initialize new repositories (`git init`)
   - Open and manage existing repositories
@@ -46,6 +47,7 @@ BrowserGit v0.1.0 is the initial pre-release of a pure browser-based Git impleme
   - Authentication (Basic, Token, OAuth)
 
 #### Storage Options
+
 - ✅ **Multiple Storage Backends**
   - IndexedDB (recommended for persistent storage)
   - OPFS (Origin Private File System, where available)
@@ -53,6 +55,7 @@ BrowserGit v0.1.0 is the initial pre-release of a pure browser-based Git impleme
   - In-memory (for testing)
 
 #### Diff Engine
+
 - ✅ **Pluggable Diff System**
   - Myers diff algorithm
   - Line-by-line text diffing
@@ -61,6 +64,7 @@ BrowserGit v0.1.0 is the initial pre-release of a pure browser-based Git impleme
   - Word-level diffs
 
 #### Developer Tools
+
 - ✅ **Command-Line Interface**
   - Full-featured CLI tool (`bgit`)
   - Supports all major git commands
@@ -75,11 +79,13 @@ BrowserGit v0.1.0 is the initial pre-release of a pure browser-based Git impleme
 ### Architecture
 
 #### Technology Stack
+
 - **Go + TinyGo WASM**: Core Git implementation compiled to WebAssembly
 - **TypeScript**: High-level API and browser integrations
 - **Yarn Workspaces**: Monorepo structure with multiple packages
 
 #### Packages
+
 1. **git-core**: Core Git operations in Go/WASM
 2. **browser-git**: TypeScript API wrapper
 3. **storage-adapters**: Multiple storage backend implementations
@@ -98,12 +104,14 @@ BrowserGit v0.1.0 is the initial pre-release of a pure browser-based Git impleme
 ### Known Limitations
 
 #### Security Limitations
+
 - ⚠️ **Credential Storage**: Tokens/passwords stored in browser storage are accessible to JavaScript (XSS risk)
 - ⚠️ **No Encryption at Rest**: Git objects and credentials are not encrypted in storage
 - ⚠️ **No GPG Signing**: Commit signing with GPG keys is not supported
 - ⚠️ **No SSH**: SSH key-based authentication is not available in browsers
 
 #### Functional Limitations
+
 - ⚠️ **No Rebase**: Interactive rebase is not yet implemented
 - ⚠️ **No Stash**: Git stash functionality is not available
 - ⚠️ **No Submodules**: Git submodules are not supported
@@ -112,53 +120,58 @@ BrowserGit v0.1.0 is the initial pre-release of a pure browser-based Git impleme
 - ⚠️ **No Hooks**: Git hooks cannot be executed in the browser
 
 #### Performance Limitations
+
 - ⚠️ **Large Repositories**: Performance degrades with very large repositories (>1000 commits)
 - ⚠️ **Binary Files**: Large binary files may cause memory issues
 - ⚠️ **Slow Cloning**: Clone operations are slower than native Git
 
 #### Browser Limitations
+
 - ⚠️ **Storage Quotas**: Browser storage is limited (typically 50-100GB, but can be less)
 - ⚠️ **CORS Required**: Remote Git servers must send appropriate CORS headers
 - ⚠️ **CSP Restrictions**: Requires `wasm-unsafe-eval` in Content Security Policy
 
 ### Browser Support
 
-| Browser | Version | Status | Notes |
-|---------|---------|--------|-------|
-| Chrome | 90+ | ✅ Fully Supported | Best performance with OPFS |
-| Edge | 90+ | ✅ Fully Supported | Best performance with OPFS |
-| Firefox | 88+ | ✅ Supported | IndexedDB recommended |
-| Safari | 15+ | ⚠️ Limited | Storage quotas more restrictive |
-| Mobile Chrome | 90+ | ⚠️ Limited | Reduced storage capacity |
-| Mobile Safari | 15+ | ⚠️ Limited | Very restrictive storage |
+| Browser       | Version | Status             | Notes                           |
+| ------------- | ------- | ------------------ | ------------------------------- |
+| Chrome        | 90+     | ✅ Fully Supported | Best performance with OPFS      |
+| Edge          | 90+     | ✅ Fully Supported | Best performance with OPFS      |
+| Firefox       | 88+     | ✅ Supported       | IndexedDB recommended           |
+| Safari        | 15+     | ⚠️ Limited         | Storage quotas more restrictive |
+| Mobile Chrome | 90+     | ⚠️ Limited         | Reduced storage capacity        |
+| Mobile Safari | 15+     | ⚠️ Limited         | Very restrictive storage        |
 
 ### Performance Benchmarks
 
 Based on testing with a 100-commit repository:
 
-| Operation | Target | Typical | Status |
-|-----------|--------|---------|--------|
-| Init | < 10ms | 5-8ms | ✅ Excellent |
-| Add (small file) | < 20ms | 10-15ms | ✅ Excellent |
-| Commit | < 50ms | 30-40ms | ✅ Good |
-| Checkout | < 200ms | 120-180ms | ✅ Good |
-| Clone (100 commits) | < 5s | 3-4s | ✅ Good |
-| Merge (no conflict) | < 100ms | 60-80ms | ✅ Good |
-| Diff (100 lines) | < 50ms | 20-30ms | ✅ Excellent |
+| Operation           | Target  | Typical   | Status       |
+| ------------------- | ------- | --------- | ------------ |
+| Init                | < 10ms  | 5-8ms     | ✅ Excellent |
+| Add (small file)    | < 20ms  | 10-15ms   | ✅ Excellent |
+| Commit              | < 50ms  | 30-40ms   | ✅ Good      |
+| Checkout            | < 200ms | 120-180ms | ✅ Good      |
+| Clone (100 commits) | < 5s    | 3-4s      | ✅ Good      |
+| Merge (no conflict) | < 100ms | 60-80ms   | ✅ Good      |
+| Diff (100 lines)    | < 50ms  | 20-30ms   | ✅ Excellent |
 
 ### Installation
 
 #### NPM Package
+
 ```bash
 npm install @browser-git/browser-git @browser-git/storage-adapters
 ```
 
 #### Yarn
+
 ```bash
 yarn add @browser-git/browser-git @browser-git/storage-adapters
 ```
 
 #### CLI Tool
+
 ```bash
 npm install -g @browser-git/git-cli
 ```
@@ -166,45 +179,46 @@ npm install -g @browser-git/git-cli
 ### Quick Start
 
 ```typescript
-import { Repository } from '@browser-git/browser-git';
+import { Repository } from "@browser-git/browser-git";
 
 // Initialize a new repository
-const repo = await Repository.init('/my-repo', {
-  storage: 'indexeddb',
-  initialBranch: 'main',
+const repo = await Repository.init("/my-repo", {
+  storage: "indexeddb",
+  initialBranch: "main",
 });
 
 // Configure user
-await repo.config('user.name', 'Your Name');
-await repo.config('user.email', 'your.email@example.com');
+await repo.config("user.name", "Your Name");
+await repo.config("user.email", "your.email@example.com");
 
 // Create and commit a file
-await repo.fs.writeFile('README.md', '# My Project');
-await repo.add(['README.md']);
-await repo.commit('Initial commit', {
+await repo.fs.writeFile("README.md", "# My Project");
+await repo.add(["README.md"]);
+await repo.commit("Initial commit", {
   author: {
-    name: 'Your Name',
-    email: 'your.email@example.com',
+    name: "Your Name",
+    email: "your.email@example.com",
   },
 });
 
 // Clone a repository
 const clonedRepo = await Repository.clone(
-  'https://github.com/user/repo.git',
-  '/local-path',
+  "https://github.com/user/repo.git",
+  "/local-path",
   {
-    storage: 'indexeddb',
+    storage: "indexeddb",
     auth: {
-      method: 'token',
-      token: 'your-github-token',
+      method: "token",
+      token: "your-github-token",
     },
-  }
+  },
 );
 ```
 
 ### Use Cases
 
 #### ✅ Recommended Use Cases
+
 - Browser-based code editors
 - Documentation sites with version control
 - Educational Git demonstrations
@@ -213,6 +227,7 @@ const clonedRepo = await Repository.clone(
 - Testing Git workflows
 
 #### ⚠️ Not Recommended For
+
 - Production applications with sensitive code
 - Large-scale repositories (>10,000 commits)
 - High-security environments
@@ -236,6 +251,7 @@ This is the initial release, so there is no upgrade path from previous versions.
 Planned features for upcoming releases:
 
 #### v0.2.0 (Q1 2025)
+
 - Enhanced URL validation
 - Improved performance for large repositories
 - Better error messages
@@ -243,6 +259,7 @@ Planned features for upcoming releases:
 - Documentation improvements
 
 #### v0.3.0 (Q2 2025)
+
 - Credential encryption using Web Crypto API
 - Interactive rebase support
 - Git stash functionality
@@ -250,6 +267,7 @@ Planned features for upcoming releases:
 - Better conflict resolution tools
 
 #### v0.4.0 (Q3 2025)
+
 - GPG commit signing (limited)
 - Submodule support
 - Git LFS integration

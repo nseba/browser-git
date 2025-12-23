@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import chalk from "chalk";
 
 export interface OutputOptions {
   color?: boolean;
@@ -16,33 +16,33 @@ export function setOutputOptions(newOptions: Partial<OutputOptions>) {
 
 export function success(message: string): void {
   if (options.color) {
-    console.log(chalk.green('✓'), message);
+    console.log(chalk.green("✓"), message);
   } else {
-    console.log('✓', message);
+    console.log("✓", message);
   }
 }
 
 export function error(message: string): void {
   if (options.color) {
-    console.error(chalk.red('✗'), message);
+    console.error(chalk.red("✗"), message);
   } else {
-    console.error('✗', message);
+    console.error("✗", message);
   }
 }
 
 export function warning(message: string): void {
   if (options.color) {
-    console.warn(chalk.yellow('⚠'), message);
+    console.warn(chalk.yellow("⚠"), message);
   } else {
-    console.warn('⚠', message);
+    console.warn("⚠", message);
   }
 }
 
 export function info(message: string): void {
   if (options.color) {
-    console.log(chalk.blue('ℹ'), message);
+    console.log(chalk.blue("ℹ"), message);
   } else {
-    console.log('ℹ', message);
+    console.log("ℹ", message);
   }
 }
 
@@ -59,7 +59,7 @@ export function section(title: string): void {
     console.log(chalk.bold.underline(title));
   } else {
     console.log(title);
-    console.log('='.repeat(title.length));
+    console.log("=".repeat(title.length));
   }
 }
 
@@ -83,27 +83,33 @@ export function table(rows: string[][]): void {
   if (rows.length === 0) return;
 
   const columnWidths = rows[0]!.map((_, colIndex) =>
-    Math.max(...rows.map(row => row[colIndex]?.length || 0))
+    Math.max(...rows.map((row) => row[colIndex]?.length || 0)),
   );
 
-  rows.forEach(row => {
+  rows.forEach((row) => {
     const formattedRow = row
       .map((cell, index) => cell.padEnd(columnWidths[index] || 0))
-      .join('  ');
+      .join("  ");
     console.log(formattedRow);
   });
 }
 
-export function list(items: string[], prefix: string = '•'): void {
-  items.forEach(item => {
+export function list(items: string[], prefix: string = "•"): void {
+  items.forEach((item) => {
     console.log(`${prefix} ${item}`);
   });
 }
 
-export function progress(current: number, total: number, message?: string): void {
+export function progress(
+  current: number,
+  total: number,
+  message?: string,
+): void {
   const percentage = Math.round((current / total) * 100);
-  const bar = '█'.repeat(Math.round(percentage / 2)) + '░'.repeat(50 - Math.round(percentage / 2));
-  const status = message ? ` ${message}` : '';
+  const bar =
+    "█".repeat(Math.round(percentage / 2)) +
+    "░".repeat(50 - Math.round(percentage / 2));
+  const status = message ? ` ${message}` : "";
 
   if (options.color) {
     process.stdout.write(`\r${chalk.cyan(bar)} ${percentage}%${status}`);
@@ -112,6 +118,6 @@ export function progress(current: number, total: number, message?: string): void
   }
 
   if (current === total) {
-    process.stdout.write('\n');
+    process.stdout.write("\n");
   }
 }

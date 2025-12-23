@@ -1,16 +1,16 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { MemoryAdapter } from '../src/memory.js';
+import { describe, it, expect, beforeEach } from "vitest";
+import { MemoryAdapter } from "../src/memory.js";
 
-describe('MemoryAdapter', () => {
+describe("MemoryAdapter", () => {
   let adapter: MemoryAdapter;
 
   beforeEach(() => {
     adapter = new MemoryAdapter();
   });
 
-  describe('basic operations', () => {
-    it('should store and retrieve data', async () => {
-      const key = 'test-key';
+  describe("basic operations", () => {
+    it("should store and retrieve data", async () => {
+      const key = "test-key";
       const value = new Uint8Array([1, 2, 3, 4, 5]);
 
       await adapter.set(key, value);
@@ -19,13 +19,13 @@ describe('MemoryAdapter', () => {
       expect(retrieved).toEqual(value);
     });
 
-    it('should return null for non-existent key', async () => {
-      const result = await adapter.get('non-existent');
+    it("should return null for non-existent key", async () => {
+      const result = await adapter.get("non-existent");
       expect(result).toBeNull();
     });
 
-    it('should delete data', async () => {
-      const key = 'test-key';
+    it("should delete data", async () => {
+      const key = "test-key";
       const value = new Uint8Array([1, 2, 3]);
 
       await adapter.set(key, value);
@@ -35,8 +35,8 @@ describe('MemoryAdapter', () => {
       expect(retrieved).toBeNull();
     });
 
-    it('should check if key exists', async () => {
-      const key = 'test-key';
+    it("should check if key exists", async () => {
+      const key = "test-key";
       const value = new Uint8Array([1, 2, 3]);
 
       expect(await adapter.exists(key)).toBe(false);
@@ -49,47 +49,47 @@ describe('MemoryAdapter', () => {
     });
   });
 
-  describe('list operations', () => {
+  describe("list operations", () => {
     beforeEach(async () => {
-      await adapter.set('file1.txt', new Uint8Array([1]));
-      await adapter.set('file2.txt', new Uint8Array([2]));
-      await adapter.set('dir/file3.txt', new Uint8Array([3]));
-      await adapter.set('other.dat', new Uint8Array([4]));
+      await adapter.set("file1.txt", new Uint8Array([1]));
+      await adapter.set("file2.txt", new Uint8Array([2]));
+      await adapter.set("dir/file3.txt", new Uint8Array([3]));
+      await adapter.set("other.dat", new Uint8Array([4]));
     });
 
-    it('should list all keys', async () => {
+    it("should list all keys", async () => {
       const keys = await adapter.list();
       expect(keys).toHaveLength(4);
-      expect(keys).toContain('file1.txt');
-      expect(keys).toContain('file2.txt');
-      expect(keys).toContain('dir/file3.txt');
-      expect(keys).toContain('other.dat');
+      expect(keys).toContain("file1.txt");
+      expect(keys).toContain("file2.txt");
+      expect(keys).toContain("dir/file3.txt");
+      expect(keys).toContain("other.dat");
     });
 
-    it('should list keys with prefix', async () => {
-      const keys = await adapter.list('file');
+    it("should list keys with prefix", async () => {
+      const keys = await adapter.list("file");
       expect(keys).toHaveLength(2);
-      expect(keys).toContain('file1.txt');
-      expect(keys).toContain('file2.txt');
+      expect(keys).toContain("file1.txt");
+      expect(keys).toContain("file2.txt");
     });
 
-    it('should list keys with directory prefix', async () => {
-      const keys = await adapter.list('dir/');
+    it("should list keys with directory prefix", async () => {
+      const keys = await adapter.list("dir/");
       expect(keys).toHaveLength(1);
-      expect(keys).toContain('dir/file3.txt');
+      expect(keys).toContain("dir/file3.txt");
     });
 
-    it('should return empty array for non-matching prefix', async () => {
-      const keys = await adapter.list('nonexistent');
+    it("should return empty array for non-matching prefix", async () => {
+      const keys = await adapter.list("nonexistent");
       expect(keys).toHaveLength(0);
     });
   });
 
-  describe('clear operation', () => {
-    it('should clear all data', async () => {
-      await adapter.set('key1', new Uint8Array([1]));
-      await adapter.set('key2', new Uint8Array([2]));
-      await adapter.set('key3', new Uint8Array([3]));
+  describe("clear operation", () => {
+    it("should clear all data", async () => {
+      await adapter.set("key1", new Uint8Array([1]));
+      await adapter.set("key2", new Uint8Array([2]));
+      await adapter.set("key3", new Uint8Array([3]));
 
       expect(adapter.size()).toBe(3);
 
@@ -101,9 +101,9 @@ describe('MemoryAdapter', () => {
     });
   });
 
-  describe('binary data', () => {
-    it('should handle empty Uint8Array', async () => {
-      const key = 'empty';
+  describe("binary data", () => {
+    it("should handle empty Uint8Array", async () => {
+      const key = "empty";
       const value = new Uint8Array([]);
 
       await adapter.set(key, value);
@@ -113,8 +113,8 @@ describe('MemoryAdapter', () => {
       expect(retrieved?.length).toBe(0);
     });
 
-    it('should handle large binary data', async () => {
-      const key = 'large';
+    it("should handle large binary data", async () => {
+      const key = "large";
       const value = new Uint8Array(100000);
       for (let i = 0; i < value.length; i++) {
         value[i] = i % 256;
@@ -126,8 +126,8 @@ describe('MemoryAdapter', () => {
       expect(retrieved).toEqual(value);
     });
 
-    it('should preserve binary data integrity', async () => {
-      const key = 'binary';
+    it("should preserve binary data integrity", async () => {
+      const key = "binary";
       const value = new Uint8Array([0, 255, 128, 1, 254, 127]);
 
       await adapter.set(key, value);
@@ -137,9 +137,9 @@ describe('MemoryAdapter', () => {
     });
   });
 
-  describe('data isolation', () => {
-    it('should return copies of stored data', async () => {
-      const key = 'test';
+  describe("data isolation", () => {
+    it("should return copies of stored data", async () => {
+      const key = "test";
       const original = new Uint8Array([1, 2, 3]);
 
       await adapter.set(key, original);
@@ -152,8 +152,8 @@ describe('MemoryAdapter', () => {
       expect(retrieved).toEqual(new Uint8Array([1, 2, 3]));
     });
 
-    it('should prevent external modification of retrieved data', async () => {
-      const key = 'test';
+    it("should prevent external modification of retrieved data", async () => {
+      const key = "test";
       await adapter.set(key, new Uint8Array([1, 2, 3]));
 
       const retrieved = await adapter.get(key);
@@ -165,21 +165,21 @@ describe('MemoryAdapter', () => {
     });
   });
 
-  describe('quota management', () => {
-    it('should get quota information', async () => {
+  describe("quota management", () => {
+    it("should get quota information", async () => {
       const quota = await adapter.getQuota();
 
       expect(quota).not.toBeNull();
-      expect(quota).toHaveProperty('usage');
-      expect(quota).toHaveProperty('quota');
-      expect(quota).toHaveProperty('percentage');
+      expect(quota).toHaveProperty("usage");
+      expect(quota).toHaveProperty("quota");
+      expect(quota).toHaveProperty("percentage");
     });
 
-    it('should track usage', async () => {
+    it("should track usage", async () => {
       const quota1 = await adapter.getQuota();
       const initialUsage = quota1!.usage;
 
-      await adapter.set('test', new Uint8Array([1, 2, 3, 4, 5]));
+      await adapter.set("test", new Uint8Array([1, 2, 3, 4, 5]));
 
       const quota2 = await adapter.getQuota();
       const newUsage = quota2!.usage;
@@ -188,38 +188,38 @@ describe('MemoryAdapter', () => {
     });
   });
 
-  describe('convenience methods', () => {
+  describe("convenience methods", () => {
     beforeEach(async () => {
-      await adapter.set('key1', new Uint8Array([1]));
-      await adapter.set('key2', new Uint8Array([2]));
-      await adapter.set('key3', new Uint8Array([3]));
+      await adapter.set("key1", new Uint8Array([1]));
+      await adapter.set("key2", new Uint8Array([2]));
+      await adapter.set("key3", new Uint8Array([3]));
     });
 
-    it('should return size', () => {
+    it("should return size", () => {
       expect(adapter.size()).toBe(3);
     });
 
-    it('should return all keys synchronously', () => {
+    it("should return all keys synchronously", () => {
       const keys = adapter.keys();
       expect(keys).toHaveLength(3);
-      expect(keys).toContain('key1');
-      expect(keys).toContain('key2');
-      expect(keys).toContain('key3');
+      expect(keys).toContain("key1");
+      expect(keys).toContain("key2");
+      expect(keys).toContain("key3");
     });
 
-    it('should return all entries synchronously', () => {
+    it("should return all entries synchronously", () => {
       const entries = adapter.entries();
       expect(entries).toHaveLength(3);
 
       const entryMap = new Map(entries);
-      expect(entryMap.get('key1')).toEqual(new Uint8Array([1]));
-      expect(entryMap.get('key2')).toEqual(new Uint8Array([2]));
-      expect(entryMap.get('key3')).toEqual(new Uint8Array([3]));
+      expect(entryMap.get("key1")).toEqual(new Uint8Array([1]));
+      expect(entryMap.get("key2")).toEqual(new Uint8Array([2]));
+      expect(entryMap.get("key3")).toEqual(new Uint8Array([3]));
     });
   });
 
-  describe('concurrent operations', () => {
-    it('should handle concurrent writes', async () => {
+  describe("concurrent operations", () => {
+    it("should handle concurrent writes", async () => {
       const promises = [];
       for (let i = 0; i < 100; i++) {
         promises.push(adapter.set(`key${i}`, new Uint8Array([i])));
@@ -230,7 +230,7 @@ describe('MemoryAdapter', () => {
       expect(adapter.size()).toBe(100);
     });
 
-    it('should handle concurrent reads', async () => {
+    it("should handle concurrent reads", async () => {
       // Setup
       for (let i = 0; i < 10; i++) {
         await adapter.set(`key${i}`, new Uint8Array([i]));

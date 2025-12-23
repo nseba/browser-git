@@ -10,6 +10,7 @@
 BrowserGit is a full-featured, browser-native Git implementation built with Go + WebAssembly and TypeScript. It enables offline-first web applications to have complete version control capabilities with no server dependencies. The library targets browser-based IDEs and web applications requiring local version control.
 
 **Key Differentiators:**
+
 - **Complete Git Support:** All core commands (init, add, commit, branch, merge, clone, push, pull, etc.)
 - **Multiple Storage Backends:** IndexedDB, OPFS, LocalStorage, in-memory
 - **Dual API Layers:** Low-level FS API + high-level Git operations API
@@ -171,6 +172,7 @@ BrowserGit is a full-featured Git implementation designed to run entirely in web
 ### Architecture
 
 **Monorepo Structure:**
+
 ```
 browser-git/
 ├── packages/
@@ -191,6 +193,7 @@ browser-git/
 ```
 
 **Technology Stack:**
+
 - **Core Implementation:** Go compiled to WebAssembly
 - **API Layer:** TypeScript for type safety and developer experience
 - **Build System:** Yarn workspaces, TinyGo for WASM compilation
@@ -348,6 +351,7 @@ All key architectural decisions have been finalized:
 ## Implementation Phases
 
 ### Phase 1: Foundation (Weeks 1-3)
+
 1. Create GitHub repository with monorepo structure
 2. Set up yarn workspaces and build tooling
 3. Configure TinyGo, TypeScript, and WASM build pipeline
@@ -357,6 +361,7 @@ All key architectural decisions have been finalized:
 7. Write ADRs (Architecture Decision Records) for key choices
 
 ### Phase 2: Core Git Operations (Weeks 4-8)
+
 1. Implement hash algorithm abstraction (SHA-1 & SHA-256)
 2. Implement Git object model (blob, tree, commit, tag)
 3. Implement basic operations: init, add, commit, status
@@ -366,6 +371,7 @@ All key architectural decisions have been finalized:
 7. Write unit tests for core operations
 
 ### Phase 3: Diff & Merge (Weeks 9-12)
+
 1. Implement pluggable diff-engine package
 2. Integrate default diff library
 3. Implement merge with conflict detection
@@ -374,6 +380,7 @@ All key architectural decisions have been finalized:
 6. Write integration tests for merge workflows
 
 ### Phase 4: Remote Operations (Weeks 13-16)
+
 1. Implement HTTP Git protocol (smart protocol)
 2. Implement authentication layer (Basic, OAuth hooks, SSH)
 3. Implement clone, fetch, push, pull
@@ -382,6 +389,7 @@ All key architectural decisions have been finalized:
 6. Document CORS workarounds
 
 ### Phase 5: Polish & Documentation (Weeks 17-20)
+
 1. Complete CLI tool with all commands
 2. Create example applications (basic-demo, mini-ide, offline-docs)
 3. Write comprehensive API documentation

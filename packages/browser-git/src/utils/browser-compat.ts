@@ -63,34 +63,38 @@ export interface CompatibilityResult {
 /**
  * Detects browser name and version
  */
-export function detectBrowser(): { name: string; version: string; engine: string } {
+export function detectBrowser(): {
+  name: string;
+  version: string;
+  engine: string;
+} {
   const ua = navigator.userAgent;
 
   // Detect browser
-  let name = 'Unknown';
-  let version = 'Unknown';
-  let engine = 'Unknown';
+  let name = "Unknown";
+  let version = "Unknown";
+  let engine = "Unknown";
 
-  if (ua.includes('Chrome') && !ua.includes('Edg')) {
-    name = 'Chrome';
+  if (ua.includes("Chrome") && !ua.includes("Edg")) {
+    name = "Chrome";
     const match = ua.match(/Chrome\/(\d+)/);
     if (match?.[1]) version = match[1];
-    engine = 'Blink';
-  } else if (ua.includes('Edg/')) {
-    name = 'Edge';
+    engine = "Blink";
+  } else if (ua.includes("Edg/")) {
+    name = "Edge";
     const match = ua.match(/Edg\/(\d+)/);
     if (match?.[1]) version = match[1];
-    engine = 'Blink';
-  } else if (ua.includes('Firefox')) {
-    name = 'Firefox';
+    engine = "Blink";
+  } else if (ua.includes("Firefox")) {
+    name = "Firefox";
     const match = ua.match(/Firefox\/(\d+)/);
     if (match?.[1]) version = match[1];
-    engine = 'Gecko';
-  } else if (ua.includes('Safari') && !ua.includes('Chrome')) {
-    name = 'Safari';
+    engine = "Gecko";
+  } else if (ua.includes("Safari") && !ua.includes("Chrome")) {
+    name = "Safari";
     const match = ua.match(/Version\/(\d+)/);
     if (match?.[1]) version = match[1];
-    engine = 'WebKit';
+    engine = "WebKit";
   }
 
   return { name, version, engine };
@@ -100,19 +104,19 @@ export function detectBrowser(): { name: string; version: string; engine: string
  * Checks if WebAssembly is supported
  */
 export function hasWebAssembly(): boolean {
-  return typeof WebAssembly !== 'undefined';
+  return typeof WebAssembly !== "undefined";
 }
 
 /**
  * Checks if IndexedDB is supported
  */
 export async function hasIndexedDB(): Promise<boolean> {
-  if (typeof indexedDB === 'undefined') {
+  if (typeof indexedDB === "undefined") {
     return false;
   }
 
   try {
-    const dbName = '__test_idb__';
+    const dbName = "__test_idb__";
     const request = indexedDB.open(dbName, 1);
 
     return new Promise<boolean>((resolve) => {
@@ -138,10 +142,10 @@ export async function hasIndexedDB(): Promise<boolean> {
  */
 export function hasOPFS(): boolean {
   return (
-    typeof navigator !== 'undefined' &&
-    'storage' in navigator &&
-    typeof navigator.storage === 'object' &&
-    'getDirectory' in navigator.storage
+    typeof navigator !== "undefined" &&
+    "storage" in navigator &&
+    typeof navigator.storage === "object" &&
+    "getDirectory" in navigator.storage
   );
 }
 
@@ -150,11 +154,11 @@ export function hasOPFS(): boolean {
  */
 export function hasLocalStorage(): boolean {
   try {
-    if (typeof localStorage === 'undefined') {
+    if (typeof localStorage === "undefined") {
       return false;
     }
 
-    const test = '__test__';
+    const test = "__test__";
     localStorage.setItem(test, test);
     localStorage.removeItem(test);
     return true;
@@ -168,11 +172,11 @@ export function hasLocalStorage(): boolean {
  */
 export function hasSessionStorage(): boolean {
   try {
-    if (typeof sessionStorage === 'undefined') {
+    if (typeof sessionStorage === "undefined") {
       return false;
     }
 
-    const test = '__test__';
+    const test = "__test__";
     sessionStorage.setItem(test, test);
     sessionStorage.removeItem(test);
     return true;
@@ -185,13 +189,15 @@ export function hasSessionStorage(): boolean {
  * Checks if Web Crypto API is supported
  */
 export function hasWebCrypto(): boolean {
-  return typeof crypto !== 'undefined' && 'subtle' in crypto;
+  return typeof crypto !== "undefined" && "subtle" in crypto;
 }
 
 /**
  * Checks if specific hash algorithm is supported
  */
-export async function hasHashAlgorithm(algorithm: 'SHA-1' | 'SHA-256'): Promise<boolean> {
+export async function hasHashAlgorithm(
+  algorithm: "SHA-1" | "SHA-256",
+): Promise<boolean> {
   if (!hasWebCrypto()) {
     return false;
   }
@@ -209,21 +215,21 @@ export async function hasHashAlgorithm(algorithm: 'SHA-1' | 'SHA-256'): Promise<
  * Checks if CompressionStream is supported
  */
 export function hasCompressionStream(): boolean {
-  return typeof CompressionStream !== 'undefined';
+  return typeof CompressionStream !== "undefined";
 }
 
 /**
  * Checks if Web Workers are supported
  */
 export function hasWebWorkers(): boolean {
-  return typeof Worker !== 'undefined';
+  return typeof Worker !== "undefined";
 }
 
 /**
  * Checks if SharedArrayBuffer is supported
  */
 export function hasSharedArrayBuffer(): boolean {
-  return typeof SharedArrayBuffer !== 'undefined';
+  return typeof SharedArrayBuffer !== "undefined";
 }
 
 /**
@@ -288,19 +294,14 @@ export async function requestPersistentStorage(): Promise<boolean> {
 export async function detectCapabilities(): Promise<BrowserCapabilities> {
   const browser = detectBrowser();
 
-  const [
-    indexedDB,
-    sha1,
-    sha256,
-    storageQuota,
-    persistentStorage
-  ] = await Promise.all([
-    hasIndexedDB(),
-    hasHashAlgorithm('SHA-1'),
-    hasHashAlgorithm('SHA-256'),
-    getStorageQuota(),
-    hasPersistentStorage(),
-  ]);
+  const [indexedDB, sha1, sha256, storageQuota, persistentStorage] =
+    await Promise.all([
+      hasIndexedDB(),
+      hasHashAlgorithm("SHA-1"),
+      hasHashAlgorithm("SHA-256"),
+      getStorageQuota(),
+      hasPersistentStorage(),
+    ]);
 
   const capabilities: BrowserCapabilities = {
     browser,
@@ -309,20 +310,21 @@ export async function detectCapabilities(): Promise<BrowserCapabilities> {
     localStorage: hasLocalStorage(),
     sessionStorage: hasSessionStorage(),
     opfs: hasOPFS(),
-    storageManager: typeof navigator.storage !== 'undefined',
+    storageManager: typeof navigator.storage !== "undefined",
     persistentStorage,
     webCrypto: hasWebCrypto(),
     subtleCrypto: hasWebCrypto(),
     sha1Support: sha1,
     sha256Support: sha256,
     compressionStream: hasCompressionStream(),
-    decompressionStream: typeof DecompressionStream !== 'undefined',
+    decompressionStream: typeof DecompressionStream !== "undefined",
     webWorkers: hasWebWorkers(),
     sharedArrayBuffer: hasSharedArrayBuffer(),
-    atomics: typeof Atomics !== 'undefined',
-    performanceAPI: typeof performance !== 'undefined',
-    performanceMemory: typeof performance !== 'undefined' && 'memory' in performance,
-    performanceObserver: typeof PerformanceObserver !== 'undefined',
+    atomics: typeof Atomics !== "undefined",
+    performanceAPI: typeof performance !== "undefined",
+    performanceMemory:
+      typeof performance !== "undefined" && "memory" in performance,
+    performanceObserver: typeof PerformanceObserver !== "undefined",
   };
 
   if (storageQuota) {
@@ -343,56 +345,70 @@ export async function checkCompatibility(): Promise<CompatibilityResult> {
 
   // Required features
   if (!capabilities.webAssembly) {
-    missingFeatures.push('WebAssembly');
+    missingFeatures.push("WebAssembly");
   }
 
   if (!capabilities.webCrypto || !capabilities.subtleCrypto) {
-    missingFeatures.push('Web Crypto API');
+    missingFeatures.push("Web Crypto API");
   }
 
   if (!capabilities.sha1Support) {
-    missingFeatures.push('SHA-1 support');
+    missingFeatures.push("SHA-1 support");
   }
 
   // Recommended features
   if (!capabilities.indexedDB) {
-    warnings.push('IndexedDB not available - only in-memory storage will work');
-    recommendations.push('Use a modern browser with IndexedDB support for persistence');
+    warnings.push("IndexedDB not available - only in-memory storage will work");
+    recommendations.push(
+      "Use a modern browser with IndexedDB support for persistence",
+    );
   }
 
   if (!capabilities.opfs && capabilities.indexedDB) {
-    recommendations.push('Use IndexedDB storage adapter for best performance in your browser');
+    recommendations.push(
+      "Use IndexedDB storage adapter for best performance in your browser",
+    );
   }
 
   if (capabilities.opfs) {
-    recommendations.push('Use OPFS storage adapter for best performance');
+    recommendations.push("Use OPFS storage adapter for best performance");
   }
 
   if (!capabilities.compressionStream) {
-    warnings.push('CompressionStream not available - compression will be slower');
+    warnings.push(
+      "CompressionStream not available - compression will be slower",
+    );
   }
 
   if (capabilities.storageQuota) {
     const { available, percentage } = capabilities.storageQuota;
     if (percentage > 80) {
-      warnings.push(`Storage is ${percentage.toFixed(1)}% full - consider clearing data`);
+      warnings.push(
+        `Storage is ${percentage.toFixed(1)}% full - consider clearing data`,
+      );
     }
     if (available < 50 * 1024 * 1024) {
-      warnings.push(`Only ${(available / 1024 / 1024).toFixed(2)}MB storage available`);
+      warnings.push(
+        `Only ${(available / 1024 / 1024).toFixed(2)}MB storage available`,
+      );
     }
   }
 
   // Browser-specific recommendations
-  if (capabilities.browser.name === 'Safari') {
-    recommendations.push('Safari has more restrictive storage quotas - monitor storage usage carefully');
+  if (capabilities.browser.name === "Safari") {
+    recommendations.push(
+      "Safari has more restrictive storage quotas - monitor storage usage carefully",
+    );
     if (parseInt(capabilities.browser.version) < 15) {
-      warnings.push('Safari version < 15 may have limited support');
+      warnings.push("Safari version < 15 may have limited support");
     }
   }
 
-  if (capabilities.browser.name === 'Firefox') {
+  if (capabilities.browser.name === "Firefox") {
     if (!capabilities.opfs) {
-      recommendations.push('OPFS not available in this Firefox version - use IndexedDB');
+      recommendations.push(
+        "OPFS not available in this Firefox version - use IndexedDB",
+      );
     }
   }
 
@@ -410,79 +426,90 @@ export async function checkCompatibility(): Promise<CompatibilityResult> {
 /**
  * Generates a compatibility report as text
  */
-export function generateCompatibilityReport(result: CompatibilityResult): string {
+export function generateCompatibilityReport(
+  result: CompatibilityResult,
+): string {
   const lines: string[] = [];
 
-  lines.push('=== Browser Compatibility Report ===');
-  lines.push('');
+  lines.push("=== Browser Compatibility Report ===");
+  lines.push("");
 
   // Browser info
-  lines.push(`Browser: ${result.capabilities.browser.name} ${result.capabilities.browser.version}`);
+  lines.push(
+    `Browser: ${result.capabilities.browser.name} ${result.capabilities.browser.version}`,
+  );
   lines.push(`Engine: ${result.capabilities.browser.engine}`);
-  lines.push('');
+  lines.push("");
 
   // Compatibility status
   if (result.compatible) {
-    lines.push('✅ Compatible - All required features are supported');
+    lines.push("✅ Compatible - All required features are supported");
   } else {
-    lines.push('❌ Not Compatible - Missing required features');
+    lines.push("❌ Not Compatible - Missing required features");
   }
-  lines.push('');
+  lines.push("");
 
   // Missing features
   if (result.missingFeatures.length > 0) {
-    lines.push('Missing Required Features:');
-    result.missingFeatures.forEach(feature => {
+    lines.push("Missing Required Features:");
+    result.missingFeatures.forEach((feature) => {
       lines.push(`  ❌ ${feature}`);
     });
-    lines.push('');
+    lines.push("");
   }
 
   // Core features
-  lines.push('Core Features:');
-  lines.push(`  ${result.capabilities.webAssembly ? '✅' : '❌'} WebAssembly`);
-  lines.push(`  ${result.capabilities.webCrypto ? '✅' : '❌'} Web Crypto API`);
-  lines.push(`  ${result.capabilities.sha1Support ? '✅' : '❌'} SHA-1`);
-  lines.push(`  ${result.capabilities.sha256Support ? '✅' : '❌'} SHA-256`);
-  lines.push('');
+  lines.push("Core Features:");
+  lines.push(`  ${result.capabilities.webAssembly ? "✅" : "❌"} WebAssembly`);
+  lines.push(`  ${result.capabilities.webCrypto ? "✅" : "❌"} Web Crypto API`);
+  lines.push(`  ${result.capabilities.sha1Support ? "✅" : "❌"} SHA-1`);
+  lines.push(`  ${result.capabilities.sha256Support ? "✅" : "❌"} SHA-256`);
+  lines.push("");
 
   // Storage features
-  lines.push('Storage Features:');
-  lines.push(`  ${result.capabilities.indexedDB ? '✅' : '❌'} IndexedDB`);
-  lines.push(`  ${result.capabilities.opfs ? '✅' : '❌'} OPFS`);
-  lines.push(`  ${result.capabilities.localStorage ? '✅' : '❌'} localStorage`);
-  lines.push(`  ${result.capabilities.sessionStorage ? '✅' : '❌'} sessionStorage`);
-  lines.push('');
+  lines.push("Storage Features:");
+  lines.push(`  ${result.capabilities.indexedDB ? "✅" : "❌"} IndexedDB`);
+  lines.push(`  ${result.capabilities.opfs ? "✅" : "❌"} OPFS`);
+  lines.push(
+    `  ${result.capabilities.localStorage ? "✅" : "❌"} localStorage`,
+  );
+  lines.push(
+    `  ${result.capabilities.sessionStorage ? "✅" : "❌"} sessionStorage`,
+  );
+  lines.push("");
 
   // Storage quota
   if (result.capabilities.storageQuota) {
-    const { usage, quota, available, percentage } = result.capabilities.storageQuota;
-    lines.push('Storage Quota:');
+    const { usage, quota, available, percentage } =
+      result.capabilities.storageQuota;
+    lines.push("Storage Quota:");
     lines.push(`  Total: ${(quota / 1024 / 1024 / 1024).toFixed(2)} GB`);
-    lines.push(`  Used: ${(usage / 1024 / 1024).toFixed(2)} MB (${percentage.toFixed(1)}%)`);
+    lines.push(
+      `  Used: ${(usage / 1024 / 1024).toFixed(2)} MB (${percentage.toFixed(1)}%)`,
+    );
     lines.push(`  Available: ${(available / 1024 / 1024).toFixed(2)} MB`);
-    lines.push('');
+    lines.push("");
   }
 
   // Warnings
   if (result.warnings.length > 0) {
-    lines.push('Warnings:');
-    result.warnings.forEach(warning => {
+    lines.push("Warnings:");
+    result.warnings.forEach((warning) => {
       lines.push(`  ⚠️  ${warning}`);
     });
-    lines.push('');
+    lines.push("");
   }
 
   // Recommendations
   if (result.recommendations.length > 0) {
-    lines.push('Recommendations:');
-    result.recommendations.forEach(rec => {
+    lines.push("Recommendations:");
+    result.recommendations.forEach((rec) => {
       lines.push(`  💡 ${rec}`);
     });
-    lines.push('');
+    lines.push("");
   }
 
-  return lines.join('\n');
+  return lines.join("\n");
 }
 
 /**
@@ -501,7 +528,7 @@ export async function assertCompatibility(): Promise<void> {
   const result = await checkCompatibility();
   if (!result.compatible) {
     throw new Error(
-      `Browser is not compatible with BrowserGit.\nMissing features: ${result.missingFeatures.join(', ')}`
+      `Browser is not compatible with BrowserGit.\nMissing features: ${result.missingFeatures.join(", ")}`,
     );
   }
 }

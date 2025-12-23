@@ -1,21 +1,21 @@
-import { Command } from 'commander';
-import { Repository } from '@browser-git/browser-git';
-import { success, error, warning } from '../utils/output.js';
+import { Command } from "commander";
+import { Repository } from "@browser-git/browser-git";
+import { success, error, warning } from "../utils/output.js";
 
-export const mergeCommand = new Command('merge')
-  .description('Join two or more development histories together')
-  .argument('<branch>', 'branch to merge into current branch')
-  .option('--no-ff', 'create merge commit even if fast-forward is possible')
-  .option('--ff-only', 'refuse to merge unless fast-forward is possible')
-  .option('-m, --message <message>', 'merge commit message')
-  .option('--abort', 'abort the current merge')
+export const mergeCommand = new Command("merge")
+  .description("Join two or more development histories together")
+  .argument("<branch>", "branch to merge into current branch")
+  .option("--no-ff", "create merge commit even if fast-forward is possible")
+  .option("--ff-only", "refuse to merge unless fast-forward is possible")
+  .option("-m, --message <message>", "merge commit message")
+  .option("--abort", "abort the current merge")
   .action(async (branch: string, options) => {
     try {
       const repo = await Repository.open(process.cwd());
 
       if (options.abort) {
         await repo.mergeAbort();
-        success('Merge aborted');
+        success("Merge aborted");
         return;
       }
 
@@ -27,7 +27,7 @@ export const mergeCommand = new Command('merge')
 
       if (result.conflicts && result.conflicts.length > 0) {
         warning(`Automatic merge failed. Fix conflicts and commit the result.`);
-        console.log('\nConflicts:');
+        console.log("\nConflicts:");
         result.conflicts.forEach((conflict: any) => {
           console.log(`  ${conflict.path}`);
         });
@@ -35,7 +35,9 @@ export const mergeCommand = new Command('merge')
       } else if (result.fastForward) {
         success(`Fast-forward merge to ${result.commitHash?.substring(0, 7)}`);
       } else {
-        success(`Merge completed with commit ${result.commitHash?.substring(0, 7)}`);
+        success(
+          `Merge completed with commit ${result.commitHash?.substring(0, 7)}`,
+        );
       }
     } catch (err) {
       error(`Failed to merge: ${(err as Error).message}`);

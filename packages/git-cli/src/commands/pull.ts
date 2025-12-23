@@ -1,16 +1,18 @@
-import { Command } from 'commander';
-import { Repository, AuthMethod } from '@browser-git/browser-git';
-import { success, error, progress } from '../utils/output.js';
+import { Command } from "commander";
+import { Repository, AuthMethod } from "@browser-git/browser-git";
+import { success, error, progress } from "../utils/output.js";
 
-export const pullCommand = new Command('pull')
-  .description('Fetch from and integrate with another repository or a local branch')
-  .argument('[remote]', 'remote name', 'origin')
-  .argument('[branch]', 'branch to pull')
-  .option('--rebase', 'rebase instead of merge')
-  .option('--ff-only', 'only update if fast-forward is possible')
-  .option('--no-ff', 'create merge commit even if fast-forward is possible')
-  .option('--username <username>', 'username for authentication')
-  .option('--token <token>', 'token for authentication')
+export const pullCommand = new Command("pull")
+  .description(
+    "Fetch from and integrate with another repository or a local branch",
+  )
+  .argument("[remote]", "remote name", "origin")
+  .argument("[branch]", "branch to pull")
+  .option("--rebase", "rebase instead of merge")
+  .option("--ff-only", "only update if fast-forward is possible")
+  .option("--no-ff", "create merge commit even if fast-forward is possible")
+  .option("--username <username>", "username for authentication")
+  .option("--token <token>", "token for authentication")
   .action(async (remote: string, branch: string | undefined, options) => {
     try {
       const repo = await Repository.open(process.cwd());
@@ -36,7 +38,7 @@ export const pullCommand = new Command('pull')
       // Show progress
       let lastProgress = 0;
       pullOptions.onProgress = (current: number, total: number) => {
-        progress(current, total, 'Pulling changes');
+        progress(current, total, "Pulling changes");
         lastProgress = current;
       };
 
@@ -45,7 +47,7 @@ export const pullCommand = new Command('pull')
       if (lastProgress > 0) console.log();
 
       if (result.alreadyUpToDate) {
-        success('Already up to date');
+        success("Already up to date");
       } else if (result.fastForward) {
         success(`Fast-forwarded`);
       } else {

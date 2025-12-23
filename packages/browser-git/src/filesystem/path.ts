@@ -6,15 +6,18 @@
 /**
  * Path separator (always '/' for browser/Unix-style paths)
  */
-export const sep = '/';
+export const sep = "/";
 
 /**
  * Path traversal error
  */
 export class PathTraversalError extends Error {
-  constructor(message: string, public readonly path: string) {
+  constructor(
+    message: string,
+    public readonly path: string,
+  ) {
     super(message);
-    this.name = 'PathTraversalError';
+    this.name = "PathTraversalError";
   }
 }
 
@@ -25,24 +28,24 @@ export class PathTraversalError extends Error {
  * path traversal. Use `normalizeSafe` or `isPathSafe` for security-critical operations.
  */
 export function normalize(path: string): string {
-  if (!path || path === '.') {
-    return '.';
+  if (!path || path === ".") {
+    return ".";
   }
 
   // Remove leading/trailing slashes and split
-  const parts = path.replace(/^\/+|\/+$/g, '').split('/');
+  const parts = path.replace(/^\/+|\/+$/g, "").split("/");
   const result: string[] = [];
 
   for (const part of parts) {
-    if (!part || part === '.') {
+    if (!part || part === ".") {
       // Skip empty and current directory markers
       continue;
-    } else if (part === '..') {
+    } else if (part === "..") {
       // Go up one directory
-      if (result.length > 0 && result[result.length - 1] !== '..') {
+      if (result.length > 0 && result[result.length - 1] !== "..") {
         result.pop();
       } else {
-        result.push('..');
+        result.push("..");
       }
     } else {
       result.push(part);
@@ -50,10 +53,10 @@ export function normalize(path: string): string {
   }
 
   if (result.length === 0) {
-    return '.';
+    return ".";
   }
 
-  return result.join('/');
+  return result.join("/");
 }
 
 /**
@@ -64,17 +67,17 @@ export function normalize(path: string): string {
  */
 export function isPathSafe(normalizedPath: string): boolean {
   // Empty paths and current directory are safe
-  if (!normalizedPath || normalizedPath === '.') {
+  if (!normalizedPath || normalizedPath === ".") {
     return true;
   }
 
   // If path starts with '..' or contains '..' after split, it escapes root
-  if (normalizedPath.startsWith('../') || normalizedPath === '..') {
+  if (normalizedPath.startsWith("../") || normalizedPath === "..") {
     return false;
   }
 
-  const parts = normalizedPath.split('/');
-  return !parts.includes('..');
+  const parts = normalizedPath.split("/");
+  return !parts.includes("..");
 }
 
 /**
@@ -92,11 +95,11 @@ export function normalizeSafe(path: string, throwOnInvalid = true): string {
     if (throwOnInvalid) {
       throw new PathTraversalError(
         `Path traversal detected: path attempts to escape root directory`,
-        path
+        path,
       );
     }
     // Return safe fallback
-    return '.';
+    return ".";
   }
 
   return normalized;
@@ -113,7 +116,7 @@ export function validatePath(path: string): void {
   if (!isPathSafe(normalized)) {
     throw new PathTraversalError(
       `Invalid path: contains directory traversal sequences that escape root`,
-      path
+      path,
     );
   }
 }
@@ -123,12 +126,10 @@ export function validatePath(path: string): void {
  */
 export function join(...segments: string[]): string {
   if (segments.length === 0) {
-    return '.';
+    return ".";
   }
 
-  const joined = segments
-    .filter((seg) => seg && seg.length > 0)
-    .join('/');
+  const joined = segments.filter((seg) => seg && seg.length > 0).join("/");
 
   return normalize(joined);
 }
@@ -138,21 +139,21 @@ export function join(...segments: string[]): string {
  */
 export function dirname(path: string): string {
   if (!path) {
-    return '.';
+    return ".";
   }
 
   const normalized = normalize(path);
-  if (normalized === '.') {
-    return '.';
+  if (normalized === ".") {
+    return ".";
   }
 
-  const lastSlash = normalized.lastIndexOf('/');
+  const lastSlash = normalized.lastIndexOf("/");
   if (lastSlash === -1) {
-    return '.';
+    return ".";
   }
 
   if (lastSlash === 0) {
-    return '/';
+    return "/";
   }
 
   return normalized.substring(0, lastSlash);
@@ -163,12 +164,13 @@ export function dirname(path: string): string {
  */
 export function basename(path: string, ext?: string): string {
   if (!path) {
-    return '';
+    return "";
   }
 
   const normalized = normalize(path);
-  const lastSlash = normalized.lastIndexOf('/');
-  const base = lastSlash === -1 ? normalized : normalized.substring(lastSlash + 1);
+  const lastSlash = normalized.lastIndexOf("/");
+  const base =
+    lastSlash === -1 ? normalized : normalized.substring(lastSlash + 1);
 
   if (ext && base.endsWith(ext)) {
     return base.substring(0, base.length - ext.length);
@@ -182,14 +184,14 @@ export function basename(path: string, ext?: string): string {
  */
 export function extname(path: string): string {
   if (!path) {
-    return '';
+    return "";
   }
 
   const base = basename(path);
-  const lastDot = base.lastIndexOf('.');
+  const lastDot = base.lastIndexOf(".");
 
   if (lastDot === -1 || lastDot === 0) {
-    return '';
+    return "";
   }
 
   return base.substring(lastDot);
@@ -199,14 +201,14 @@ export function extname(path: string): string {
  * Check if path is absolute
  */
 export function isAbsolute(path: string): boolean {
-  return path.startsWith('/');
+  return path.startsWith("/");
 }
 
 /**
  * Resolve a sequence of paths to an absolute path
  */
 export function resolve(...paths: string[]): string {
-  let resolved = '';
+  let resolved = "";
 
   for (let i = paths.length - 1; i >= 0; i--) {
     const path = paths[i];
@@ -217,12 +219,12 @@ export function resolve(...paths: string[]): string {
       break;
     }
 
-    resolved = path + (resolved ? '/' + resolved : '');
+    resolved = path + (resolved ? "/" + resolved : "");
   }
 
   // If still relative, prepend current directory marker
   if (!isAbsolute(resolved)) {
-    resolved = '/' + resolved;
+    resolved = "/" + resolved;
   }
 
   return normalize(resolved);
@@ -232,8 +234,8 @@ export function resolve(...paths: string[]): string {
  * Get relative path from 'from' to 'to'
  */
 export function relative(from: string, to: string): string {
-  const fromParts = normalize(from).split('/');
-  const toParts = normalize(to).split('/');
+  const fromParts = normalize(from).split("/");
+  const toParts = normalize(to).split("/");
 
   // Find common prefix
   let commonLength = 0;
@@ -251,7 +253,7 @@ export function relative(from: string, to: string): string {
   const relativeParts: string[] = [];
 
   for (let i = 0; i < upCount; i++) {
-    relativeParts.push('..');
+    relativeParts.push("..");
   }
 
   for (let i = commonLength; i < toParts.length; i++) {
@@ -262,10 +264,10 @@ export function relative(from: string, to: string): string {
   }
 
   if (relativeParts.length === 0) {
-    return '.';
+    return ".";
   }
 
-  return relativeParts.join('/');
+  return relativeParts.join("/");
 }
 
 /**
@@ -294,8 +296,8 @@ export function parse(path: string): ParsedPath {
   const name = ext ? base.substring(0, base.length - ext.length) : base;
 
   return {
-    root: isAbs ? '/' : '',
-    dir: dir === '.' ? '' : dir,
+    root: isAbs ? "/" : "",
+    dir: dir === "." ? "" : dir,
     base,
     ext,
     name,
@@ -306,8 +308,8 @@ export function parse(path: string): ParsedPath {
  * Format path components into a path string
  */
 export function format(pathObj: Partial<ParsedPath>): string {
-  const dir = pathObj.dir || '';
-  const base = pathObj.base || ((pathObj.name || '') + (pathObj.ext || ''));
+  const dir = pathObj.dir || "";
+  const base = pathObj.base || (pathObj.name || "") + (pathObj.ext || "");
 
   if (!dir) {
     return base;

@@ -1,16 +1,16 @@
-import { Command } from 'commander';
-import { Repository, AuthMethod } from '@browser-git/browser-git';
-import { success, error, progress } from '../utils/output.js';
+import { Command } from "commander";
+import { Repository, AuthMethod } from "@browser-git/browser-git";
+import { success, error, progress } from "../utils/output.js";
 
-export const fetchCommand = new Command('fetch')
-  .description('Download objects and refs from another repository')
-  .argument('[remote]', 'remote name', 'origin')
-  .argument('[refspec]', 'refspec to fetch')
-  .option('--all', 'fetch from all remotes')
-  .option('--prune', 'remove remote-tracking references that no longer exist')
-  .option('--depth <depth>', 'deepen shallow clone')
-  .option('--username <username>', 'username for authentication')
-  .option('--token <token>', 'token for authentication')
+export const fetchCommand = new Command("fetch")
+  .description("Download objects and refs from another repository")
+  .argument("[remote]", "remote name", "origin")
+  .argument("[refspec]", "refspec to fetch")
+  .option("--all", "fetch from all remotes")
+  .option("--prune", "remove remote-tracking references that no longer exist")
+  .option("--depth <depth>", "deepen shallow clone")
+  .option("--username <username>", "username for authentication")
+  .option("--token <token>", "token for authentication")
   .action(async (remote: string, refspec: string | undefined, options) => {
     try {
       const repo = await Repository.open(process.cwd());
@@ -35,7 +35,7 @@ export const fetchCommand = new Command('fetch')
       // Show progress
       let lastProgress = 0;
       fetchOptions.onProgress = (current: number, total: number) => {
-        progress(current, total, 'Fetching objects');
+        progress(current, total, "Fetching objects");
         lastProgress = current;
       };
 

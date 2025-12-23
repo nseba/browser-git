@@ -14,6 +14,7 @@ This is the first public release of BrowserGit, a complete Git implementation fo
 ### Added
 
 #### Core Git Operations
+
 - Repository initialization and configuration
 - File staging (`git add`) with glob patterns and .gitignore support
 - Commit creation with author and committer metadata
@@ -25,6 +26,7 @@ This is the first public release of BrowserGit, a complete Git implementation fo
 - Diff operations for file changes
 
 #### Object Model
+
 - Complete Git object model (blob, tree, commit, tag)
 - SHA-1 and SHA-256 hash algorithm support
 - Object serialization and deserialization
@@ -32,6 +34,7 @@ This is the first public release of BrowserGit, a complete Git implementation fo
 - Object database interface
 
 #### Remote Operations
+
 - Git HTTP smart protocol implementation
 - Clone operation with progress tracking
 - Fetch and pull operations
@@ -42,6 +45,7 @@ This is the first public release of BrowserGit, a complete Git implementation fo
 - CORS detection and error handling
 
 #### Storage Layer
+
 - Pluggable storage adapter interface
 - IndexedDB storage adapter (recommended)
 - OPFS (Origin Private File System) adapter
@@ -52,6 +56,7 @@ This is the first public release of BrowserGit, a complete Git implementation fo
 - Browser feature detection
 
 #### File System API
+
 - Node.js-like async fs API
 - Path manipulation utilities (join, dirname, basename, etc.)
 - File reading and writing (text and binary)
@@ -59,6 +64,7 @@ This is the first public release of BrowserGit, a complete Git implementation fo
 - File watching API with event emitters
 
 #### Diff Engine
+
 - Pluggable diff interface
 - Myers diff algorithm implementation
 - Line-by-line diff support
@@ -67,6 +73,7 @@ This is the first public release of BrowserGit, a complete Git implementation fo
 - Unified diff formatting
 
 #### Authentication
+
 - HTTP Basic Authentication
 - OAuth flow integration hooks
 - Custom authentication handlers
@@ -74,6 +81,7 @@ This is the first public release of BrowserGit, a complete Git implementation fo
 - Token-based authentication (GitHub, GitLab)
 
 #### CLI Tool
+
 - Command-line interface (`bgit`)
 - All major Git commands implemented
 - Colored output and formatted tables
@@ -81,12 +89,14 @@ This is the first public release of BrowserGit, a complete Git implementation fo
 - Help documentation for all commands
 
 #### Examples
+
 - Basic demo application (HTML/JS)
 - Mini IDE example (React)
 - Offline documentation site example
 - Integration examples for various use cases
 
 #### Testing
+
 - Comprehensive unit test suite
 - Integration tests for complete workflows
 - Cross-browser testing with Playwright
@@ -95,6 +105,7 @@ This is the first public release of BrowserGit, a complete Git implementation fo
 - Mock adapters for testing
 
 #### Documentation
+
 - Architecture overview
 - API reference documentation
 - Getting started guide
@@ -105,6 +116,7 @@ This is the first public release of BrowserGit, a complete Git implementation fo
 - Performance optimization guide
 
 #### Build System
+
 - Monorepo structure with yarn workspaces
 - TinyGo WASM compilation
 - TypeScript builds for all packages
@@ -113,6 +125,7 @@ This is the first public release of BrowserGit, a complete Git implementation fo
 - CI/CD pipeline with GitHub Actions
 
 ### Security Features
+
 - URL validation to prevent SSRF attacks
 - Path sanitization to prevent directory traversal
 - Input validation across all operations
@@ -123,6 +136,7 @@ This is the first public release of BrowserGit, a complete Git implementation fo
 - Secure credential handling
 
 ### Performance Optimizations
+
 - Commit operations: < 50ms
 - Checkout operations: < 200ms
 - Clone operations: < 5s for 100-commit repos
@@ -131,6 +145,7 @@ This is the first public release of BrowserGit, a complete Git implementation fo
 - Lazy loading of WASM modules
 
 ### Browser Compatibility
+
 - Chrome/Edge 90+
 - Firefox 88+
 - Safari 14+
@@ -138,6 +153,7 @@ This is the first public release of BrowserGit, a complete Git implementation fo
 - Graceful degradation for older browsers
 
 ### Known Limitations
+
 - Storage quotas vary by browser (typically 50MB-1GB)
 - Large repositories (>500MB) may hit memory limits
 - Remote operations require CORS-enabled servers
@@ -163,12 +179,14 @@ All packages are released with version 0.1.0:
 ### Planned for Future Releases
 
 #### High Priority
+
 - Interactive rebase operations
 - Git stash functionality
 - Shallow clone support
 - Performance improvements for large repositories
 
 #### Medium Priority
+
 - Git submodule support
 - Git LFS (Large File Storage) support
 - Signed commits (GPG)
@@ -177,6 +195,7 @@ All packages are released with version 0.1.0:
 - Advanced merge strategies
 
 #### Low Priority
+
 - Sparse checkout
 - Git worktrees
 - Git bisect
@@ -184,6 +203,7 @@ All packages are released with version 0.1.0:
 - Bundle format support
 
 ### In Progress
+
 - None
 
 ---
@@ -197,6 +217,7 @@ All packages are released with version 0.1.0:
 This initial release brings a complete, production-ready Git implementation to the browser. BrowserGit enables version control for browser-based applications without requiring server-side dependencies.
 
 **Highlights:**
+
 - Complete Git core functionality
 - Multiple storage backends with IndexedDB as the recommended default
 - Full remote operations support (clone, fetch, pull, push)
@@ -206,26 +227,30 @@ This initial release brings a complete, production-ready Git implementation to t
 - Cross-browser compatibility (Chrome, Firefox, Safari)
 
 **Getting Started:**
+
 ```bash
 npm install @browser-git/browser-git
 ```
 
 **Quick Example:**
-```typescript
-import { Repository } from '@browser-git/browser-git';
 
-const repo = await Repository.init('/my-project');
-await repo.writeFile('README.md', '# My Project');
-await repo.add(['README.md']);
-await repo.commit('Initial commit');
+```typescript
+import { Repository } from "@browser-git/browser-git";
+
+const repo = await Repository.init("/my-project");
+await repo.writeFile("README.md", "# My Project");
+await repo.add(["README.md"]);
+await repo.commit("Initial commit");
 ```
 
 **Documentation:**
+
 - [Getting Started Guide](./docs/getting-started.md)
 - [API Reference](./docs/api-reference/repository.md)
 - [Architecture Overview](./docs/architecture/overview.md)
 
 **Known Issues:**
+
 - Large binary files (>10MB) may cause performance degradation
 - Safari OPFS support requires macOS 13.4+ or iOS 16.4+
 - Clone operations require CORS-enabled Git servers

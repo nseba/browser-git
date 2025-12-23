@@ -7,6 +7,7 @@ Templates for announcing BrowserGit on various platforms.
 ### Initial Announcement (Thread)
 
 **Tweet 1:**
+
 ```
 🚀 Introducing BrowserGit - A complete Git implementation for browsers!
 
@@ -21,6 +22,7 @@ Built with Go + WebAssembly and TypeScript, it brings full version control to we
 ```
 
 **Tweet 2:**
+
 ```
 Why BrowserGit?
 
@@ -34,6 +36,7 @@ All running entirely in the browser!
 ```
 
 **Tweet 3:**
+
 ```
 Key features:
 
@@ -46,7 +49,8 @@ Key features:
 ```
 
 **Tweet 4:**
-```
+
+````
 Quick example:
 
 ```typescript
@@ -56,13 +60,15 @@ const repo = await Repository.init('/my-project');
 await repo.writeFile('README.md', '# Hello');
 await repo.add(['README.md']);
 await repo.commit('Initial commit');
-```
+````
 
 That's it! Full Git in 5 lines.
+
 ```
 
 **Tweet 5:**
 ```
+
 Get started:
 📚 Docs: https://github.com/user/browser-git
 📦 npm: npm install @browser-git/browser-git
@@ -72,10 +78,12 @@ Get started:
 Built with ❤️ using Go, WebAssembly, and TypeScript
 
 #WebDev #JavaScript #Git #WebAssembly #OpenSource
+
 ```
 
 ### Short Version
 ```
+
 🚀 BrowserGit - Complete Git implementation for browsers!
 
 ✅ All core Git operations
@@ -89,7 +97,8 @@ npm install @browser-git/browser-git
 
 Docs: [link]
 #WebDev #JavaScript #Git
-```
+
+````
 
 ## Reddit
 
@@ -143,7 +152,7 @@ await repo.merge('feature');
 
 // Remote operations
 await Repository.clone('https://github.com/user/repo.git', '/local');
-```
+````
 
 ## Use Cases
 
@@ -164,6 +173,7 @@ await Repository.clone('https://github.com/user/repo.git', '/local');
 ## Performance
 
 Benchmarked on Chrome 120, macOS M1:
+
 - Initialize repo: ~10ms
 - Stage file (1KB): ~5ms
 - Commit: ~30ms
@@ -173,6 +183,7 @@ Benchmarked on Chrome 120, macOS M1:
 ## Examples
 
 Check out the example applications:
+
 - Basic demo (vanilla JS)
 - Mini IDE (React)
 - Offline docs site
@@ -187,6 +198,7 @@ Check out the example applications:
 ## What's Next?
 
 Roadmap includes:
+
 - Rebase operations
 - Git stash
 - Submodules
@@ -202,7 +214,8 @@ npm install @browser-git/browser-git
 I'd love to hear your feedback, use cases, or contributions!
 
 Happy to answer any questions!
-```
+
+````
 
 ### r/webdev
 
@@ -247,24 +260,26 @@ I've built example apps showing:
 
 ```bash
 npm install @browser-git/browser-git
-```
+````
 
 ## Example
 
 ```typescript
-const repo = await Repository.init('/project');
-await repo.writeFile('index.html', '<h1>Hello</h1>');
-await repo.add(['index.html']);
-await repo.commit('Add homepage');
+const repo = await Repository.init("/project");
+await repo.writeFile("index.html", "<h1>Hello</h1>");
+await repo.add(["index.html"]);
+await repo.commit("Add homepage");
 ```
 
 Check it out and let me know what you think!
 
 **Links:**
+
 - GitHub: [link]
 - Docs: [link]
 - npm: [link]
-```
+
+````
 
 ### r/programming
 
@@ -286,15 +301,17 @@ Git is a complex distributed version control system. Reimplementing it for the b
 
 ## Architecture
 
-```
+````
+
 Browser App
-    ↓
+↓
 TypeScript API (async/await)
-    ↓
+↓
 WASM Core (Go/TinyGo)
-    ↓
+↓
 Storage Layer (IndexedDB/OPFS/LocalStorage)
-```
+
+````
 
 ## Technical Highlights
 
@@ -360,7 +377,7 @@ await repo.commit('Add feature');
 await repo.push('origin', 'main', {
   auth: { username: 'user', token: 'token' }
 });
-```
+````
 
 ## Limitations
 
@@ -377,6 +394,7 @@ Licensed under MIT. Contributions welcome!
 - npm: `npm install @browser-git/browser-git`
 
 Happy to discuss the implementation details or answer questions!
+
 ```
 
 ## Hacker News
@@ -385,11 +403,13 @@ Happy to discuss the implementation details or answer questions!
 
 **Text:**
 ```
+
 I've been working on a complete Git implementation that runs entirely in the browser using WebAssembly. After several months of development, I'm releasing it as open source.
 
 BrowserGit implements the full Git data model, protocol, and operations - clone, commit, branch, merge, push, pull - all running client-side. It uses Go compiled to WASM for the core Git operations, with a TypeScript API layer on top.
 
 The main technical challenges were:
+
 1. Implementing the Git HTTP smart protocol and packfile format in WASM
 2. Creating a filesystem abstraction over browser storage APIs (IndexedDB, OPFS)
 3. Optimizing bundle size (<2MB gzipped) while maintaining full functionality
@@ -405,7 +425,8 @@ GitHub: https://github.com/user/browser-git
 npm: npm install @browser-git/browser-git
 
 Would love feedback from the HN community!
-```
+
+````
 
 ## Dev.to
 
@@ -479,37 +500,42 @@ await repo.merge('feature');
 await repo.push('origin', 'main', {
   auth: { username: 'user', token: 'ghp_xxx' }
 });
-```
+````
 
 That's it! Full Git in the browser! 🎊
 
 ## Use Cases
 
 ### 1. Browser-Based IDEs
+
 Build powerful web-based development environments with real Git.
 
 ### 2. Offline-First Apps
+
 Version control that works without internet connection.
 
 ### 3. Documentation Sites
+
 Let users track changes to their content.
 
 ### 4. Educational Tools
+
 Interactive Git learning platforms.
 
 ### 5. Collaborative Editors
+
 Local version control with remote sync.
 
 ## Performance
 
 Benchmarked on Chrome 120:
 
-| Operation | Time |
-|-----------|------|
-| Commit | ~30ms ⚡ |
-| Checkout | ~150ms |
-| Clone (100 commits) | ~3s |
-| Bundle size | <2MB gzipped |
+| Operation           | Time         |
+| ------------------- | ------------ |
+| Commit              | ~30ms ⚡     |
+| Checkout            | ~150ms       |
+| Clone (100 commits) | ~3s          |
+| Bundle size         | <2MB gzipped |
 
 ## Live Examples
 
@@ -524,6 +550,7 @@ I built three example applications:
 ## Security
 
 Built with security as a priority:
+
 - 🔒 SSRF protection
 - 🔒 Path sanitization
 - 🔒 Input validation
@@ -566,6 +593,7 @@ Check out the [documentation](#) to get started!
 ## What's Next?
 
 Roadmap for future releases:
+
 - [ ] Rebase operations
 - [ ] Git stash
 - [ ] Submodules
@@ -583,6 +611,7 @@ BrowserGit is open source (MIT License)! Contributions are welcome!
 ## Conclusion
 
 Building a Git implementation taught me so much about:
+
 - The Git internals
 - WebAssembly optimization
 - Browser storage APIs
@@ -597,6 +626,7 @@ Questions? Drop them in the comments! 👇
 ---
 
 Happy coding! 🚀
+
 ```
 
 ## LinkedIn
@@ -605,6 +635,7 @@ Happy coding! 🚀
 
 **Post:**
 ```
+
 🚀 Excited to share my latest open-source project: BrowserGit!
 
 After months of development, I've built a complete Git implementation that runs entirely in the browser using WebAssembly and TypeScript.
@@ -643,12 +674,14 @@ npm: npm install @browser-git/browser-git
 Check it out and let me know what you think! Always happy to discuss the technical implementation or potential use cases.
 
 #WebDevelopment #JavaScript #Git #WebAssembly #OpenSource #SoftwareEngineering
+
 ```
 
 ## Discord/Slack Communities
 
 **Short Announcement:**
 ```
+
 Hey everyone! 👋
 
 Just released BrowserGit - a complete Git implementation for browsers!
@@ -668,25 +701,31 @@ Docs: https://github.com/user/browser-git
 Examples: [link]
 
 Would love your feedback! 🙏
+
 ```
 
 **Detailed Announcement:**
 ```
+
 # 🎉 Introducing BrowserGit
 
 Hey everyone! I'm excited to share a project I've been working on: **BrowserGit** - a complete Git implementation for browsers built with Go/WASM + TypeScript.
 
 ## What is it?
+
 Full Git functionality running entirely client-side. Clone repos, make commits, create branches, merge, push, pull - all in the browser with zero server dependencies.
 
 ## Why?
+
 Enables powerful use cases like:
+
 - Browser-based IDEs with real Git
 - Offline-first apps with version control
 - Interactive Git learning platforms
 - Documentation sites with history tracking
 
 ## Quick Stats
+
 ⚡ <50ms commits
 📦 <2MB gzipped
 🌐 Chrome, Firefox, Safari
@@ -694,14 +733,16 @@ Enables powerful use cases like:
 💾 IndexedDB, OPFS, LocalStorage
 
 ## Code Example
+
 ```typescript
-const repo = await Repository.init('/project');
-await repo.writeFile('README.md', '# Hello');
-await repo.add(['README.md']);
-await repo.commit('Initial commit');
+const repo = await Repository.init("/project");
+await repo.writeFile("README.md", "# Hello");
+await repo.add(["README.md"]);
+await repo.commit("Initial commit");
 ```
 
 ## Links
+
 📚 GitHub: https://github.com/user/browser-git
 📦 npm: npm install @browser-git/browser-git
 💻 Examples: [link]
@@ -709,7 +750,8 @@ await repo.commit('Initial commit');
 Open source (MIT) and contributions welcome!
 
 Let me know if you have any questions or ideas! 🚀
-```
+
+````
 
 ## Email Newsletter
 
@@ -755,7 +797,7 @@ Let me know if you have any questions or ideas! 🚀
 
 <p>Happy coding!<br>
 [Your Name]</p>
-```
+````
 
 ---
 

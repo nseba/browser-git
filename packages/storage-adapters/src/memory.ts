@@ -1,7 +1,4 @@
-import type {
-  StorageAdapter,
-  StorageQuota,
-} from './interface.js';
+import type { StorageAdapter, StorageQuota } from "./interface.js";
 
 /**
  * In-memory storage adapter.

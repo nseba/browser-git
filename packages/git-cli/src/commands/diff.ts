@@ -1,15 +1,15 @@
-import { Command } from 'commander';
-import { Repository } from '@browser-git/browser-git';
-import { error } from '../utils/output.js';
-import chalk from 'chalk';
+import { Command } from "commander";
+import { Repository } from "@browser-git/browser-git";
+import { error } from "../utils/output.js";
+import chalk from "chalk";
 
-export const diffCommand = new Command('diff')
-  .description('Show changes between commits, commit and working tree, etc')
-  .argument('[paths...]', 'limit diff to specific paths')
-  .option('--cached', 'show diff between index and HEAD')
-  .option('--staged', 'same as --cached')
-  .option('--stat', 'show diffstat instead of patch')
-  .option('-U, --unified <lines>', 'number of context lines', '3')
+export const diffCommand = new Command("diff")
+  .description("Show changes between commits, commit and working tree, etc")
+  .argument("[paths...]", "limit diff to specific paths")
+  .option("--cached", "show diff between index and HEAD")
+  .option("--staged", "same as --cached")
+  .option("--stat", "show diffstat instead of patch")
+  .option("-U, --unified <lines>", "number of context lines", "3")
   .action(async (paths: string[], options) => {
     try {
       const repo = await Repository.open(process.cwd());
@@ -23,7 +23,7 @@ export const diffCommand = new Command('diff')
       const diffs = await repo.diff(diffOptions);
 
       if (diffs.length === 0) {
-        console.log('No changes');
+        console.log("No changes");
         return;
       }
 
@@ -36,20 +36,32 @@ export const diffCommand = new Command('diff')
         }
 
         if (options.stat) {
-          const additions = diff.hunks.reduce((sum: number, h: any) => sum + h.additions, 0);
-          const deletions = diff.hunks.reduce((sum: number, h: any) => sum + h.deletions, 0);
-          console.log(` ${diff.path} | ${additions + deletions} ${chalk.green('+'.repeat(additions))}${chalk.red('-'.repeat(deletions))}`);
+          const additions = diff.hunks.reduce(
+            (sum: number, h: any) => sum + h.additions,
+            0,
+          );
+          const deletions = diff.hunks.reduce(
+            (sum: number, h: any) => sum + h.deletions,
+            0,
+          );
+          console.log(
+            ` ${diff.path} | ${additions + deletions} ${chalk.green("+".repeat(additions))}${chalk.red("-".repeat(deletions))}`,
+          );
         } else {
           console.log(chalk.bold(`--- a/${diff.path}`));
           console.log(chalk.bold(`+++ b/${diff.path}`));
 
           diff.hunks.forEach((hunk: any) => {
-            console.log(chalk.cyan(`@@ -${hunk.oldStart},${hunk.oldLines} +${hunk.newStart},${hunk.newLines} @@`));
+            console.log(
+              chalk.cyan(
+                `@@ -${hunk.oldStart},${hunk.oldLines} +${hunk.newStart},${hunk.newLines} @@`,
+              ),
+            );
 
             hunk.lines.forEach((line: any) => {
-              if (line.type === 'add') {
+              if (line.type === "add") {
                 console.log(chalk.green(`+${line.content}`));
-              } else if (line.type === 'delete') {
+              } else if (line.type === "delete") {
                 console.log(chalk.red(`-${line.content}`));
               } else {
                 console.log(` ${line.content}`);

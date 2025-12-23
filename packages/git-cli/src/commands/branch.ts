@@ -1,16 +1,16 @@
-import { Command } from 'commander';
-import { Repository } from '@browser-git/browser-git';
-import { success, error } from '../utils/output.js';
-import chalk from 'chalk';
+import { Command } from "commander";
+import { Repository } from "@browser-git/browser-git";
+import { success, error } from "../utils/output.js";
+import chalk from "chalk";
 
-export const branchCommand = new Command('branch')
-  .description('List, create, or delete branches')
-  .argument('[branch-name]', 'name of branch to create')
-  .option('-d, --delete <branch>', 'delete a branch')
-  .option('-D, --force-delete <branch>', 'force delete a branch')
-  .option('-m, --move <old-name> <new-name>', 'rename a branch')
-  .option('-a, --all', 'list all branches (local and remote)')
-  .option('-r, --remote', 'list remote branches')
+export const branchCommand = new Command("branch")
+  .description("List, create, or delete branches")
+  .argument("[branch-name]", "name of branch to create")
+  .option("-d, --delete <branch>", "delete a branch")
+  .option("-D, --force-delete <branch>", "force delete a branch")
+  .option("-m, --move <old-name> <new-name>", "rename a branch")
+  .option("-a, --all", "list all branches (local and remote)")
+  .option("-r, --remote", "list remote branches")
   .action(async (branchName: string | undefined, options) => {
     try {
       const repo = await Repository.open(process.cwd());
@@ -25,7 +25,7 @@ export const branchCommand = new Command('branch')
 
       // Rename branch
       if (options.move) {
-        const [oldName, newName] = options.move.split(' ');
+        const [oldName, newName] = options.move.split(" ");
         await repo.renameBranch(oldName, newName);
         success(`Renamed branch ${oldName} to ${newName}`);
         return;
@@ -43,7 +43,7 @@ export const branchCommand = new Command('branch')
 
       const currentBranch = await repo.getCurrentBranch();
 
-      branches.forEach(branch => {
+      branches.forEach((branch) => {
         if (branch === currentBranch) {
           console.log(chalk.green(`* ${branch}`));
         } else {

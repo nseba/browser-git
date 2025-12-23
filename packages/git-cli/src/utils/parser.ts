@@ -2,9 +2,9 @@
  * Parse glob patterns from command line arguments
  */
 export function parseGlobPatterns(args: string[]): string[] {
-  return args.map(arg => {
+  return args.map((arg) => {
     // Handle escaped characters
-    return arg.replace(/\\\*/g, '*');
+    return arg.replace(/\\\*/g, "*");
   });
 }
 
@@ -14,7 +14,7 @@ export function parseGlobPatterns(args: string[]): string[] {
 export function parseKeyValuePairs(args: string[]): Record<string, string> {
   const result: Record<string, string> = {};
 
-  args.forEach(arg => {
+  args.forEach((arg) => {
     const match = arg.match(/^([^=]+)=(.+)$/);
     if (match && match[1] && match[2]) {
       result[match[1]] = match[2];
@@ -27,7 +27,9 @@ export function parseKeyValuePairs(args: string[]): Record<string, string> {
 /**
  * Parse author/committer format: "Name <email>"
  */
-export function parseAuthor(authorString: string): { name: string; email: string } | null {
+export function parseAuthor(
+  authorString: string,
+): { name: string; email: string } | null {
   const match = authorString.match(/^([^<]+)\s*<([^>]+)>$/);
   if (!match || !match[1] || !match[2]) {
     return null;
@@ -74,13 +76,18 @@ export function formatRelativeDate(date: Date): string {
   const diffMonths = Math.floor(diffDays / 30);
   const diffYears = Math.floor(diffDays / 365);
 
-  if (diffSecs < 60) return `${diffSecs} second${diffSecs !== 1 ? 's' : ''} ago`;
-  if (diffMins < 60) return `${diffMins} minute${diffMins !== 1 ? 's' : ''} ago`;
-  if (diffHours < 24) return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
-  if (diffDays < 7) return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
-  if (diffWeeks < 4) return `${diffWeeks} week${diffWeeks !== 1 ? 's' : ''} ago`;
-  if (diffMonths < 12) return `${diffMonths} month${diffMonths !== 1 ? 's' : ''} ago`;
-  return `${diffYears} year${diffYears !== 1 ? 's' : ''} ago`;
+  if (diffSecs < 60)
+    return `${diffSecs} second${diffSecs !== 1 ? "s" : ""} ago`;
+  if (diffMins < 60)
+    return `${diffMins} minute${diffMins !== 1 ? "s" : ""} ago`;
+  if (diffHours < 24)
+    return `${diffHours} hour${diffHours !== 1 ? "s" : ""} ago`;
+  if (diffDays < 7) return `${diffDays} day${diffDays !== 1 ? "s" : ""} ago`;
+  if (diffWeeks < 4)
+    return `${diffWeeks} week${diffWeeks !== 1 ? "s" : ""} ago`;
+  if (diffMonths < 12)
+    return `${diffMonths} month${diffMonths !== 1 ? "s" : ""} ago`;
+  return `${diffYears} year${diffYears !== 1 ? "s" : ""} ago`;
 }
 
 /**
@@ -95,5 +102,5 @@ export function shortHash(hash: string): string {
  */
 export function truncate(str: string, maxLength: number): string {
   if (str.length <= maxLength) return str;
-  return str.substring(0, maxLength - 3) + '...';
+  return str.substring(0, maxLength - 3) + "...";
 }

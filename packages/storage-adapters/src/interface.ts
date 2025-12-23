@@ -102,10 +102,10 @@ export class StorageError extends Error {
   constructor(
     message: string,
     public readonly code: StorageErrorCode,
-    public readonly cause?: unknown
+    public readonly cause?: unknown,
   ) {
     super(message);
-    this.name = 'StorageError';
+    this.name = "StorageError";
   }
 }
 
@@ -113,11 +113,11 @@ export class StorageError extends Error {
  * Error codes for storage operations.
  */
 export enum StorageErrorCode {
-  NOT_FOUND = 'NOT_FOUND',
-  QUOTA_EXCEEDED = 'QUOTA_EXCEEDED',
-  NOT_SUPPORTED = 'NOT_SUPPORTED',
-  PERMISSION_DENIED = 'PERMISSION_DENIED',
-  OPERATION_FAILED = 'OPERATION_FAILED',
-  INVALID_KEY = 'INVALID_KEY',
-  INVALID_VALUE = 'INVALID_VALUE',
+  NOT_FOUND = "NOT_FOUND",
+  QUOTA_EXCEEDED = "QUOTA_EXCEEDED",
+  NOT_SUPPORTED = "NOT_SUPPORTED",
+  PERMISSION_DENIED = "PERMISSION_DENIED",
+  OPERATION_FAILED = "OPERATION_FAILED",
+  INVALID_KEY = "INVALID_KEY",
+  INVALID_VALUE = "INVALID_VALUE",
 }

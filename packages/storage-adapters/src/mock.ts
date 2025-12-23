@@ -4,7 +4,7 @@
  * Provides controllable behavior for testing edge cases, errors, and timing
  */
 
-import { StorageAdapter } from './interface.js';
+import { StorageAdapter } from "./interface.js";
 
 export interface MockStorageOptions {
   /**
@@ -47,7 +47,7 @@ export class MockAdapter implements StorageAdapter {
   private options: MockStorageOptions;
   private calls: MockCall[] = [];
 
-  readonly name = 'mock';
+  readonly name = "mock";
   readonly supportsTransactions = true;
   readonly maxKeySize = 1024;
   readonly maxValueSize = 10 * 1024 * 1024; // 10MB
@@ -112,12 +112,12 @@ export class MockAdapter implements StorageAdapter {
    */
   private checkQuota(): void {
     if (this.options.maxKeys && this.storage.size >= this.options.maxKeys) {
-      throw new Error('QuotaExceededError: Storage quota exceeded');
+      throw new Error("QuotaExceededError: Storage quota exceeded");
     }
   }
 
   async get(key: string): Promise<Uint8Array | null> {
-    this.trackCall('get', key);
+    this.trackCall("get", key);
     await this.simulateDelay();
     this.checkFailure(key);
 
@@ -125,7 +125,7 @@ export class MockAdapter implements StorageAdapter {
   }
 
   async set(key: string, value: Uint8Array): Promise<void> {
-    this.trackCall('set', key, value);
+    this.trackCall("set", key, value);
     await this.simulateDelay();
     this.checkFailure(key);
 
@@ -137,7 +137,7 @@ export class MockAdapter implements StorageAdapter {
   }
 
   async delete(key: string): Promise<void> {
-    this.trackCall('delete', key);
+    this.trackCall("delete", key);
     await this.simulateDelay();
     this.checkFailure(key);
 
@@ -145,7 +145,7 @@ export class MockAdapter implements StorageAdapter {
   }
 
   async exists(key: string): Promise<boolean> {
-    this.trackCall('exists', key);
+    this.trackCall("exists", key);
     await this.simulateDelay();
     this.checkFailure(key);
 
@@ -153,7 +153,7 @@ export class MockAdapter implements StorageAdapter {
   }
 
   async list(prefix?: string): Promise<string[]> {
-    this.trackCall('list', prefix);
+    this.trackCall("list", prefix);
     await this.simulateDelay();
 
     const keys = Array.from(this.storage.keys());
@@ -173,14 +173,18 @@ export class MockAdapter implements StorageAdapter {
   }
 
   async clear(): Promise<void> {
-    this.trackCall('clear');
+    this.trackCall("clear");
     await this.simulateDelay();
 
     this.storage.clear();
   }
 
-  async getQuota(): Promise<{ usage: number; quota: number; percentage: number } | null> {
-    this.trackCall('getQuota');
+  async getQuota(): Promise<{
+    usage: number;
+    quota: number;
+    percentage: number;
+  } | null> {
+    this.trackCall("getQuota");
     await this.simulateDelay();
 
     let usage = 0;
@@ -191,13 +195,14 @@ export class MockAdapter implements StorageAdapter {
     const maxKeys = this.options.maxKeys || Infinity;
     const quota =
       maxKeys === Infinity ? Number.MAX_SAFE_INTEGER : maxKeys * 1024;
-    const percentage = quota === Number.MAX_SAFE_INTEGER ? 0 : (usage / quota) * 100;
+    const percentage =
+      quota === Number.MAX_SAFE_INTEGER ? 0 : (usage / quota) * 100;
 
     return { usage, quota, percentage };
   }
 
   async transaction<T>(fn: () => Promise<T>): Promise<T> {
-    this.trackCall('transaction');
+    this.trackCall("transaction");
     await this.simulateDelay();
 
     // Simple transaction: save state, run function, restore on error

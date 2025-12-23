@@ -44,7 +44,7 @@ jobs:
         run: npm ci
 
       - name: Build dependencies first
-        run: npm run build:deps
+        run: npm run build:deps && npm run build:main
 
       - name: Run type checker
         run: npm run type-check

@@ -1,24 +1,24 @@
-import { Command } from 'commander';
-import { Repository, AuthMethod } from '@browser-git/browser-git';
-import { success, error, warning, progress } from '../utils/output.js';
+import { Command } from "commander";
+import { Repository, AuthMethod } from "@browser-git/browser-git";
+import { success, error, warning, progress } from "../utils/output.js";
 
-export const pushCommand = new Command('push')
-  .description('Update remote refs along with associated objects')
-  .argument('[remote]', 'remote name', 'origin')
-  .argument('[refspec]', 'refspec to push')
-  .option('-f, --force', 'force push (may lose commits on remote)')
-  .option('--all', 'push all branches')
-  .option('--tags', 'push all tags')
-  .option('--delete', 'delete remote branch')
-  .option('--set-upstream', 'set upstream for current branch')
-  .option('--username <username>', 'username for authentication')
-  .option('--token <token>', 'token for authentication')
+export const pushCommand = new Command("push")
+  .description("Update remote refs along with associated objects")
+  .argument("[remote]", "remote name", "origin")
+  .argument("[refspec]", "refspec to push")
+  .option("-f, --force", "force push (may lose commits on remote)")
+  .option("--all", "push all branches")
+  .option("--tags", "push all tags")
+  .option("--delete", "delete remote branch")
+  .option("--set-upstream", "set upstream for current branch")
+  .option("--username <username>", "username for authentication")
+  .option("--token <token>", "token for authentication")
   .action(async (remote: string, refspec: string | undefined, options) => {
     try {
       const repo = await Repository.open(process.cwd());
 
       if (options.force) {
-        warning('Force push can cause data loss on remote repository');
+        warning("Force push can cause data loss on remote repository");
       }
 
       const pushOptions: any = {
@@ -44,7 +44,7 @@ export const pushCommand = new Command('push')
       // Show progress
       let lastProgress = 0;
       pushOptions.onProgress = (current: number, total: number) => {
-        progress(current, total, 'Pushing objects');
+        progress(current, total, "Pushing objects");
         lastProgress = current;
       };
 

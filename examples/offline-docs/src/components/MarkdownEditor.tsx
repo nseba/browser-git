@@ -1,11 +1,14 @@
-import React from 'react';
+import React from "react";
 
 interface MarkdownEditorProps {
   content: string;
   onChange: (content: string) => void;
 }
 
-const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ content, onChange }) => {
+const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
+  content,
+  onChange,
+}) => {
   return (
     <div className="markdown-editor">
       <textarea

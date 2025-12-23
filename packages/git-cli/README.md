@@ -186,6 +186,7 @@ For operations that require authentication (clone, fetch, pull, push), you can p
 - Credential storage (planned)
 
 For GitHub, use a Personal Access Token instead of your password:
+
 1. Go to Settings → Developer settings → Personal access tokens
 2. Generate new token with `repo` scope
 3. Use token with `--token` flag

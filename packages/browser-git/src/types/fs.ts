@@ -5,7 +5,7 @@
 /**
  * Encoding types supported for text operations
  */
-export type Encoding = 'utf8' | 'utf-8' | 'base64' | 'hex' | 'binary';
+export type Encoding = "utf8" | "utf-8" | "base64" | "hex" | "binary";
 
 /**
  * File or directory statistics
@@ -76,7 +76,7 @@ export interface WriteFileOptions {
 /**
  * File system change types
  */
-export type ChangeType = 'create' | 'modify' | 'delete';
+export type ChangeType = "create" | "modify" | "delete";
 
 /**
  * File system change event

@@ -8,6 +8,7 @@ Based on PRD: `0001-prd-browser-git.md`
 ## Relevant Files
 
 ### Root Configuration
+
 - `package.json` - Root workspace configuration for yarn workspaces
 - `.gitignore` - Git ignore patterns
 - `tsconfig.base.json` - Base TypeScript configuration shared across packages
@@ -16,6 +17,7 @@ Based on PRD: `0001-prd-browser-git.md`
 - `.github/workflows/release.yml` - Release automation workflow
 
 ### Package: git-core (Go + WASM)
+
 - `packages/git-core/main.go` - Main WASM entry point and JS interop
 - `packages/git-core/pkg/hash/interface.go` - Hash algorithm interface
 - `packages/git-core/pkg/hash/sha1.go` - SHA-1 implementation
@@ -53,6 +55,7 @@ Based on PRD: `0001-prd-browser-git.md`
 - `packages/git-core/README.md` - Package documentation
 
 ### Package: browser-git (TypeScript API wrapper)
+
 - `packages/browser-git/src/index.ts` - Main entry point and API exports
 - `packages/browser-git/src/repository.ts` - High-level repository API
 - `packages/browser-git/src/wasm-loader.ts` - WASM binary loader and initialization
@@ -77,6 +80,7 @@ Based on PRD: `0001-prd-browser-git.md`
 - `packages/browser-git/README.md` - Package documentation
 
 ### Package: storage-adapters
+
 - `packages/storage-adapters/src/index.ts` - Storage adapter exports
 - `packages/storage-adapters/src/interface.ts` - Common storage interface definition
 - `packages/storage-adapters/src/indexeddb.ts` - IndexedDB storage adapter
@@ -95,6 +99,7 @@ Based on PRD: `0001-prd-browser-git.md`
 - `packages/storage-adapters/README.md` - Package documentation
 
 ### Package: diff-engine
+
 - `packages/diff-engine/src/index.ts` - Diff engine exports
 - `packages/diff-engine/src/interface.ts` - Pluggable diff interface
 - `packages/diff-engine/src/myers-diff.ts` - Default Myers diff implementation
@@ -108,6 +113,7 @@ Based on PRD: `0001-prd-browser-git.md`
 - `packages/diff-engine/README.md` - Package documentation
 
 ### Package: git-cli
+
 - `packages/git-cli/src/index.ts` - CLI entry point
 - `packages/git-cli/src/commands/init.ts` - git init command
 - `packages/git-cli/src/commands/add.ts` - git add command
@@ -130,6 +136,7 @@ Based on PRD: `0001-prd-browser-git.md`
 - `packages/git-cli/README.md` - CLI usage documentation
 
 ### Examples
+
 - `examples/basic-demo/index.html` - Basic demo HTML page
 - `examples/basic-demo/src/main.ts` - Basic demo application
 - `examples/basic-demo/package.json` - Demo package configuration
@@ -143,6 +150,7 @@ Based on PRD: `0001-prd-browser-git.md`
 - `examples/offline-docs/package.json` - Offline docs package configuration
 
 ### Documentation
+
 - `docs/README.md` - Documentation site index
 - `docs/getting-started.md` - Getting started guide
 - `docs/api-reference/repository.md` - Repository API reference
@@ -158,6 +166,7 @@ Based on PRD: `0001-prd-browser-git.md`
 - `docs/browser-compatibility.md` - Browser compatibility matrix
 
 ### Testing
+
 - `tests/integration/basic-workflow.test.ts` - Basic Git workflow integration tests
 - `tests/integration/branching.test.ts` - Branch and merge integration tests
 - `tests/integration/remote-operations.test.ts` - Clone, fetch, push integration tests
@@ -287,7 +296,7 @@ Based on PRD: `0001-prd-browser-git.md`
   - [x] 9.12 Write integration tests for complete add-commit workflow
 
 - [x] 10.0 Implement branch management
-  - [x] 10.1 Implement reference storage (refs/heads/*, refs/tags/*)
+  - [x] 10.1 Implement reference storage (refs/heads/_, refs/tags/_)
   - [x] 10.2 Implement `git branch` to list branches
   - [x] 10.3 Implement `git branch <name>` to create new branch
   - [x] 10.4 Implement `git branch -d <name>` to delete branch
@@ -412,7 +421,7 @@ Based on PRD: `0001-prd-browser-git.md`
 
 - [x] 19.0 Implement fetch and pull operations
   - [x] 19.1 Implement `git fetch` to retrieve remote changes
-  - [x] 19.2 Update remote tracking branches (refs/remotes/origin/*)
+  - [x] 19.2 Update remote tracking branches (refs/remotes/origin/\*)
   - [x] 19.3 Download new objects not present locally
   - [x] 19.4 Handle force updates and deletions
   - [x] 19.5 Implement fetch refspec parsing and handling

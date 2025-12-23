@@ -72,21 +72,21 @@ npm install @browser-git/browser-git
 ### Basic Usage
 
 ```typescript
-import { Repository } from '@browser-git/browser-git';
+import { Repository } from "@browser-git/browser-git";
 
 // Initialize a new repository
-const repo = await Repository.init('/my-project', {
-  storage: 'indexeddb',
+const repo = await Repository.init("/my-project", {
+  storage: "indexeddb",
   author: {
-    name: 'Your Name',
-    email: 'you@example.com'
-  }
+    name: "Your Name",
+    email: "you@example.com",
+  },
 });
 
 // Create a file and commit
-await repo.writeFile('README.md', '# My Project');
-await repo.add(['README.md']);
-await repo.commit('Initial commit');
+await repo.writeFile("README.md", "# My Project");
+await repo.add(["README.md"]);
+await repo.commit("Initial commit");
 
 // View history
 const log = await repo.log();
@@ -96,19 +96,19 @@ console.log(log);
 ### Clone a Repository
 
 ```typescript
-import { Repository } from '@browser-git/browser-git';
+import { Repository } from "@browser-git/browser-git";
 
 // Clone from GitHub
 const repo = await Repository.clone(
-  'https://github.com/user/repo.git',
-  '/local-path',
+  "https://github.com/user/repo.git",
+  "/local-path",
   {
-    storage: 'indexeddb',
+    storage: "indexeddb",
     auth: {
-      username: 'user',
-      token: 'ghp_xxx'
-    }
-  }
+      username: "user",
+      token: "ghp_xxx",
+    },
+  },
 );
 ```
 
@@ -116,17 +116,17 @@ const repo = await Repository.clone(
 
 ```typescript
 // Create and switch to a new branch
-await repo.createBranch('feature/awesome');
-await repo.checkout('feature/awesome');
+await repo.createBranch("feature/awesome");
+await repo.checkout("feature/awesome");
 
 // Make changes
-await repo.writeFile('feature.js', 'console.log("awesome");');
-await repo.add(['feature.js']);
-await repo.commit('Add awesome feature');
+await repo.writeFile("feature.js", 'console.log("awesome");');
+await repo.add(["feature.js"]);
+await repo.commit("Add awesome feature");
 
 // Merge back to main
-await repo.checkout('main');
-await repo.merge('feature/awesome');
+await repo.checkout("main");
+await repo.merge("feature/awesome");
 ```
 
 ## Use Cases
@@ -136,19 +136,19 @@ await repo.merge('feature/awesome');
 Build powerful web-based development environments with full Git integration:
 
 ```typescript
-import { Repository } from '@browser-git/browser-git';
-import { MonacoEditor } from 'monaco-editor';
+import { Repository } from "@browser-git/browser-git";
+import { MonacoEditor } from "monaco-editor";
 
 // Integrate Git with your editor
-const repo = await Repository.init('/workspace');
+const repo = await Repository.init("/workspace");
 const editor = new MonacoEditor();
 
 // Save and commit on change
 editor.onDidChangeContent(async () => {
   const content = editor.getValue();
-  await repo.writeFile('index.js', content);
-  await repo.add(['index.js']);
-  await repo.commit('Auto-save');
+  await repo.writeFile("index.js", content);
+  await repo.add(["index.js"]);
+  await repo.commit("Auto-save");
 });
 ```
 
@@ -157,18 +157,18 @@ editor.onDidChangeContent(async () => {
 Enable users to track changes to their documentation:
 
 ```typescript
-const docsRepo = await Repository.init('/my-docs', {
-  storage: 'indexeddb'
+const docsRepo = await Repository.init("/my-docs", {
+  storage: "indexeddb",
 });
 
 // User edits a document
-await docsRepo.writeFile('getting-started.md', newContent);
-await docsRepo.add(['getting-started.md']);
-await docsRepo.commit('Update getting started guide');
+await docsRepo.writeFile("getting-started.md", newContent);
+await docsRepo.add(["getting-started.md"]);
+await docsRepo.commit("Update getting started guide");
 
 // View change history
-const history = await docsRepo.log({ path: 'getting-started.md' });
-const diff = await docsRepo.diff('HEAD~1', 'HEAD', 'getting-started.md');
+const history = await docsRepo.log({ path: "getting-started.md" });
+const diff = await docsRepo.diff("HEAD~1", "HEAD", "getting-started.md");
 ```
 
 ### 3. Offline-First Applications
@@ -177,14 +177,14 @@ Build applications that work offline and sync when online:
 
 ```typescript
 // Work offline
-const repo = await Repository.init('/offline-work');
-await repo.writeFile('notes.txt', 'My offline notes');
-await repo.add(['notes.txt']);
-await repo.commit('Add notes');
+const repo = await Repository.init("/offline-work");
+await repo.writeFile("notes.txt", "My offline notes");
+await repo.add(["notes.txt"]);
+await repo.commit("Add notes");
 
 // Sync when online
 if (navigator.onLine) {
-  await repo.push('origin', 'main');
+  await repo.push("origin", "main");
 }
 ```
 
@@ -232,6 +232,7 @@ BrowserGit is built on a modern, modular architecture:
 Check out our example applications:
 
 ### Basic Demo
+
 A simple HTML/JS demonstration of basic Git operations.
 
 ```bash
@@ -241,6 +242,7 @@ npm run dev
 ```
 
 ### Mini IDE
+
 A React-based mini IDE with file tree, editor, and Git panel.
 
 ```bash
@@ -250,6 +252,7 @@ npm run dev
 ```
 
 ### Offline Docs
+
 A documentation site with version control for content.
 
 ```bash
@@ -262,16 +265,16 @@ npm run dev
 
 Tested on Chrome 120, macOS M1:
 
-| Operation | Time | Notes |
-|-----------|------|-------|
-| Initialize repository | ~10ms | Create .git structure |
-| Stage file (1KB) | ~5ms | Add to index |
-| Commit | ~30ms | Create commit object |
-| Checkout branch | ~150ms | 100 files |
-| Merge (fast-forward) | ~20ms | Update references |
-| Merge (3-way) | ~200ms | 50 files, no conflicts |
-| Clone (100 commits) | ~3s | HTTP, IndexedDB |
-| Diff (1000 lines) | ~50ms | Myers algorithm |
+| Operation             | Time   | Notes                  |
+| --------------------- | ------ | ---------------------- |
+| Initialize repository | ~10ms  | Create .git structure  |
+| Stage file (1KB)      | ~5ms   | Add to index           |
+| Commit                | ~30ms  | Create commit object   |
+| Checkout branch       | ~150ms | 100 files              |
+| Merge (fast-forward)  | ~20ms  | Update references      |
+| Merge (3-way)         | ~200ms | 50 files, no conflicts |
+| Clone (100 commits)   | ~3s    | HTTP, IndexedDB        |
+| Diff (1000 lines)     | ~50ms  | Myers algorithm        |
 
 ## Limitations
 

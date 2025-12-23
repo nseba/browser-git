@@ -1,26 +1,26 @@
-import { Command } from 'commander';
-import { Repository } from '@browser-git/browser-git';
-import { success, error } from '../utils/output.js';
-import { parseAuthor } from '../utils/parser.js';
+import { Command } from "commander";
+import { Repository } from "@browser-git/browser-git";
+import { success, error } from "../utils/output.js";
+import { parseAuthor } from "../utils/parser.js";
 
-export const commitCommand = new Command('commit')
-  .description('Record changes to the repository')
-  .option('-m, --message <message>', 'commit message')
-  .option('-a, --all', 'commit all changed files')
-  .option('--author <author>', 'override author (format: "Name <email>")')
-  .option('--amend', 'amend previous commit')
-  .option('--allow-empty', 'allow empty commit')
+export const commitCommand = new Command("commit")
+  .description("Record changes to the repository")
+  .option("-m, --message <message>", "commit message")
+  .option("-a, --all", "commit all changed files")
+  .option("--author <author>", 'override author (format: "Name <email>")')
+  .option("--amend", "amend previous commit")
+  .option("--allow-empty", "allow empty commit")
   .action(async (options) => {
     try {
       if (!options.message && !options.amend) {
-        error('Commit message required. Use -m flag.');
+        error("Commit message required. Use -m flag.");
         process.exit(1);
       }
 
       const repo = await Repository.open(process.cwd());
 
       if (options.all) {
-        await repo.add(['.']);
+        await repo.add(["."]);
       }
 
       const commitOptions: any = {

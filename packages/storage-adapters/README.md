@@ -22,25 +22,25 @@ import {
   IndexedDBAdapter,
   OPFSAdapter,
   LocalStorageAdapter,
-  MemoryAdapter
-} from '@browser-git/storage-adapters';
+  MemoryAdapter,
+} from "@browser-git/storage-adapters";
 
 // Use IndexedDB (recommended)
-const storage = new IndexedDBAdapter('my-repo');
-await storage.set('key', new Uint8Array([1, 2, 3]));
-const data = await storage.get('key');
+const storage = new IndexedDBAdapter("my-repo");
+await storage.set("key", new Uint8Array([1, 2, 3]));
+const data = await storage.get("key");
 
 // Use OPFS (best performance on modern browsers)
-const opfsStorage = new OPFSAdapter('my-repo');
-await opfsStorage.set('file.txt', new TextEncoder().encode('content'));
+const opfsStorage = new OPFSAdapter("my-repo");
+await opfsStorage.set("file.txt", new TextEncoder().encode("content"));
 
 // Use LocalStorage (limited capacity)
-const localStorage = new LocalStorageAdapter('my-repo');
-await localStorage.set('small-key', new Uint8Array([1, 2, 3]));
+const localStorage = new LocalStorageAdapter("my-repo");
+await localStorage.set("small-key", new Uint8Array([1, 2, 3]));
 
 // Use in-memory (testing)
 const memStorage = new MemoryAdapter();
-await memStorage.set('test-key', new Uint8Array([1, 2, 3]));
+await memStorage.set("test-key", new Uint8Array([1, 2, 3]));
 ```
 
 ## Storage Interface
@@ -60,12 +60,12 @@ interface StorageAdapter {
 
 ## Browser Compatibility
 
-| Adapter | Chrome | Firefox | Safari |
-|---------|--------|---------|--------|
-| IndexedDB | ✅ | ✅ | ✅ |
-| OPFS | ✅ 86+ | ✅ 111+ | ✅ 15.2+ |
-| LocalStorage | ✅ | ✅ | ✅ |
-| Memory | ✅ | ✅ | ✅ |
+| Adapter      | Chrome | Firefox | Safari   |
+| ------------ | ------ | ------- | -------- |
+| IndexedDB    | ✅     | ✅      | ✅       |
+| OPFS         | ✅ 86+ | ✅ 111+ | ✅ 15.2+ |
+| LocalStorage | ✅     | ✅      | ✅       |
+| Memory       | ✅     | ✅      | ✅       |
 
 ## License
 

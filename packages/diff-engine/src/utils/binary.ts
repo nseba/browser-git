@@ -35,12 +35,7 @@ export function isBinary(content: Uint8Array, sampleSize = 8000): boolean {
     if (byte === undefined) continue;
     // Non-printable: not tab (9), not newline (10), not carriage return (13),
     // and not in printable ASCII range (32-126)
-    if (
-      byte !== 9 &&
-      byte !== 10 &&
-      byte !== 13 &&
-      (byte < 32 || byte > 126)
-    ) {
+    if (byte !== 9 && byte !== 10 && byte !== 13 && (byte < 32 || byte > 126)) {
       nonPrintable++;
     }
   }
@@ -68,7 +63,7 @@ export function isText(content: Uint8Array, sampleSize = 8000): boolean {
  * @returns Decoded string
  */
 export function uint8ArrayToString(content: Uint8Array): string {
-  const decoder = new TextDecoder('utf-8', { fatal: false });
+  const decoder = new TextDecoder("utf-8", { fatal: false });
   return decoder.decode(content);
 }
 
@@ -92,19 +87,19 @@ export function stringToUint8Array(text: string): Uint8Array {
  */
 export function detectFileType(
   content: Uint8Array,
-  _filename?: string
-): 'text' | 'binary' | 'image' | 'unknown' {
+  _filename?: string,
+): "text" | "binary" | "image" | "unknown" {
   // Check by content first
   if (isBinary(content)) {
     // Check for common image signatures
     if (isImage(content)) {
-      return 'image';
+      return "image";
     }
-    return 'binary';
+    return "binary";
   }
 
   // It's text
-  return 'text';
+  return "text";
 }
 
 /**
@@ -173,7 +168,7 @@ function matchesSignature(content: Uint8Array, signature: number[]): boolean {
  * @returns Formatted size string (e.g., "1.5 KB")
  */
 export function formatSize(bytes: number): string {
-  const units = ['B', 'KB', 'MB', 'GB'];
+  const units = ["B", "KB", "MB", "GB"];
   let size = bytes;
   let unitIndex = 0;
 

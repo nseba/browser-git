@@ -3,8 +3,8 @@
  * Provides shared setup and teardown for browser tests
  */
 
-import { test as base, Page } from '@playwright/test';
-import { clearAllStorage, createTestPage } from './helpers';
+import { test as base, Page } from "@playwright/test";
+import { clearAllStorage, createTestPage } from "./helpers";
 
 /**
  * Extended test fixtures with custom setup
@@ -52,4 +52,4 @@ export const test = base.extend<TestFixtures>({
 /**
  * Export expect from @playwright/test
  */
-export { expect } from '@playwright/test';
+export { expect } from "@playwright/test";

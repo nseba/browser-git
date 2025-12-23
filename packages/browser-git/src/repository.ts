@@ -4,7 +4,7 @@
  * High-level TypeScript API for Git repository operations
  */
 
-import type { AuthConfig } from './types/auth.js';
+import type { AuthConfig } from "./types/auth.js";
 
 /**
  * Progress callback function
@@ -352,7 +352,7 @@ export interface InitOptions {
    * Hash algorithm to use
    * @default "sha1"
    */
-  hashAlgorithm?: 'sha1' | 'sha256';
+  hashAlgorithm?: "sha1" | "sha256";
 }
 
 /**
@@ -361,7 +361,10 @@ export interface InitOptions {
 export class Repository {
   private wasmInstance: any;
 
-  constructor(private path: string, wasmInstance: any) {
+  constructor(
+    private path: string,
+    wasmInstance: any,
+  ) {
     this.wasmInstance = wasmInstance;
   }
 
@@ -387,7 +390,7 @@ export class Repository {
   static async clone(
     url: string,
     path: string,
-    options: CloneOptions = {}
+    options: CloneOptions = {},
   ): Promise<Repository> {
     // Load WASM if not already loaded
     const wasm = await loadWASM();
@@ -396,8 +399,8 @@ export class Repository {
     const cloneOpts = {
       bare: options.bare ?? false,
       depth: options.depth ?? 0,
-      branch: options.branch ?? '',
-      remote: options.remote ?? 'origin',
+      branch: options.branch ?? "",
+      remote: options.remote ?? "origin",
       auth: options.auth,
     };
 
@@ -414,7 +417,7 @@ export class Repository {
       throw new CloneError(
         `Failed to clone repository: ${error instanceof Error ? error.message : String(error)}`,
         url,
-        error
+        error,
       );
     }
   }
@@ -435,14 +438,14 @@ export class Repository {
    */
   static async init(
     path: string,
-    options: InitOptions = {}
+    options: InitOptions = {},
   ): Promise<Repository> {
     const wasm = await loadWASM();
 
     const initOpts = {
       bare: options.bare ?? false,
-      initialBranch: options.initialBranch ?? 'main',
-      hashAlgorithm: options.hashAlgorithm ?? 'sha1',
+      initialBranch: options.initialBranch ?? "main",
+      hashAlgorithm: options.hashAlgorithm ?? "sha1",
     };
 
     try {
@@ -451,7 +454,7 @@ export class Repository {
     } catch (error) {
       throw new GitError(
         `Failed to initialize repository: ${error instanceof Error ? error.message : String(error)}`,
-        error
+        error,
       );
     }
   }
@@ -476,7 +479,7 @@ export class Repository {
     } catch (error) {
       throw new GitError(
         `Failed to open repository: ${error instanceof Error ? error.message : String(error)}`,
-        error
+        error,
       );
     }
   }
@@ -497,7 +500,7 @@ export class Repository {
     } catch (error) {
       throw new GitError(
         `Failed to get current branch: ${error instanceof Error ? error.message : String(error)}`,
-        error
+        error,
       );
     }
   }
@@ -511,7 +514,7 @@ export class Repository {
     } catch (error) {
       throw new GitError(
         `Failed to list branches: ${error instanceof Error ? error.message : String(error)}`,
-        error
+        error,
       );
     }
   }
@@ -525,7 +528,7 @@ export class Repository {
     } catch (error) {
       throw new GitError(
         `Failed to create branch: ${error instanceof Error ? error.message : String(error)}`,
-        error
+        error,
       );
     }
   }
@@ -539,7 +542,7 @@ export class Repository {
     } catch (error) {
       throw new GitError(
         `Failed to delete branch: ${error instanceof Error ? error.message : String(error)}`,
-        error
+        error,
       );
     }
   }
@@ -553,7 +556,7 @@ export class Repository {
     } catch (error) {
       throw new GitError(
         `Failed to rename branch: ${error instanceof Error ? error.message : String(error)}`,
-        error
+        error,
       );
     }
   }
@@ -567,7 +570,7 @@ export class Repository {
     } catch (error) {
       throw new GitError(
         `Failed to checkout: ${error instanceof Error ? error.message : String(error)}`,
-        error
+        error,
       );
     }
   }
@@ -581,7 +584,7 @@ export class Repository {
     } catch (error) {
       throw new GitError(
         `Failed to add files: ${error instanceof Error ? error.message : String(error)}`,
-        error
+        error,
       );
     }
   }
@@ -595,7 +598,7 @@ export class Repository {
     } catch (error) {
       throw new GitError(
         `Failed to commit: ${error instanceof Error ? error.message : String(error)}`,
-        error
+        error,
       );
     }
   }
@@ -609,7 +612,7 @@ export class Repository {
     } catch (error) {
       throw new GitError(
         `Failed to get status: ${error instanceof Error ? error.message : String(error)}`,
-        error
+        error,
       );
     }
   }
@@ -623,7 +626,7 @@ export class Repository {
     } catch (error) {
       throw new GitError(
         `Failed to get log: ${error instanceof Error ? error.message : String(error)}`,
-        error
+        error,
       );
     }
   }
@@ -637,7 +640,7 @@ export class Repository {
     } catch (error) {
       throw new GitError(
         `Failed to get diff: ${error instanceof Error ? error.message : String(error)}`,
-        error
+        error,
       );
     }
   }
@@ -651,7 +654,7 @@ export class Repository {
     } catch (error) {
       throw new GitError(
         `Failed to merge: ${error instanceof Error ? error.message : String(error)}`,
-        error
+        error,
       );
     }
   }
@@ -665,7 +668,7 @@ export class Repository {
     } catch (error) {
       throw new GitError(
         `Failed to abort merge: ${error instanceof Error ? error.message : String(error)}`,
-        error
+        error,
       );
     }
   }
@@ -679,7 +682,7 @@ export class Repository {
     } catch (error) {
       throw new GitError(
         `Failed to set auth: ${error instanceof Error ? error.message : String(error)}`,
-        error
+        error,
       );
     }
   }
@@ -693,7 +696,7 @@ export class Repository {
     } catch (error) {
       throw new GitError(
         `Failed to list remotes: ${error instanceof Error ? error.message : String(error)}`,
-        error
+        error,
       );
     }
   }
@@ -720,7 +723,7 @@ export class Repository {
    */
   async fetch(options: FetchOptions = {}): Promise<FetchResult> {
     const fetchOpts = {
-      remote: options.remote ?? 'origin',
+      remote: options.remote ?? "origin",
       refspecs: options.refspecs ?? [],
       prune: options.prune ?? false,
       force: options.force ?? false,
@@ -734,11 +737,15 @@ export class Repository {
       : undefined;
 
     try {
-      return await this.wasmInstance.fetch(this.path, fetchOpts, progressCallback);
+      return await this.wasmInstance.fetch(
+        this.path,
+        fetchOpts,
+        progressCallback,
+      );
     } catch (error) {
       throw new GitError(
         `Failed to fetch: ${error instanceof Error ? error.message : String(error)}`,
-        error
+        error,
       );
     }
   }
@@ -772,8 +779,8 @@ export class Repository {
    */
   async pull(options: PullOptions = {}): Promise<PullResult> {
     const pullOpts = {
-      remote: options.remote ?? 'origin',
-      branch: options.branch ?? '',
+      remote: options.remote ?? "origin",
+      branch: options.branch ?? "",
       rebase: options.rebase ?? false,
       fastForwardOnly: options.fastForwardOnly ?? false,
       force: options.force ?? false,
@@ -786,11 +793,15 @@ export class Repository {
       : undefined;
 
     try {
-      return await this.wasmInstance.pull(this.path, pullOpts, progressCallback);
+      return await this.wasmInstance.pull(
+        this.path,
+        pullOpts,
+        progressCallback,
+      );
     } catch (error) {
       throw new GitError(
         `Failed to pull: ${error instanceof Error ? error.message : String(error)}`,
-        error
+        error,
       );
     }
   }
@@ -829,7 +840,7 @@ export class Repository {
     try {
       // Prepare push options
       const pushOpts = {
-        remote: options.remote ?? 'origin',
+        remote: options.remote ?? "origin",
         refSpecs: options.refSpecs ?? [],
         force: options.force ?? false,
         auth: options.auth,
@@ -845,7 +856,7 @@ export class Repository {
     } catch (error) {
       throw new PushError(
         `Failed to push: ${error instanceof Error ? error.message : String(error)}`,
-        error
+        error,
       );
     }
   }
@@ -857,10 +868,10 @@ export class Repository {
 export class GitError extends Error {
   constructor(
     message: string,
-    public readonly cause?: unknown
+    public readonly cause?: unknown,
   ) {
     super(message);
-    this.name = 'GitError';
+    this.name = "GitError";
   }
 }
 
@@ -871,10 +882,10 @@ export class CloneError extends GitError {
   constructor(
     message: string,
     public readonly url: string,
-    cause?: unknown
+    cause?: unknown,
   ) {
     super(message, cause);
-    this.name = 'CloneError';
+    this.name = "CloneError";
   }
 }
 
@@ -882,12 +893,9 @@ export class CloneError extends GitError {
  * Push-specific error
  */
 export class PushError extends GitError {
-  constructor(
-    message: string,
-    cause?: unknown
-  ) {
+  constructor(message: string, cause?: unknown) {
     super(message, cause);
-    this.name = 'PushError';
+    this.name = "PushError";
   }
 }
 
@@ -904,69 +912,86 @@ async function loadWASM(): Promise<any> {
   // TODO: Implement actual WASM loading
   // For now, return a mock instance
   wasmInstance = {
-    clone: async (_url: string, _path: string, _opts: any, _progress?: ProgressCallback) => {
+    clone: async (
+      _url: string,
+      _path: string,
+      _opts: any,
+      _progress?: ProgressCallback,
+    ) => {
       // This will be implemented when we integrate with actual WASM
-      throw new Error('WASM not yet integrated');
+      throw new Error("WASM not yet integrated");
     },
     init: async (_path: string, _opts: any) => {
-      throw new Error('WASM not yet integrated');
+      throw new Error("WASM not yet integrated");
     },
     open: async (_path: string) => {
-      throw new Error('WASM not yet integrated');
+      throw new Error("WASM not yet integrated");
     },
     getCurrentBranch: async (_path: string) => {
-      throw new Error('WASM not yet integrated');
+      throw new Error("WASM not yet integrated");
     },
     listBranches: async (_path: string) => {
-      throw new Error('WASM not yet integrated');
+      throw new Error("WASM not yet integrated");
     },
-    createBranch: async (_path: string, _name: string, _startPoint?: string) => {
-      throw new Error('WASM not yet integrated');
+    createBranch: async (
+      _path: string,
+      _name: string,
+      _startPoint?: string,
+    ) => {
+      throw new Error("WASM not yet integrated");
     },
     deleteBranch: async (_path: string, _name: string, _force: boolean) => {
-      throw new Error('WASM not yet integrated');
+      throw new Error("WASM not yet integrated");
     },
     renameBranch: async (_path: string, _oldName: string, _newName: string) => {
-      throw new Error('WASM not yet integrated');
+      throw new Error("WASM not yet integrated");
     },
-    checkout: async (_path: string, _target: string, _options?: CheckoutOptions) => {
-      throw new Error('WASM not yet integrated');
+    checkout: async (
+      _path: string,
+      _target: string,
+      _options?: CheckoutOptions,
+    ) => {
+      throw new Error("WASM not yet integrated");
     },
     add: async (_path: string, _paths: string[], _options?: AddOptions) => {
-      throw new Error('WASM not yet integrated');
+      throw new Error("WASM not yet integrated");
     },
-    commit: async (_path: string, _message: string, _options?: CommitOptions) => {
-      throw new Error('WASM not yet integrated');
+    commit: async (
+      _path: string,
+      _message: string,
+      _options?: CommitOptions,
+    ) => {
+      throw new Error("WASM not yet integrated");
     },
     status: async (_path: string) => {
-      throw new Error('WASM not yet integrated');
+      throw new Error("WASM not yet integrated");
     },
     log: async (_path: string, _options?: LogOptions) => {
-      throw new Error('WASM not yet integrated');
+      throw new Error("WASM not yet integrated");
     },
     diff: async (_path: string, _options?: DiffOptions) => {
-      throw new Error('WASM not yet integrated');
+      throw new Error("WASM not yet integrated");
     },
     merge: async (_path: string, _branch: string, _options?: MergeOptions) => {
-      throw new Error('WASM not yet integrated');
+      throw new Error("WASM not yet integrated");
     },
     mergeAbort: async (_path: string) => {
-      throw new Error('WASM not yet integrated');
+      throw new Error("WASM not yet integrated");
     },
     setAuth: async (_path: string, _auth: AuthConfig) => {
-      throw new Error('WASM not yet integrated');
+      throw new Error("WASM not yet integrated");
     },
     listRemotes: async (_path: string) => {
-      throw new Error('WASM not yet integrated');
+      throw new Error("WASM not yet integrated");
     },
     fetch: async (_path: string, _opts: any, _progress?: ProgressCallback) => {
-      throw new Error('WASM not yet integrated');
+      throw new Error("WASM not yet integrated");
     },
     pull: async (_path: string, _opts: any, _progress?: ProgressCallback) => {
-      throw new Error('WASM not yet integrated');
+      throw new Error("WASM not yet integrated");
     },
     push: async (_path: string, _opts: any, _progress?: ProgressCallback) => {
-      throw new Error('WASM not yet integrated');
+      throw new Error("WASM not yet integrated");
     },
   };
 

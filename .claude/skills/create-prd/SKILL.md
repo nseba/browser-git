@@ -12,6 +12,7 @@ Generate detailed Product Requirements Documents following the project's standar
 ### When to Use
 
 Activate this skill when:
+
 - User requests a new feature or functionality
 - User explicitly asks to "create a PRD"
 - Planning a major change or addition to the codebase
@@ -26,27 +27,27 @@ Activate this skill when:
 2. **Ask Clarifying Questions**
    - Gather essential details using multiple-choice options for easy selection
    - Focus areas:
-     * Problem/Goal the feature solves
-     * Target users and their needs
-     * Core functionality requirements
-     * User stories and workflows
-     * Acceptance criteria
-     * Scope and boundaries (what's included/excluded)
-     * Data requirements
-     * Design/UI considerations if applicable
-     * Edge cases and error handling
+     - Problem/Goal the feature solves
+     - Target users and their needs
+     - Core functionality requirements
+     - User stories and workflows
+     - Acceptance criteria
+     - Scope and boundaries (what's included/excluded)
+     - Data requirements
+     - Design/UI considerations if applicable
+     - Edge cases and error handling
 
 3. **Generate Structured PRD**
    - Use responses to create comprehensive PRD with sections:
-     * **Introduction/Overview**: Brief description and problem statement
-     * **Goals**: Specific, measurable objectives
-     * **User Stories**: Detailed narratives with format "As a [user], I want to [action] so that [benefit]"
-     * **Functional Requirements**: Numbered, explicit requirements
-     * **Non-Goals (Out of Scope)**: Clear boundaries
-     * **Design Considerations**: UI/UX requirements if applicable
-     * **Technical Considerations**: Constraints, dependencies, integration points
-     * **Success Metrics**: How to measure success
-     * **Open Questions**: Remaining uncertainties
+     - **Introduction/Overview**: Brief description and problem statement
+     - **Goals**: Specific, measurable objectives
+     - **User Stories**: Detailed narratives with format "As a [user], I want to [action] so that [benefit]"
+     - **Functional Requirements**: Numbered, explicit requirements
+     - **Non-Goals (Out of Scope)**: Clear boundaries
+     - **Design Considerations**: UI/UX requirements if applicable
+     - **Technical Considerations**: Constraints, dependencies, integration points
+     - **Success Metrics**: How to measure success
+     - **Open Questions**: Remaining uncertainties
 
 4. **Save PRD**
    - Filename format: `/tasks/[n]-prd-[feature-name].md`
@@ -60,6 +61,7 @@ Activate this skill when:
 ### Target Audience
 
 Write for **junior developers**:
+
 - Be explicit and unambiguous
 - Avoid jargon where possible
 - Provide enough detail to understand purpose and logic
@@ -70,11 +72,13 @@ Write for **junior developers**:
 ### Example 1: Simple Feature Request
 
 **User Input:**
+
 ```
 I need a way for users to export their data
 ```
 
 **Clarifying Questions:**
+
 ```
 Let me ask a few questions to better understand this feature:
 
@@ -99,15 +103,18 @@ Let me ask a few questions to better understand this feature:
 ```
 
 **Output:**
+
 ```markdown
 # PRD: User Data Export Feature
 
 ## Introduction
+
 Users need the ability to export their data for backup, migration, or
 compliance purposes. This feature will provide a self-service export
 mechanism accessible from the user dashboard.
 
 ## Goals
+
 1. Enable users to export their personal data in standard formats
 2. Ensure GDPR compliance for data portability
 3. Provide export within 5 seconds for typical user datasets
@@ -118,11 +125,13 @@ mechanism accessible from the user dashboard.
 ### Example 2: Complex Feature
 
 **User Input:**
+
 ```
 We need real-time collaboration on IEC programs
 ```
 
 **Clarifying Questions:**
+
 ```
 This is a complex feature. Let me gather more details:
 
@@ -144,6 +153,7 @@ permissions, offline behavior, etc...]
 ### Example 3: User Already Has Details
 
 **User Input:**
+
 ```
 Create a PRD for webhook notifications.
 
@@ -156,6 +166,7 @@ Details:
 ```
 
 **Response:**
+
 ```
 Great! I have enough information to create a comprehensive PRD.
 Let me just clarify a few edge cases:
@@ -177,6 +188,7 @@ Let me just clarify a few edge cases:
 ## Quality Checklist
 
 Before saving PRD, ensure:
+
 - [ ] All sections are present and complete
 - [ ] Requirements are numbered and specific
 - [ ] User stories follow proper format

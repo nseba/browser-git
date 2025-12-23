@@ -45,36 +45,36 @@ yarn add @browser-git/core
 ## Usage
 
 ```typescript
-import { Repository } from '@browser-git/core';
+import { Repository } from "@browser-git/core";
 
 // Initialize a new repository
-const repo = await Repository.init('/my-project', {
-  storage: 'indexeddb',
-  hashAlgorithm: 'sha1'
+const repo = await Repository.init("/my-project", {
+  storage: "indexeddb",
+  hashAlgorithm: "sha1",
 });
 
 // Add and commit files
-await repo.add(['src/**/*.ts']);
-await repo.commit('Initial commit', {
-  author: { name: 'John Doe', email: 'john@example.com' }
+await repo.add(["src/**/*.ts"]);
+await repo.commit("Initial commit", {
+  author: { name: "John Doe", email: "john@example.com" },
 });
 
 // Create and switch branches
-await repo.createBranch('feature/new-feature');
-await repo.checkout('feature/new-feature');
+await repo.createBranch("feature/new-feature");
+await repo.checkout("feature/new-feature");
 
 // Clone a remote repository
 const cloned = await Repository.clone(
-  'https://github.com/user/repo.git',
-  '/local-path',
+  "https://github.com/user/repo.git",
+  "/local-path",
   {
-    storage: 'indexeddb',
-    auth: { type: 'basic', token: 'ghp_...' }
-  }
+    storage: "indexeddb",
+    auth: { type: "basic", token: "ghp_..." },
+  },
 );
 
 // Push changes
-await repo.push('origin', 'main');
+await repo.push("origin", "main");
 ```
 
 ## Project Structure
@@ -166,15 +166,19 @@ yarn format:check
 ## Packages
 
 ### @browser-git/core
+
 The main package that provides the high-level Git API for browser applications.
 
 ### @browser-git/storage
+
 Storage adapter implementations for IndexedDB, OPFS, LocalStorage, and in-memory.
 
 ### @browser-git/diff
+
 Pluggable diff engine with support for custom diff algorithms.
 
 ### @browser-git/cli
+
 Command-line interface for testing and debugging Git operations.
 
 ## Examples

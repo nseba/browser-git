@@ -4,27 +4,29 @@ BrowserGit is designed to work across all modern browsers. This document outline
 
 ## Quick Reference
 
-| Browser | Version | Status | Storage | WASM | Notes |
-|---------|---------|--------|---------|------|-------|
-| Chrome | 90+ | ✅ Full Support | IndexedDB, OPFS, localStorage | Full | Best performance |
-| Edge | 90+ | ✅ Full Support | IndexedDB, OPFS, localStorage | Full | Chromium-based |
-| Firefox | 88+ | ✅ Full Support | IndexedDB, OPFS*, localStorage | Full | OPFS in recent versions |
-| Safari | 15+ | ⚠️ Partial Support | IndexedDB, localStorage | Full | No OPFS support |
-| Mobile Safari | 15+ | ⚠️ Partial Support | IndexedDB, localStorage | Full | Limited storage quota |
-| Mobile Chrome | 90+ | ✅ Full Support | IndexedDB, OPFS, localStorage | Full | - |
+| Browser       | Version | Status             | Storage                         | WASM | Notes                   |
+| ------------- | ------- | ------------------ | ------------------------------- | ---- | ----------------------- |
+| Chrome        | 90+     | ✅ Full Support    | IndexedDB, OPFS, localStorage   | Full | Best performance        |
+| Edge          | 90+     | ✅ Full Support    | IndexedDB, OPFS, localStorage   | Full | Chromium-based          |
+| Firefox       | 88+     | ✅ Full Support    | IndexedDB, OPFS\*, localStorage | Full | OPFS in recent versions |
+| Safari        | 15+     | ⚠️ Partial Support | IndexedDB, localStorage         | Full | No OPFS support         |
+| Mobile Safari | 15+     | ⚠️ Partial Support | IndexedDB, localStorage         | Full | Limited storage quota   |
+| Mobile Chrome | 90+     | ✅ Full Support    | IndexedDB, OPFS, localStorage   | Full | -                       |
 
-*OPFS support in Firefox requires version 111+
+\*OPFS support in Firefox requires version 111+
 
 ## Minimum Requirements
 
 BrowserGit requires the following browser features:
 
 ### Essential Features
+
 - ✅ WebAssembly support
 - ✅ SubtleCrypto API (for SHA-1/SHA-256 hashing)
 - ✅ At least one persistent storage option (IndexedDB, OPFS, or localStorage)
 
 ### Recommended Features
+
 - 🔷 IndexedDB (for optimal performance)
 - 🔷 OPFS (Origin Private File System) for best file system performance
 - 🔷 CompressionStream API (for efficient data compression)
@@ -34,15 +36,16 @@ BrowserGit requires the following browser features:
 
 ### Storage APIs
 
-| Feature | Chrome | Firefox | Safari | Mobile Chrome | Mobile Safari |
-|---------|--------|---------|--------|---------------|---------------|
-| IndexedDB | ✅ | ✅ | ✅ | ✅ | ✅ |
-| OPFS | ✅ 86+ | ✅ 111+ | ❌ | ✅ 86+ | ❌ |
-| localStorage | ✅ | ✅ | ✅ | ✅ | ⚠️ Limited |
-| Storage Manager | ✅ | ✅ | ✅ | ✅ | ⚠️ Partial |
-| Persistent Storage | ✅ | ✅ | ❌ | ✅ | ❌ |
+| Feature            | Chrome | Firefox | Safari | Mobile Chrome | Mobile Safari |
+| ------------------ | ------ | ------- | ------ | ------------- | ------------- |
+| IndexedDB          | ✅     | ✅      | ✅     | ✅            | ✅            |
+| OPFS               | ✅ 86+ | ✅ 111+ | ❌     | ✅ 86+        | ❌            |
+| localStorage       | ✅     | ✅      | ✅     | ✅            | ⚠️ Limited    |
+| Storage Manager    | ✅     | ✅      | ✅     | ✅            | ⚠️ Partial    |
+| Persistent Storage | ✅     | ✅      | ❌     | ✅            | ❌            |
 
 **Recommended Storage Adapter by Browser:**
+
 - Chrome/Edge: OPFS (best performance)
 - Firefox 111+: OPFS
 - Firefox <111: IndexedDB
@@ -51,29 +54,29 @@ BrowserGit requires the following browser features:
 
 ### WebAssembly Features
 
-| Feature | Chrome | Firefox | Safari | Notes |
-|---------|--------|---------|--------|-------|
-| Basic WASM | ✅ | ✅ | ✅ | Required |
-| Streaming | ✅ | ✅ | ✅ | Preferred for loading |
-| Threads | ✅ | ✅ | ⚠️ | Requires SharedArrayBuffer |
-| SIMD | ✅ | ✅ | ✅ | Performance optimization |
+| Feature    | Chrome | Firefox | Safari | Notes                      |
+| ---------- | ------ | ------- | ------ | -------------------------- |
+| Basic WASM | ✅     | ✅      | ✅     | Required                   |
+| Streaming  | ✅     | ✅      | ✅     | Preferred for loading      |
+| Threads    | ✅     | ✅      | ⚠️     | Requires SharedArrayBuffer |
+| SIMD       | ✅     | ✅      | ✅     | Performance optimization   |
 
 ### Compression APIs
 
-| Feature | Chrome | Firefox | Safari | Notes |
-|---------|--------|---------|--------|-------|
-| CompressionStream | ✅ 80+ | ✅ 113+ | ✅ 16.4+ | For packfile compression |
-| DecompressionStream | ✅ 80+ | ✅ 113+ | ✅ 16.4+ | For packfile decompression |
-| Fallback (pako) | ✅ | ✅ | ✅ | Used when native API unavailable |
+| Feature             | Chrome | Firefox | Safari   | Notes                            |
+| ------------------- | ------ | ------- | -------- | -------------------------------- |
+| CompressionStream   | ✅ 80+ | ✅ 113+ | ✅ 16.4+ | For packfile compression         |
+| DecompressionStream | ✅ 80+ | ✅ 113+ | ✅ 16.4+ | For packfile decompression       |
+| Fallback (pako)     | ✅     | ✅      | ✅       | Used when native API unavailable |
 
 ### Crypto APIs
 
-| Feature | Chrome | Firefox | Safari | Notes |
-|---------|--------|---------|--------|-------|
-| Web Crypto | ✅ | ✅ | ✅ | Required |
-| SubtleCrypto | ✅ | ✅ | ✅ | For SHA-1/SHA-256 |
-| SHA-1 | ✅ | ✅ | ✅ | Git default hash |
-| SHA-256 | ✅ | ✅ | ✅ | For newer repos |
+| Feature      | Chrome | Firefox | Safari | Notes             |
+| ------------ | ------ | ------- | ------ | ----------------- |
+| Web Crypto   | ✅     | ✅      | ✅     | Required          |
+| SubtleCrypto | ✅     | ✅      | ✅     | For SHA-1/SHA-256 |
+| SHA-1        | ✅     | ✅      | ✅     | Git default hash  |
+| SHA-256      | ✅     | ✅      | ✅     | For newer repos   |
 
 ## Performance Characteristics
 
@@ -87,11 +90,12 @@ BrowserGit requires the following browser features:
 - **Memory**: Large heap size available
 
 **Recommended Configuration:**
+
 ```typescript
-const repo = await Repository.init('/repo', {
-  storage: 'opfs',
-  hash: 'sha1',
-  compression: 'native'
+const repo = await Repository.init("/repo", {
+  storage: "opfs",
+  hash: "sha1",
+  compression: "native",
 });
 ```
 
@@ -105,11 +109,12 @@ const repo = await Repository.init('/repo', {
 - **Memory**: Moderate heap size
 
 **Recommended Configuration:**
+
 ```typescript
-const repo = await Repository.init('/repo', {
-  storage: navigator.userAgent.includes('Firefox/1') ? 'opfs' : 'indexeddb',
-  hash: 'sha1',
-  compression: 'native'
+const repo = await Repository.init("/repo", {
+  storage: navigator.userAgent.includes("Firefox/1") ? "opfs" : "indexeddb",
+  hash: "sha1",
+  compression: "native",
 });
 ```
 
@@ -123,11 +128,12 @@ const repo = await Repository.init('/repo', {
 - **Storage quota**: More restrictive than Chrome
 
 **Recommended Configuration:**
+
 ```typescript
-const repo = await Repository.init('/repo', {
-  storage: 'indexeddb',
-  hash: 'sha1',
-  compression: 'native'
+const repo = await Repository.init("/repo", {
+  storage: "indexeddb",
+  hash: "sha1",
+  compression: "native",
 });
 ```
 
@@ -141,12 +147,13 @@ const repo = await Repository.init('/repo', {
 - **Memory**: Limited heap size
 
 **Recommended Configuration:**
+
 ```typescript
-const repo = await Repository.init('/repo', {
-  storage: 'indexeddb',
-  hash: 'sha1',
-  compression: 'native',
-  maxCacheSize: 20 * 1024 * 1024 // 20MB cache limit
+const repo = await Repository.init("/repo", {
+  storage: "indexeddb",
+  hash: "sha1",
+  compression: "native",
+  maxCacheSize: 20 * 1024 * 1024, // 20MB cache limit
 });
 ```
 
@@ -154,18 +161,18 @@ const repo = await Repository.init('/repo', {
 
 ### Typical Storage Limits
 
-| Browser | Typical Quota | Notes |
-|---------|--------------|-------|
-| Chrome Desktop | ~60% of disk | Very generous |
-| Firefox Desktop | ~50% of disk | Can request more |
-| Safari Desktop | ~1GB | Requires user permission for more |
-| Mobile Chrome | ~6GB | Device dependent |
-| Mobile Safari | 50-100MB | Very restrictive |
+| Browser         | Typical Quota | Notes                             |
+| --------------- | ------------- | --------------------------------- |
+| Chrome Desktop  | ~60% of disk  | Very generous                     |
+| Firefox Desktop | ~50% of disk  | Can request more                  |
+| Safari Desktop  | ~1GB          | Requires user permission for more |
+| Mobile Chrome   | ~6GB          | Device dependent                  |
+| Mobile Safari   | 50-100MB      | Very restrictive                  |
 
 ### Checking Available Storage
 
 ```typescript
-import { getStorageQuota } from 'browser-git';
+import { getStorageQuota } from "browser-git";
 
 const quota = await getStorageQuota();
 if (quota) {
@@ -177,11 +184,11 @@ if (quota) {
 ### Requesting Persistent Storage
 
 ```typescript
-import { requestPersistentStorage } from 'browser-git';
+import { requestPersistentStorage } from "browser-git";
 
 const granted = await requestPersistentStorage();
 if (granted) {
-  console.log('Storage will persist across sessions');
+  console.log("Storage will persist across sessions");
 }
 ```
 
@@ -222,25 +229,28 @@ BrowserGit includes comprehensive automatic feature detection to use the best av
 ### Quick Compatibility Check
 
 ```typescript
-import { checkCompatibility, logCompatibilityReport } from '@browser-git/browser-git/utils/browser-compat';
+import {
+  checkCompatibility,
+  logCompatibilityReport,
+} from "@browser-git/browser-git/utils/browser-compat";
 
 // Check compatibility and get detailed results
 const result = await checkCompatibility();
 
 if (!result.compatible) {
-  console.error('Browser not compatible');
-  console.error('Missing features:', result.missingFeatures);
-  throw new Error(`Unsupported browser: ${result.missingFeatures.join(', ')}`);
+  console.error("Browser not compatible");
+  console.error("Missing features:", result.missingFeatures);
+  throw new Error(`Unsupported browser: ${result.missingFeatures.join(", ")}`);
 }
 
 // Show warnings to user
 if (result.warnings.length > 0) {
-  result.warnings.forEach(warning => console.warn(warning));
+  result.warnings.forEach((warning) => console.warn(warning));
 }
 
 // Show recommendations
 if (result.recommendations.length > 0) {
-  console.log('Recommendations:', result.recommendations);
+  console.log("Recommendations:", result.recommendations);
 }
 
 // Or get a formatted compatibility report
@@ -250,7 +260,10 @@ await logCompatibilityReport();
 ### Detailed Capability Detection
 
 ```typescript
-import { detectCapabilities, detectBrowser } from '@browser-git/browser-git/utils/browser-compat';
+import {
+  detectCapabilities,
+  detectBrowser,
+} from "@browser-git/browser-git/utils/browser-compat";
 
 // Detect browser
 const browser = detectBrowser();
@@ -258,18 +271,20 @@ console.log(`${browser.name} ${browser.version} (${browser.engine})`);
 
 // Detect all capabilities
 const capabilities = await detectCapabilities();
-console.log('WebAssembly:', capabilities.webAssembly);
-console.log('IndexedDB:', capabilities.indexedDB);
-console.log('OPFS:', capabilities.opfs);
-console.log('Web Crypto:', capabilities.webCrypto);
-console.log('SHA-1:', capabilities.sha1Support);
-console.log('SHA-256:', capabilities.sha256Support);
-console.log('CompressionStream:', capabilities.compressionStream);
+console.log("WebAssembly:", capabilities.webAssembly);
+console.log("IndexedDB:", capabilities.indexedDB);
+console.log("OPFS:", capabilities.opfs);
+console.log("Web Crypto:", capabilities.webCrypto);
+console.log("SHA-1:", capabilities.sha1Support);
+console.log("SHA-256:", capabilities.sha256Support);
+console.log("CompressionStream:", capabilities.compressionStream);
 
 // Check storage quota
 if (capabilities.storageQuota) {
   const { usage, quota, available, percentage } = capabilities.storageQuota;
-  console.log(`Storage: ${(usage / 1024 / 1024).toFixed(2)}MB / ${(quota / 1024 / 1024 / 1024).toFixed(2)}GB (${percentage.toFixed(1)}% used)`);
+  console.log(
+    `Storage: ${(usage / 1024 / 1024).toFixed(2)}MB / ${(quota / 1024 / 1024 / 1024).toFixed(2)}GB (${percentage.toFixed(1)}% used)`,
+  );
   console.log(`Available: ${(available / 1024 / 1024).toFixed(2)}MB`);
 }
 ```
@@ -287,15 +302,15 @@ import {
   hasCompressionStream,
   getStorageQuota,
   hasPersistentStorage,
-  requestPersistentStorage
-} from '@browser-git/browser-git/utils/browser-compat';
+  requestPersistentStorage,
+} from "@browser-git/browser-git/utils/browser-compat";
 
 // Check individual features
 const wasm = hasWebAssembly();
 const idb = await hasIndexedDB();
 const opfs = hasOPFS();
 const crypto = hasWebCrypto();
-const sha1 = await hasHashAlgorithm('SHA-1');
+const sha1 = await hasHashAlgorithm("SHA-1");
 const compression = hasCompressionStream();
 
 // Get storage information
@@ -305,7 +320,7 @@ const isPersistent = await hasPersistentStorage();
 // Request persistent storage
 const granted = await requestPersistentStorage();
 if (granted) {
-  console.log('Storage will not be automatically cleared');
+  console.log("Storage will not be automatically cleared");
 }
 ```
 
@@ -347,7 +362,7 @@ Recommendations:
 BrowserGit automatically selects the best storage adapter:
 
 ```typescript
-import { getRecommendedStorageAdapter } from 'browser-git';
+import { getRecommendedStorageAdapter } from "browser-git";
 
 const adapter = await getRecommendedStorageAdapter();
 // Returns: 'opfs' | 'indexeddb' | 'localstorage' | 'memory'
@@ -390,9 +405,10 @@ console.log(`Using ${adapter} storage adapter`);
 **Issue**: IndexedDB disabled in private browsing mode
 
 **Workaround**: Use memory adapter
+
 ```typescript
-const repo = await Repository.init('/repo', {
-  storage: 'memory'
+const repo = await Repository.init("/repo", {
+  storage: "memory",
 });
 ```
 
@@ -401,10 +417,11 @@ const repo = await Repository.init('/repo', {
 **Issue**: Very restrictive storage quotas (50-100MB)
 
 **Workaround**: Implement shallow clone
+
 ```typescript
-const repo = await Repository.clone(url, '/repo', {
+const repo = await Repository.clone(url, "/repo", {
   depth: 10, // Only last 10 commits
-  storage: 'indexeddb'
+  storage: "indexeddb",
 });
 ```
 
@@ -413,11 +430,12 @@ const repo = await Repository.clone(url, '/repo', {
 **Issue**: OPFS only available in Firefox 111+
 
 **Workaround**: Feature detection
+
 ```typescript
-import { checkOPFS } from 'browser-git';
+import { checkOPFS } from "browser-git";
 
 const hasOPFS = await checkOPFS();
-const storage = hasOPFS ? 'opfs' : 'indexeddb';
+const storage = hasOPFS ? "opfs" : "indexeddb";
 ```
 
 ## Testing Across Browsers

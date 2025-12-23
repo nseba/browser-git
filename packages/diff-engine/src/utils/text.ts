@@ -9,20 +9,23 @@
  * @param preserveLineEndings - Whether to keep \n at end of lines (default: false)
  * @returns Array of lines
  */
-export function splitLines(text: string, preserveLineEndings = false): string[] {
+export function splitLines(
+  text: string,
+  preserveLineEndings = false,
+): string[] {
   if (!text) {
     return [];
   }
 
   const lines = text.split(/\r?\n/);
 
-  if (preserveLineEndings && text.endsWith('\n')) {
+  if (preserveLineEndings && text.endsWith("\n")) {
     // Add empty line if text ends with newline
     return lines;
   }
 
   // Remove last empty line if it exists (from trailing newline)
-  if (lines.length > 0 && lines[lines.length - 1] === '') {
+  if (lines.length > 0 && lines[lines.length - 1] === "") {
     lines.pop();
   }
 
@@ -36,7 +39,7 @@ export function splitLines(text: string, preserveLineEndings = false): string[] 
  * @param lineEnding - Line ending to use (default: \n)
  * @returns Joined text
  */
-export function joinLines(lines: string[], lineEnding = '\n'): string {
+export function joinLines(lines: string[], lineEnding = "\n"): string {
   return lines.join(lineEnding);
 }
 
@@ -53,7 +56,7 @@ export function normalizeWhitespace(
     trimLines?: boolean;
     collapseSpaces?: boolean;
     ignoreTrailingWhitespace?: boolean;
-  } = {}
+  } = {},
 ): string {
   let result = text;
 
@@ -63,7 +66,7 @@ export function normalizeWhitespace(
   }
 
   if (options.collapseSpaces) {
-    result = result.replace(/[ \t]+/g, ' ');
+    result = result.replace(/[ \t]+/g, " ");
   }
 
   if (options.ignoreTrailingWhitespace) {
@@ -80,7 +83,9 @@ export function normalizeWhitespace(
  * @param text - Text to split
  * @returns Array of words with their positions
  */
-export function splitWords(text: string): Array<{ word: string; position: number }> {
+export function splitWords(
+  text: string,
+): Array<{ word: string; position: number }> {
   const words: Array<{ word: string; position: number }> = [];
   const regex = /\S+|\s+/g;
   let match: RegExpExecArray | null;
@@ -133,15 +138,15 @@ export function isBlankLine(line: string): boolean {
  * @param text - Text to analyze
  * @returns Line ending type (\n, \r\n, or \r)
  */
-export function detectLineEnding(text: string): '\n' | '\r\n' | '\r' | null {
-  if (text.includes('\r\n')) {
-    return '\r\n';
+export function detectLineEnding(text: string): "\n" | "\r\n" | "\r" | null {
+  if (text.includes("\r\n")) {
+    return "\r\n";
   }
-  if (text.includes('\n')) {
-    return '\n';
+  if (text.includes("\n")) {
+    return "\n";
   }
-  if (text.includes('\r')) {
-    return '\r';
+  if (text.includes("\r")) {
+    return "\r";
   }
   return null;
 }
@@ -153,7 +158,10 @@ export function detectLineEnding(text: string): '\n' | '\r\n' | '\r' | null {
  * @param lineEnding - Target line ending (default: \n)
  * @returns Text with normalized line endings
  */
-export function normalizeLineEndings(text: string, lineEnding: '\n' | '\r\n' | '\r' = '\n'): string {
+export function normalizeLineEndings(
+  text: string,
+  lineEnding: "\n" | "\r\n" | "\r" = "\n",
+): string {
   return text.replace(/\r\n|\r|\n/g, lineEnding);
 }
 
@@ -173,7 +181,7 @@ export function stripCommonIndent(text: string): string {
   }
 
   const minIndent = Math.min(
-    ...nonBlankLines.map((line) => countLeadingWhitespace(line))
+    ...nonBlankLines.map((line) => countLeadingWhitespace(line)),
   );
 
   if (minIndent === 0) {
@@ -182,7 +190,7 @@ export function stripCommonIndent(text: string): string {
 
   // Remove common indentation
   const stripped = lines.map((line) =>
-    isBlankLine(line) ? line : line.slice(minIndent)
+    isBlankLine(line) ? line : line.slice(minIndent),
   );
 
   return joinLines(stripped);
@@ -195,9 +203,11 @@ export function stripCommonIndent(text: string): string {
  * @param indent - Indentation string (default: two spaces)
  * @returns Indented text
  */
-export function addIndent(text: string, indent = '  '): string {
+export function addIndent(text: string, indent = "  "): string {
   const lines = splitLines(text);
-  return joinLines(lines.map((line) => (isBlankLine(line) ? line : indent + line)));
+  return joinLines(
+    lines.map((line) => (isBlankLine(line) ? line : indent + line)),
+  );
 }
 
 /**
@@ -208,9 +218,9 @@ export function addIndent(text: string, indent = '  '): string {
  */
 export function escapeForDisplay(text: string): string {
   return text
-    .replace(/\t/g, '→   ') // Tab
-    .replace(/\r/g, '\\r') // Carriage return
-    .replace(/ /g, '·'); // Space (optional, for visibility)
+    .replace(/\t/g, "→   ") // Tab
+    .replace(/\r/g, "\\r") // Carriage return
+    .replace(/ /g, "·"); // Space (optional, for visibility)
 }
 
 /**
@@ -224,7 +234,7 @@ export function truncateLongLines(text: string, maxLength = 120): string {
   const lines = splitLines(text);
   const truncated = lines.map((line) => {
     if (line.length > maxLength) {
-      return line.slice(0, maxLength) + '...';
+      return line.slice(0, maxLength) + "...";
     }
     return line;
   });

@@ -3,7 +3,7 @@
  * Provides authentication management and credential storage
  */
 
-export { AuthMethod } from '../types/auth';
+export { AuthMethod } from "../types/auth";
 export type {
   AuthConfig,
   BasicAuthConfig,
@@ -14,24 +14,35 @@ export type {
   AuthOptions,
   CredentialStorageOptions,
   StoredCredentials,
-} from '../types/auth';
+} from "../types/auth";
 
 export {
   AuthenticationError,
   createAuthConfig,
   validateAuthConfig,
   applyAuthToRequest,
-} from '../types/auth';
+} from "../types/auth";
 
 export {
   CredentialStorage,
   defaultCredentialStorage,
   createCredentialStorage,
-} from './credential-storage';
+} from "./credential-storage";
 
-import type { AuthConfig, AuthOptions, CredentialStorageOptions } from '../types/auth';
-import { createAuthConfig, validateAuthConfig, applyAuthToRequest } from '../types/auth';
-import { CredentialStorage, defaultCredentialStorage } from './credential-storage';
+import type {
+  AuthConfig,
+  AuthOptions,
+  CredentialStorageOptions,
+} from "../types/auth";
+import {
+  createAuthConfig,
+  validateAuthConfig,
+  applyAuthToRequest,
+} from "../types/auth";
+import {
+  CredentialStorage,
+  defaultCredentialStorage,
+} from "./credential-storage";
 
 /**
  * Authentication manager for a repository
@@ -45,7 +56,7 @@ export class AuthManager {
   constructor(
     repositoryUrl: string,
     storage?: CredentialStorage,
-    storageOptions?: CredentialStorageOptions
+    storageOptions?: CredentialStorageOptions,
   ) {
     this.repositoryUrl = repositoryUrl;
     this.credentialStorage = storage || defaultCredentialStorage;
@@ -57,7 +68,7 @@ export class AuthManager {
    */
   async setAuth(config: AuthConfig | AuthOptions): Promise<void> {
     // Convert options to config if needed
-    const authConfig = 'method' in config ? config : createAuthConfig(config);
+    const authConfig = "method" in config ? config : createAuthConfig(config);
 
     // Validate the configuration
     validateAuthConfig(authConfig);
@@ -139,7 +150,7 @@ export class AuthManager {
    * Checks if authentication is configured
    */
   hasAuth(): boolean {
-    return this.config !== null && this.config.method !== 'none';
+    return this.config !== null && this.config.method !== "none";
   }
 
   /**
@@ -158,11 +169,11 @@ export function createAuthManager(
   options?: {
     storage?: CredentialStorage;
     storageOptions?: CredentialStorageOptions;
-  }
+  },
 ): AuthManager {
   return new AuthManager(
     repositoryUrl,
     options?.storage,
-    options?.storageOptions
+    options?.storageOptions,
   );
 }

@@ -12,6 +12,7 @@ Execute task lists with automated sub-task completion, quality gates, and increm
 ### When to Use
 
 Activate this skill when:
+
 - User says "start task X.0" or "begin task X.0"
 - User says "continue" or "go" (to proceed to next parent task)
 - User points to specific task in task list
@@ -22,6 +23,7 @@ Activate this skill when:
 **CRITICAL UNDERSTANDING:**
 
 #### Within Parent Task (Automated)
+
 - Execute ALL sub-tasks automatically
 - Do NOT pause between sub-tasks
 - Do NOT ask permission for each sub-task
@@ -29,6 +31,7 @@ Activate this skill when:
 - Proceed seamlessly to next sub-task
 
 #### Between Parent Tasks (Manual Gate)
+
 - ALWAYS pause after completing parent task
 - ALWAYS wait for explicit user confirmation
 - User must say "go", "continue", "start task X.0"
@@ -107,6 +110,7 @@ ls -la helm/
 ```
 
 If deployment changes were made, verify:
+
 - Dockerfile builds successfully
 - Helm chart values are correct
 - Deployment configurations updated
@@ -224,11 +228,13 @@ Update task list file:
 ### Example 1: Simple Parent Task
 
 **User Input:**
+
 ```
 Start task 2.0
 ```
 
 **Execution:**
+
 ```
 Starting Task 2.0: Implement Configuration Management System
 
@@ -288,11 +294,13 @@ Ready to proceed to Task 3.0: Fix Code Quality Issues?
 ### Example 2: Task with Deployment Changes
 
 **User Input:**
+
 ```
 Continue with task 5.0
 ```
 
 **Execution:**
+
 ```
 Starting Task 5.0: Enhance Multi-POU Generation in Copilot
 
@@ -337,11 +345,13 @@ Ready to proceed to Task 6.0: Refactor and Simplify Workflows?
 ### Example 3: Handling Test Failures
 
 **User Input:**
+
 ```
 Start task 3.0
 ```
 
 **Execution:**
+
 ```
 Starting Task 3.0: Fix Code Quality Issues
 

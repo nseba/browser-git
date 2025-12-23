@@ -4,7 +4,7 @@ import type {
   BinaryDiffResult,
   FormatOptions,
   LineWithWordChanges,
-} from './types.js';
+} from "./types.js";
 
 /**
  * Interface for diff engine implementations
@@ -24,7 +24,7 @@ export interface IDiffEngine {
   diff(
     oldText: string,
     newText: string,
-    options?: DiffOptions
+    options?: DiffOptions,
   ): DiffResult | BinaryDiffResult;
 
   /**
@@ -38,7 +38,7 @@ export interface IDiffEngine {
   diffFiles(
     oldFile: Uint8Array,
     newFile: Uint8Array,
-    options?: DiffOptions
+    options?: DiffOptions,
   ): DiffResult | BinaryDiffResult;
 
   /**
@@ -52,7 +52,7 @@ export interface IDiffEngine {
   diffWords(
     oldLine: string,
     newLine: string,
-    options?: DiffOptions
+    options?: DiffOptions,
   ): LineWithWordChanges;
 
   /**
@@ -62,10 +62,7 @@ export interface IDiffEngine {
    * @param options - Format options
    * @returns Formatted diff string (unified, side-by-side, etc.)
    */
-  format(
-    diff: DiffResult | BinaryDiffResult,
-    options?: FormatOptions
-  ): string;
+  format(diff: DiffResult | BinaryDiffResult, options?: FormatOptions): string;
 
   /**
    * Check if content is binary
@@ -103,10 +100,7 @@ export interface IDiffEngineFactory {
    * @param name - Name to register the engine under
    * @param engine - Diff engine instance or constructor
    */
-  register(
-    name: string,
-    engine: IDiffEngine | (() => IDiffEngine)
-  ): void;
+  register(name: string, engine: IDiffEngine | (() => IDiffEngine)): void;
 
   /**
    * List available diff engine names

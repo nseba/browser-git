@@ -19,6 +19,7 @@ We take the security of BrowserGit seriously. If you discover a security vulnera
 Instead, please report them via email to: **[security@your-domain.com]** (replace with actual contact)
 
 Include the following information:
+
 - Type of vulnerability
 - Full paths of affected source files
 - Step-by-step instructions to reproduce the issue
@@ -43,6 +44,7 @@ Include the following information:
 - **XSS Risk**: Any XSS vulnerability in your application could expose these credentials
 
 **Best Practices**:
+
 1. **Use token-based authentication** instead of passwords
 2. **Use short-lived tokens** with minimal permissions
 3. **Never store credentials in localStorage** for production applications
@@ -58,6 +60,7 @@ BrowserGit makes HTTP requests directly from the browser to Git servers. This ha
 - **CORS Proxies**: Using CORS proxies means trusting a third party with your credentials
 
 **Best Practices**:
+
 1. Only connect to trusted Git servers
 2. Use HTTPS exclusively (never HTTP)
 3. Implement proper CORS configuration on your Git server
@@ -84,6 +87,7 @@ BrowserGit normalizes paths to prevent directory traversal attacks. However:
 - Applications should validate user-provided paths before passing to BrowserGit
 
 **Best Practices**:
+
 1. Validate and sanitize all user-provided file paths
 2. Use absolute paths when possible
 3. Implement application-level access controls
@@ -97,37 +101,43 @@ When cloning or fetching from remote repositories:
 - **Validation**: URLs are parsed but not validated against allow/deny lists
 
 **Best Practices**:
+
 1. Validate repository URLs before passing to BrowserGit
 2. Implement URL allow-lists in your application
 3. Never pass user-provided URLs directly to clone/fetch operations without validation
 4. Consider implementing network boundary checks
 
 Example validation:
+
 ```typescript
 function validateRepositoryURL(url: string): boolean {
   try {
     const parsed = new URL(url);
 
     // Only allow HTTPS
-    if (parsed.protocol !== 'https:') {
+    if (parsed.protocol !== "https:") {
       return false;
     }
 
     // Deny internal/private IP ranges
     const hostname = parsed.hostname;
     if (
-      hostname === 'localhost' ||
-      hostname === '127.0.0.1' ||
-      hostname.startsWith('192.168.') ||
-      hostname.startsWith('10.') ||
-      hostname.startsWith('172.')
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      hostname.startsWith("192.168.") ||
+      hostname.startsWith("10.") ||
+      hostname.startsWith("172.")
     ) {
       return false;
     }
 
     // Allow-list of trusted domains
-    const allowedDomains = ['github.com', 'gitlab.com', 'bitbucket.org'];
-    if (!allowedDomains.some(domain => hostname === domain || hostname.endsWith('.' + domain))) {
+    const allowedDomains = ["github.com", "gitlab.com", "bitbucket.org"];
+    if (
+      !allowedDomains.some(
+        (domain) => hostname === domain || hostname.endsWith("." + domain),
+      )
+    ) {
       return false;
     }
 
@@ -147,6 +157,7 @@ The example applications use `innerHTML` and `dangerouslySetInnerHTML` for rende
 - **Warning**: Do not copy example code to production without proper security review
 
 **Best Practices**:
+
 1. Sanitize all user-generated content before rendering
 2. Use React's built-in XSS protection (avoid `dangerouslySetInnerHTML`)
 3. Implement CSP headers

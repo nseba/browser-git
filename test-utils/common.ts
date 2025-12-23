@@ -15,7 +15,7 @@ export function delay(ms: number): Promise<void> {
 export async function retry<T>(
   fn: () => Promise<T>,
   maxAttempts: number = 3,
-  delayMs: number = 100
+  delayMs: number = 100,
 ): Promise<T> {
   let lastError: Error | undefined;
 
@@ -48,8 +48,9 @@ export function randomBytes(size: number): Uint8Array {
  * Generates a random string
  */
 export function randomString(length: number): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
   for (let i = 0; i < length; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
@@ -59,7 +60,7 @@ export function randomString(length: number): string {
 /**
  * Generates a random file name
  */
-export function randomFileName(extension: string = 'txt'): string {
+export function randomFileName(extension: string = "txt"): string {
   return `test_${randomString(8)}.${extension}`;
 }
 
@@ -109,7 +110,12 @@ export function deepCopy<T>(obj: T): T {
 export function deepEqual(a: any, b: any): boolean {
   if (a === b) return true;
 
-  if (typeof a !== 'object' || typeof b !== 'object' || a === null || b === null) {
+  if (
+    typeof a !== "object" ||
+    typeof b !== "object" ||
+    a === null ||
+    b === null
+  ) {
     return false;
   }
 
@@ -137,9 +143,9 @@ export function deepEqual(a: any, b: any): boolean {
  * Formats bytes as human-readable string
  */
 export function formatBytes(bytes: number): string {
-  if (bytes === 0) return '0 B';
+  if (bytes === 0) return "0 B";
 
-  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+  const units = ["B", "KB", "MB", "GB", "TB"];
   const k = 1024;
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
@@ -166,7 +172,8 @@ export function formatDuration(ms: number): string {
  */
 export class MockTimer {
   private currentTime: number = 0;
-  private timers: Map<number, { callback: () => void; time: number }> = new Map();
+  private timers: Map<number, { callback: () => void; time: number }> =
+    new Map();
   private nextId: number = 1;
 
   now(): number {
