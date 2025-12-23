@@ -87,11 +87,13 @@ For each browser being tested:
    - [ ] Note browser version and OS
 
 2. **Feature Detection**
+
    ```typescript
    // Run in browser console
-   import { logCompatibilityReport } from '@browser-git/browser-git/utils/browser-compat';
+   import { logCompatibilityReport } from "@browser-git/browser-git/utils/browser-compat";
    await logCompatibilityReport();
    ```
+
    - [ ] Verify all required features present
    - [ ] Note any missing optional features
    - [ ] Check storage quota
@@ -101,15 +103,16 @@ For each browser being tested:
 #### 1. Repository Initialization
 
 ```typescript
-const repo = await Repository.init('/test-repo', {
-  storage: 'indexeddb', // or 'opfs' if available
+const repo = await Repository.init("/test-repo", {
+  storage: "indexeddb", // or 'opfs' if available
 });
 
-await repo.config('user.name', 'Test User');
-await repo.config('user.email', 'test@example.com');
+await repo.config("user.name", "Test User");
+await repo.config("user.email", "test@example.com");
 ```
 
 **Verify:**
+
 - [ ] Repository initializes without errors
 - [ ] Storage adapter loads correctly
 - [ ] Configuration is saved
@@ -120,17 +123,17 @@ await repo.config('user.email', 'test@example.com');
 
 ```typescript
 // Create file
-await repo.fs.writeFile('README.md', '# Test Repository');
-await repo.fs.writeFile('src/index.ts', 'console.log("hello");');
+await repo.fs.writeFile("README.md", "# Test Repository");
+await repo.fs.writeFile("src/index.ts", 'console.log("hello");');
 
 // Stage files
-await repo.add(['README.md', 'src/index.ts']);
+await repo.add(["README.md", "src/index.ts"]);
 
 // Commit
-await repo.commit('Initial commit', {
+await repo.commit("Initial commit", {
   author: {
-    name: 'Test User',
-    email: 'test@example.com',
+    name: "Test User",
+    email: "test@example.com",
   },
 });
 
@@ -139,6 +142,7 @@ const status = await repo.status();
 ```
 
 **Verify:**
+
 - [ ] Files are created successfully
 - [ ] Staging works correctly
 - [ ] Commit completes without errors
@@ -150,24 +154,25 @@ const status = await repo.status();
 
 ```typescript
 // Create branch
-await repo.createBranch('feature-branch');
+await repo.createBranch("feature-branch");
 
 // Switch to branch
-await repo.checkout('feature-branch');
+await repo.checkout("feature-branch");
 
 // Make changes
-await repo.fs.writeFile('feature.ts', 'export const feature = true;');
-await repo.add(['feature.ts']);
-await repo.commit('Add feature');
+await repo.fs.writeFile("feature.ts", "export const feature = true;");
+await repo.add(["feature.ts"]);
+await repo.commit("Add feature");
 
 // Switch back
-await repo.checkout('main');
+await repo.checkout("main");
 
 // List branches
 const branches = await repo.listBranches();
 ```
 
 **Verify:**
+
 - [ ] Branch creation succeeds
 - [ ] Checkout switches branches
 - [ ] Working directory updates correctly
@@ -179,16 +184,17 @@ const branches = await repo.listBranches();
 
 ```typescript
 // Merge feature branch
-await repo.checkout('main');
-const result = await repo.merge('feature-branch');
+await repo.checkout("main");
+const result = await repo.merge("feature-branch");
 
 // Check for conflicts
 if (result.conflicts.length > 0) {
-  console.log('Conflicts:', result.conflicts);
+  console.log("Conflicts:", result.conflicts);
 }
 ```
 
 **Verify:**
+
 - [ ] Merge completes successfully
 - [ ] Fast-forward merge when possible
 - [ ] Conflicts detected when present
@@ -201,7 +207,7 @@ if (result.conflicts.length > 0) {
 ```typescript
 // Get commit history
 const log = await repo.log({ maxCount: 10 });
-log.forEach(commit => {
+log.forEach((commit) => {
   console.log(commit.hash, commit.message);
 });
 
@@ -210,11 +216,12 @@ const commit = await repo.showCommit(log[0].hash);
 console.log(commit);
 
 // Generate diff
-const diff = await repo.diff('HEAD~1', 'HEAD');
+const diff = await repo.diff("HEAD~1", "HEAD");
 console.log(diff);
 ```
 
 **Verify:**
+
 - [ ] Log shows all commits
 - [ ] Commit details are accurate
 - [ ] Diff shows correct changes
@@ -244,6 +251,7 @@ console.log(`Average: ${avg.toFixed(2)}ms`);
 ```
 
 **Targets:**
+
 - Chrome: < 30ms avg
 - Firefox: < 40ms avg
 - Safari: < 50ms avg
@@ -252,26 +260,27 @@ console.log(`Average: ${avg.toFixed(2)}ms`);
 
 ```typescript
 // Create branch with 50 files
-await repo.createBranch('perf-test');
-await repo.checkout('perf-test');
+await repo.createBranch("perf-test");
+await repo.checkout("perf-test");
 
 for (let i = 0; i < 50; i++) {
-  await repo.fs.writeFile(`perf${i}.txt`, 'x'.repeat(100));
+  await repo.fs.writeFile(`perf${i}.txt`, "x".repeat(100));
 }
 await repo.add(Array.from({ length: 50 }, (_, i) => `perf${i}.txt`));
-await repo.commit('Perf test commit');
+await repo.commit("Perf test commit");
 
 // Measure checkout back to main
-await repo.checkout('main');
+await repo.checkout("main");
 
 const start = performance.now();
-await repo.checkout('perf-test');
+await repo.checkout("perf-test");
 const duration = performance.now() - start;
 
 console.log(`Checkout (50 files): ${duration.toFixed(2)}ms`);
 ```
 
 **Targets:**
+
 - Chrome: < 120ms
 - Firefox: < 180ms
 - Safari: < 200ms
@@ -285,7 +294,7 @@ if (performance.memory) {
 
   // Perform operations
   for (let i = 0; i < 100; i++) {
-    await repo.fs.writeFile(`mem${i}.txt`, 'x'.repeat(1000));
+    await repo.fs.writeFile(`mem${i}.txt`, "x".repeat(1000));
     await repo.add([`mem${i}.txt`]);
     await repo.commit(`Commit ${i}`);
   }
@@ -298,6 +307,7 @@ if (performance.memory) {
 ```
 
 **Targets:**
+
 - < 50MB for 100 commits with small files
 
 ### Storage Tests
@@ -305,26 +315,27 @@ if (performance.memory) {
 #### 1. Storage Quota
 
 ```typescript
-import { getStorageQuota } from '@browser-git/browser-git/utils/browser-compat';
+import { getStorageQuota } from "@browser-git/browser-git/utils/browser-compat";
 
 // Check initial quota
 const initial = await getStorageQuota();
-console.log('Initial:', initial);
+console.log("Initial:", initial);
 
 // Create large repository
 for (let i = 0; i < 1000; i++) {
-  await repo.fs.writeFile(`large${i}.txt`, 'x'.repeat(10000));
+  await repo.fs.writeFile(`large${i}.txt`, "x".repeat(10000));
 }
 await repo.add(Array.from({ length: 1000 }, (_, i) => `large${i}.txt`));
-await repo.commit('Large commit');
+await repo.commit("Large commit");
 
 // Check after
 const after = await getStorageQuota();
-console.log('After:', after);
-console.log('Used:', (after.usage - initial.usage) / 1024 / 1024, 'MB');
+console.log("After:", after);
+console.log("Used:", (after.usage - initial.usage) / 1024 / 1024, "MB");
 ```
 
 **Verify:**
+
 - [ ] Storage quota is reported correctly
 - [ ] Usage increases after operations
 - [ ] No quota errors (unless intentional)
@@ -332,20 +343,24 @@ console.log('Used:', (after.usage - initial.usage) / 1024 / 1024, 'MB');
 #### 2. Storage Persistence
 
 ```typescript
-import { hasPersistentStorage, requestPersistentStorage } from '@browser-git/browser-git/utils/browser-compat';
+import {
+  hasPersistentStorage,
+  requestPersistentStorage,
+} from "@browser-git/browser-git/utils/browser-compat";
 
 // Check persistence
 const isPersistent = await hasPersistentStorage();
-console.log('Is persistent:', isPersistent);
+console.log("Is persistent:", isPersistent);
 
 // Request persistence
 if (!isPersistent) {
   const granted = await requestPersistentStorage();
-  console.log('Persistence granted:', granted);
+  console.log("Persistence granted:", granted);
 }
 ```
 
 **Verify:**
+
 - [ ] Persistence status is accurate
 - [ ] Request shows browser prompt (if supported)
 - [ ] Storage persists after browser restart (manual check)
@@ -355,9 +370,10 @@ if (!isPersistent) {
 #### Chrome/Edge Tests
 
 1. **OPFS Performance**
+
    ```typescript
-   const repo = await Repository.init('/opfs-test', {
-     storage: 'opfs',
+   const repo = await Repository.init("/opfs-test", {
+     storage: "opfs",
    });
 
    // Run performance tests
@@ -372,10 +388,11 @@ if (!isPersistent) {
 #### Firefox Tests
 
 1. **OPFS Availability**
+
    ```typescript
-   import { hasOPFS } from '@browser-git/browser-git/utils/browser-compat';
+   import { hasOPFS } from "@browser-git/browser-git/utils/browser-compat";
    const opfs = hasOPFS();
-   console.log('OPFS available:', opfs);
+   console.log("OPFS available:", opfs);
    ```
 
 2. **IndexedDB Performance**
@@ -433,12 +450,14 @@ if (!isPersistent) {
 **Tester**: [Name]
 
 ### Environment
+
 - Browser Version:
 - OS Version:
 - Device: (if mobile)
 - Storage Adapter Used:
 
 ### Feature Detection
+
 - WebAssembly: ✅/❌
 - IndexedDB: ✅/❌
 - OPFS: ✅/❌
@@ -446,11 +465,13 @@ if (!isPersistent) {
 - CompressionStream: ✅/❌
 
 ### Storage Quota
+
 - Available: [X] GB
 - Used: [X] MB
 - Persistent: ✅/❌
 
 ### Core Functionality
+
 - [ ] Repository Init
 - [ ] File Operations
 - [ ] Branching
@@ -458,20 +479,24 @@ if (!isPersistent) {
 - [ ] History/Log
 
 ### Performance Results
+
 - Commit (avg): [X]ms (target: <50ms)
 - Checkout (50 files): [X]ms (target: <200ms)
 - Memory Usage: [X]MB (target: <50MB)
 
 ### Issues Found
+
 1. [Issue description]
    - Severity: High/Medium/Low
    - Reproduction: [Steps]
    - Error: [Error message]
 
 ### Notes
+
 [Additional observations]
 
 ### Overall Status
+
 ✅ Pass / ⚠️ Pass with warnings / ❌ Fail
 ```
 
@@ -525,11 +550,13 @@ jobs:
 ### Tests Won't Run
 
 **Playwright not installed**:
+
 ```bash
 npx playwright install
 ```
 
 **Port conflicts**:
+
 ```bash
 # Kill process on port
 lsof -ti:3000 | xargs kill -9
@@ -538,11 +565,13 @@ lsof -ti:3000 | xargs kill -9
 ### Tests Failing
 
 **Timing issues**:
+
 - Increase timeouts in test config
 - Add explicit waits
 - Check for race conditions
 
 **Storage issues**:
+
 - Clear browser data between runs
 - Check storage quotas
 - Verify IndexedDB/OPFS access
@@ -550,6 +579,7 @@ lsof -ti:3000 | xargs kill -9
 ### Performance Issues
 
 **Slower than expected**:
+
 - Check CPU throttling in DevTools
 - Verify no background processes
 - Use production build, not dev

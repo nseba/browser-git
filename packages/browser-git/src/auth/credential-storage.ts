@@ -2,8 +2,8 @@
  * Credential storage implementation using various browser storage mechanisms
  */
 
-import type { AuthConfig, StoredCredentials } from '../types/auth';
-import { AuthMethod } from '../types/auth';
+import type { AuthConfig, StoredCredentials } from "../types/auth";
+import { AuthMethod } from "../types/auth";
 
 /**
  * Storage backend interface
@@ -49,7 +49,7 @@ class SessionStorageBackend implements StorageBackend {
     try {
       sessionStorage.setItem(key, value);
     } catch (e) {
-      console.warn('Failed to store credentials in sessionStorage:', e);
+      console.warn("Failed to store credentials in sessionStorage:", e);
     }
   }
 
@@ -78,7 +78,7 @@ class LocalStorageBackend implements StorageBackend {
     try {
       localStorage.setItem(key, value);
     } catch (e) {
-      console.warn('Failed to store credentials in localStorage:', e);
+      console.warn("Failed to store credentials in localStorage:", e);
     }
   }
 
@@ -109,7 +109,7 @@ class CredentialManagerBackend implements StorageBackend {
     await this.fallback.set(key, value);
 
     // Try to use Credential Management API for password credentials
-    if ('credentials' in navigator && 'PasswordCredential' in window) {
+    if ("credentials" in navigator && "PasswordCredential" in window) {
       try {
         const data = JSON.parse(value) as StoredCredentials;
         if (data.username && data.method === AuthMethod.Basic) {
@@ -117,13 +117,16 @@ class CredentialManagerBackend implements StorageBackend {
           // This is just for browser's autofill
           const credential = new (window as any).PasswordCredential({
             id: data.username,
-            password: '', // Can't store actual password
+            password: "", // Can't store actual password
             name: data.username,
           });
           await navigator.credentials.store(credential);
         }
       } catch (e) {
-        console.warn('Failed to store credentials using Credential Manager:', e);
+        console.warn(
+          "Failed to store credentials using Credential Manager:",
+          e,
+        );
       }
     }
   }
@@ -138,20 +141,22 @@ class CredentialManagerBackend implements StorageBackend {
  */
 export class CredentialStorage {
   private backend: StorageBackend;
-  private prefix = 'browsergit:credentials:';
+  private prefix = "browsergit:credentials:";
 
-  constructor(type: 'memory' | 'session' | 'local' | 'credential-manager' = 'memory') {
+  constructor(
+    type: "memory" | "session" | "local" | "credential-manager" = "memory",
+  ) {
     switch (type) {
-      case 'session':
+      case "session":
         this.backend = new SessionStorageBackend();
         break;
-      case 'local':
+      case "local":
         this.backend = new LocalStorageBackend();
         break;
-      case 'credential-manager':
+      case "credential-manager":
         this.backend = new CredentialManagerBackend();
         break;
-      case 'memory':
+      case "memory":
       default:
         this.backend = new MemoryStorage();
         break;
@@ -161,7 +166,11 @@ export class CredentialStorage {
   /**
    * Stores credentials for a given key (typically repository URL)
    */
-  async store(key: string, config: AuthConfig, expiresIn?: number): Promise<void> {
+  async store(
+    key: string,
+    config: AuthConfig,
+    expiresIn?: number,
+  ): Promise<void> {
     const credentials: StoredCredentials = {
       method: config.method as AuthMethod,
       storedAt: Date.now(),
@@ -241,7 +250,7 @@ export class CredentialStorage {
   async clear(): Promise<void> {
     // This is limited - we can only clear what we know about
     // For a full implementation, we'd need to iterate over all keys
-    console.warn('CredentialStorage.clear() has limited functionality');
+    console.warn("CredentialStorage.clear() has limited functionality");
   }
 
   /**
@@ -250,16 +259,16 @@ export class CredentialStorage {
   credentialsToAuthConfig(credentials: StoredCredentials): AuthConfig | null {
     switch (credentials.method) {
       case AuthMethod.Basic:
-      case 'basic':
+      case "basic":
         if (!credentials.username) return null;
         return {
           method: AuthMethod.Basic,
           username: credentials.username,
-          password: '', // Password is not retrievable
+          password: "", // Password is not retrievable
         };
 
       case AuthMethod.Token:
-      case 'token':
+      case "token":
         if (!credentials.token) return null;
         return {
           method: AuthMethod.Token,
@@ -267,14 +276,15 @@ export class CredentialStorage {
         };
 
       case AuthMethod.OAuth:
-      case 'oauth': {
+      case "oauth": {
         if (!credentials.accessToken) return null;
         const oauthConfig: AuthConfig = {
           method: AuthMethod.OAuth,
           accessToken: credentials.accessToken,
         };
         if (credentials.refreshToken) {
-          (oauthConfig as unknown as { refreshToken: string }).refreshToken = credentials.refreshToken;
+          (oauthConfig as unknown as { refreshToken: string }).refreshToken =
+            credentials.refreshToken;
         }
         return oauthConfig;
       }
@@ -289,22 +299,20 @@ export class CredentialStorage {
    */
   private sanitizeKey(key: string): string {
     // Remove special characters and limit length
-    return key
-      .replace(/[^a-zA-Z0-9-_.]/g, '_')
-      .substring(0, 200);
+    return key.replace(/[^a-zA-Z0-9-_.]/g, "_").substring(0, 200);
   }
 }
 
 /**
  * Default credential storage instance
  */
-export const defaultCredentialStorage = new CredentialStorage('memory');
+export const defaultCredentialStorage = new CredentialStorage("memory");
 
 /**
  * Creates a credential storage instance
  */
 export function createCredentialStorage(
-  type: 'memory' | 'session' | 'local' | 'credential-manager' = 'memory'
+  type: "memory" | "session" | "local" | "credential-manager" = "memory",
 ): CredentialStorage {
   return new CredentialStorage(type);
 }

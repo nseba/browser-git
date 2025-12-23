@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from "@playwright/test";
 
 /**
  * Playwright configuration for browser-git e2e tests
@@ -6,7 +6,7 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   // Test directory
-  testDir: './tests/browser',
+  testDir: "./tests/browser",
 
   // Maximum time one test can run
   timeout: 30 * 1000,
@@ -25,9 +25,9 @@ export default defineConfig({
 
   // Reporter to use
   reporter: [
-    ['html'],
-    ['list'],
-    ...(process.env.CI ? [['github'] as const] : []),
+    ["html"],
+    ["list"],
+    ...(process.env.CI ? [["github"] as const] : []),
   ],
 
   // Shared settings for all the projects below
@@ -36,47 +36,47 @@ export default defineConfig({
     // baseURL: 'http://localhost:5173',
 
     // Collect trace when retrying the failed test
-    trace: 'on-first-retry',
+    trace: "on-first-retry",
 
     // Screenshot on failure
-    screenshot: 'only-on-failure',
+    screenshot: "only-on-failure",
 
     // Video on failure
-    video: 'retain-on-failure',
+    video: "retain-on-failure",
   },
 
   // Configure projects for major browsers
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
     },
 
     {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      name: "firefox",
+      use: { ...devices["Desktop Firefox"] },
     },
 
     {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      name: "webkit",
+      use: { ...devices["Desktop Safari"] },
     },
 
     // Test against mobile viewports
     {
-      name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
+      name: "Mobile Chrome",
+      use: { ...devices["Pixel 5"] },
     },
     {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
+      name: "Mobile Safari",
+      use: { ...devices["iPhone 12"] },
     },
   ],
 
   // Run a simple static server before starting the tests
   webServer: {
-    command: 'npx serve tests/browser -l 3456 --no-request-logging',
-    url: 'http://localhost:3456',
+    command: "npx serve tests/browser -l 3456 --no-request-logging",
+    url: "http://localhost:3456",
     reuseExistingServer: !process.env.CI,
     timeout: 10 * 1000,
   },

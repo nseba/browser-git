@@ -3,16 +3,20 @@
  * Tests performance targets: commit <50ms, checkout <200ms, clone <5s
  */
 
-import { test, expect } from './fixtures';
-import { setupConsoleLogging, measurePerformance, TEST_PAGE_URL } from './helpers';
+import { test, expect } from "./fixtures";
+import {
+  setupConsoleLogging,
+  measurePerformance,
+  TEST_PAGE_URL,
+} from "./helpers";
 
-test.describe('Git Operations Performance - Cross Browser', () => {
+test.describe("Git Operations Performance - Cross Browser", () => {
   test.beforeEach(async ({ page }) => {
     setupConsoleLogging(page);
   });
 
-  test.describe('Repository Initialization', () => {
-    test('should initialize repository quickly', async ({ cleanPage }) => {
+  test.describe("Repository Initialization", () => {
+    test("should initialize repository quickly", async ({ cleanPage }) => {
       await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
@@ -20,40 +24,43 @@ test.describe('Git Operations Performance - Cross Browser', () => {
 
         // Simulate repository initialization
         const repoStructure = {
-          '.git/objects': {},
-          '.git/refs/heads': {},
-          '.git/refs/tags': {},
-          '.git/HEAD': 'ref: refs/heads/main',
-          '.git/config': '[core]\n\trepositoryformatversion = 0\n'
+          ".git/objects": {},
+          ".git/refs/heads": {},
+          ".git/refs/tags": {},
+          ".git/HEAD": "ref: refs/heads/main",
+          ".git/config": "[core]\n\trepositoryformatversion = 0\n",
         };
 
         const duration = performance.now() - start;
         return { duration, structure: Object.keys(repoStructure).length };
       });
 
-      console.log('Repository init time:', result.duration, 'ms');
+      console.log("Repository init time:", result.duration, "ms");
       expect(result.duration).toBeLessThan(10); // Should be very fast
     });
   });
 
-  test.describe('Commit Operations', () => {
-    test('should create commit in < 50ms (target)', async ({ cleanPage, browserName }) => {
+  test.describe("Commit Operations", () => {
+    test("should create commit in < 50ms (target)", async ({
+      cleanPage,
+      browserName,
+    }) => {
       await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         // Simulate commit creation
         const author = {
-          name: 'Test User',
-          email: 'test@example.com',
-          timestamp: Date.now()
+          name: "Test User",
+          email: "test@example.com",
+          timestamp: Date.now(),
         };
 
         const commitData = {
-          tree: 'a'.repeat(40), // SHA-1 hash
-          parent: 'b'.repeat(40),
+          tree: "a".repeat(40), // SHA-1 hash
+          parent: "b".repeat(40),
           author: `${author.name} <${author.email}> ${author.timestamp}`,
           committer: `${author.name} <${author.email}> ${author.timestamp}`,
-          message: 'Test commit message'
+          message: "Test commit message",
         };
 
         // Create commit object
@@ -68,16 +75,18 @@ test.describe('Git Operations Performance - Cross Browser', () => {
             `parent ${commitData.parent}`,
             `author ${commitData.author}`,
             `committer ${commitData.committer}`,
-            '',
-            commitData.message
-          ].join('\n');
+            "",
+            commitData.message,
+          ].join("\n");
 
           // Simulate hashing
           const encoder = new TextEncoder();
           const data = encoder.encode(commitText);
-          const hashBuffer = await crypto.subtle.digest('SHA-1', data);
+          const hashBuffer = await crypto.subtle.digest("SHA-1", data);
           const hashArray = Array.from(new Uint8Array(hashBuffer));
-          const hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+          const hash = hashArray
+            .map((b) => b.toString(16).padStart(2, "0"))
+            .join("");
 
           const duration = performance.now() - start;
           times.push(duration);
@@ -91,7 +100,7 @@ test.describe('Git Operations Performance - Cross Browser', () => {
           avgDuration,
           minDuration,
           maxDuration,
-          times
+          times,
         };
       });
 
@@ -102,7 +111,9 @@ test.describe('Git Operations Performance - Cross Browser', () => {
       expect(result.minDuration).toBeLessThan(50);
     });
 
-    test('should handle multiple commits efficiently', async ({ cleanPage }) => {
+    test("should handle multiple commits efficiently", async ({
+      cleanPage,
+    }) => {
       await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
@@ -110,16 +121,16 @@ test.describe('Git Operations Performance - Cross Browser', () => {
         const start = performance.now();
 
         const author = {
-          name: 'Test User',
-          email: 'test@example.com'
+          name: "Test User",
+          email: "test@example.com",
         };
 
         for (let i = 0; i < commitCount; i++) {
           const commitData = {
-            tree: 'a'.repeat(40),
-            parent: 'b'.repeat(40),
+            tree: "a".repeat(40),
+            parent: "b".repeat(40),
             author: `${author.name} <${author.email}> ${Date.now()}`,
-            message: `Commit ${i}`
+            message: `Commit ${i}`,
           };
 
           const commitText = [
@@ -127,14 +138,14 @@ test.describe('Git Operations Performance - Cross Browser', () => {
             `parent ${commitData.parent}`,
             `author ${commitData.author}`,
             `committer ${commitData.author}`,
-            '',
-            commitData.message
-          ].join('\n');
+            "",
+            commitData.message,
+          ].join("\n");
 
           // Hash the commit
           const encoder = new TextEncoder();
           const data = encoder.encode(commitText);
-          await crypto.subtle.digest('SHA-1', data);
+          await crypto.subtle.digest("SHA-1", data);
         }
 
         const totalDuration = performance.now() - start;
@@ -144,26 +155,26 @@ test.describe('Git Operations Performance - Cross Browser', () => {
           totalDuration,
           avgDuration,
           commitCount,
-          commitsPerSecond: Math.round(commitCount / (totalDuration / 1000))
+          commitsPerSecond: Math.round(commitCount / (totalDuration / 1000)),
         };
       });
 
-      console.log('Multiple commits performance:', result);
+      console.log("Multiple commits performance:", result);
       expect(result.avgDuration).toBeLessThan(50);
       expect(result.commitsPerSecond).toBeGreaterThan(10);
     });
 
-    test('should hash commit objects efficiently', async ({ cleanPage }) => {
+    test("should hash commit objects efficiently", async ({ cleanPage }) => {
       await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         const iterations = 1000;
-        const testData = new TextEncoder().encode('test commit data');
+        const testData = new TextEncoder().encode("test commit data");
 
         const start = performance.now();
 
         for (let i = 0; i < iterations; i++) {
-          await crypto.subtle.digest('SHA-1', testData);
+          await crypto.subtle.digest("SHA-1", testData);
         }
 
         const duration = performance.now() - start;
@@ -174,18 +185,21 @@ test.describe('Git Operations Performance - Cross Browser', () => {
           duration,
           avgTime,
           hashesPerSecond,
-          iterations
+          iterations,
         };
       });
 
-      console.log('SHA-1 hashing performance:', result);
+      console.log("SHA-1 hashing performance:", result);
       expect(result.avgTime).toBeLessThan(1); // Should be sub-millisecond
       expect(result.hashesPerSecond).toBeGreaterThan(100);
     });
   });
 
-  test.describe('Checkout Operations', () => {
-    test('should checkout branch in < 200ms (target)', async ({ cleanPage, browserName }) => {
+  test.describe("Checkout Operations", () => {
+    test("should checkout branch in < 200ms (target)", async ({
+      cleanPage,
+      browserName,
+    }) => {
       await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
@@ -196,7 +210,7 @@ test.describe('Git Operations Performance - Cross Browser', () => {
         for (let i = 0; i < fileCount; i++) {
           files.push({
             path: `file${i}.txt`,
-            content: `Content of file ${i}\n`.repeat(10)
+            content: `Content of file ${i}\n`.repeat(10),
           });
         }
 
@@ -213,10 +227,13 @@ test.describe('Git Operations Performance - Cross Browser', () => {
           }
 
           // Simulate updating HEAD
-          const head = 'ref: refs/heads/main';
+          const head = "ref: refs/heads/main";
 
           // Simulate updating index
-          const index = files.map(f => ({ path: f.path, hash: 'a'.repeat(40) }));
+          const index = files.map((f) => ({
+            path: f.path,
+            hash: "a".repeat(40),
+          }));
 
           const duration = performance.now() - start;
           times.push(duration);
@@ -231,7 +248,7 @@ test.describe('Git Operations Performance - Cross Browser', () => {
           minDuration,
           maxDuration,
           fileCount,
-          times
+          times,
         };
       });
 
@@ -241,7 +258,9 @@ test.describe('Git Operations Performance - Cross Browser', () => {
       expect(result.avgDuration).toBeLessThan(200);
     });
 
-    test('should update working directory efficiently', async ({ cleanPage }) => {
+    test("should update working directory efficiently", async ({
+      cleanPage,
+    }) => {
       await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
@@ -264,18 +283,21 @@ test.describe('Git Operations Performance - Cross Browser', () => {
           duration,
           avgTimePerFile,
           fileCount,
-          filesPerSecond: Math.round(fileCount / (duration / 1000))
+          filesPerSecond: Math.round(fileCount / (duration / 1000)),
         };
       });
 
-      console.log('Working directory update performance:', result);
+      console.log("Working directory update performance:", result);
       expect(result.avgTimePerFile).toBeLessThan(2); // < 2ms per file
       expect(result.filesPerSecond).toBeGreaterThan(50);
     });
   });
 
-  test.describe('Clone Operations', () => {
-    test('should clone repository in < 5s for 100 commits (target)', async ({ cleanPage, browserName }) => {
+  test.describe("Clone Operations", () => {
+    test("should clone repository in < 5s for 100 commits (target)", async ({
+      cleanPage,
+      browserName,
+    }) => {
       await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
@@ -288,11 +310,11 @@ test.describe('Git Operations Performance - Cross Browser', () => {
         const commits = [];
         for (let i = 0; i < commitCount; i++) {
           const commit = {
-            hash: 'a'.repeat(40),
-            tree: 'b'.repeat(40),
-            parent: i > 0 ? 'c'.repeat(40) : null,
+            hash: "a".repeat(40),
+            tree: "b".repeat(40),
+            parent: i > 0 ? "c".repeat(40) : null,
             author: `Author <author@example.com> ${Date.now()}`,
-            message: `Commit ${i}`
+            message: `Commit ${i}`,
           };
           commits.push(commit);
         }
@@ -303,7 +325,7 @@ test.describe('Git Operations Performance - Cross Browser', () => {
           // Each commit has a commit object and a tree object
           const encoder = new TextEncoder();
           const data = encoder.encode(`object data ${i}`);
-          await crypto.subtle.digest('SHA-1', data);
+          await crypto.subtle.digest("SHA-1", data);
           objects.push(data);
         }
 
@@ -312,7 +334,7 @@ test.describe('Git Operations Performance - Cross Browser', () => {
         for (let i = 0; i < fileCount; i++) {
           files.push({
             path: `file${i}.txt`,
-            content: `Content ${i}\n`
+            content: `Content ${i}\n`,
           });
         }
 
@@ -323,7 +345,7 @@ test.describe('Git Operations Performance - Cross Browser', () => {
           commitCount,
           fileCount,
           objectCount: objects.length,
-          avgTimePerCommit: duration / commitCount
+          avgTimePerCommit: duration / commitCount,
         };
       });
 
@@ -334,7 +356,9 @@ test.describe('Git Operations Performance - Cross Browser', () => {
       expect(result.avgTimePerCommit).toBeLessThan(50);
     });
 
-    test('should handle packfile processing efficiently', async ({ cleanPage }) => {
+    test("should handle packfile processing efficiently", async ({
+      cleanPage,
+    }) => {
       await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
@@ -349,7 +373,7 @@ test.describe('Git Operations Performance - Cross Browser', () => {
           const data = encoder.encode(`object ${i} content`);
 
           // Hash the object
-          await crypto.subtle.digest('SHA-1', data);
+          await crypto.subtle.digest("SHA-1", data);
         }
 
         const duration = performance.now() - start;
@@ -360,18 +384,21 @@ test.describe('Git Operations Performance - Cross Browser', () => {
           duration,
           avgTimePerObject,
           objectsPerSecond,
-          objectCount
+          objectCount,
         };
       });
 
-      console.log('Packfile processing performance:', result);
+      console.log("Packfile processing performance:", result);
       expect(result.avgTimePerObject).toBeLessThan(25); // < 25ms per object
       expect(result.objectsPerSecond).toBeGreaterThan(10);
     });
   });
 
-  test.describe('Memory Usage', () => {
-    test('should track memory usage during operations', async ({ cleanPage, browserName }) => {
+  test.describe("Memory Usage", () => {
+    test("should track memory usage during operations", async ({
+      cleanPage,
+      browserName,
+    }) => {
       await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
@@ -390,8 +417,8 @@ test.describe('Git Operations Performance - Cross Browser', () => {
         const largeArray = new Array(10000);
         for (let i = 0; i < largeArray.length; i++) {
           largeArray[i] = {
-            hash: 'a'.repeat(40),
-            data: `object ${i}`
+            hash: "a".repeat(40),
+            data: `object ${i}`,
           };
         }
 
@@ -405,7 +432,7 @@ test.describe('Git Operations Performance - Cross Browser', () => {
           memoryBefore,
           memoryAfter,
           memoryUsed,
-          hasMemoryAPI: memoryBefore > 0
+          hasMemoryAPI: memoryBefore > 0,
         };
       });
 
@@ -414,13 +441,19 @@ test.describe('Git Operations Performance - Cross Browser', () => {
       if (result.hasMemoryAPI) {
         // Memory usage should be non-negative (can be 0 if GC ran between allocations)
         expect(result.memoryUsed).toBeGreaterThanOrEqual(0);
-        console.log('Memory used:', (result.memoryUsed / 1024 / 1024).toFixed(2), 'MB');
+        console.log(
+          "Memory used:",
+          (result.memoryUsed / 1024 / 1024).toFixed(2),
+          "MB",
+        );
       } else {
-        console.log('Memory API not available in this browser');
+        console.log("Memory API not available in this browser");
       }
     });
 
-    test('should measure peak memory during large operation', async ({ cleanPage }) => {
+    test("should measure peak memory during large operation", async ({
+      cleanPage,
+    }) => {
       await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
@@ -445,7 +478,7 @@ test.describe('Git Operations Performance - Cross Browser', () => {
           for (let i = 0; i < batchSize; i++) {
             data[i] = {
               id: `${batch}-${i}`,
-              content: new Uint8Array(1024) // 1KB per object
+              content: new Uint8Array(1024), // 1KB per object
             };
           }
 
@@ -457,7 +490,7 @@ test.describe('Git Operations Performance - Cross Browser', () => {
           // Process data
           for (const item of data) {
             const encoder = new TextEncoder();
-            await crypto.subtle.digest('SHA-1', encoder.encode(item.id));
+            await crypto.subtle.digest("SHA-1", encoder.encode(item.id));
           }
         }
 
@@ -468,27 +501,31 @@ test.describe('Git Operations Performance - Cross Browser', () => {
           peakMemory,
           memoryAfter,
           peakIncrease: peakMemory - memoryBefore,
-          hasMemoryAPI: memoryBefore > 0
+          hasMemoryAPI: memoryBefore > 0,
         };
       });
 
-      console.log('Peak memory usage:', result);
+      console.log("Peak memory usage:", result);
 
       if (result.hasMemoryAPI) {
-        console.log('Peak memory increase:', (result.peakIncrease / 1024 / 1024).toFixed(2), 'MB');
+        console.log(
+          "Peak memory increase:",
+          (result.peakIncrease / 1024 / 1024).toFixed(2),
+          "MB",
+        );
         // Should not use excessive memory (< 50MB for this test)
         expect(result.peakIncrease).toBeLessThan(50 * 1024 * 1024);
       }
     });
   });
 
-  test.describe('Diff Operations', () => {
-    test('should compute diff efficiently', async ({ cleanPage }) => {
+  test.describe("Diff Operations", () => {
+    test("should compute diff efficiently", async ({ cleanPage }) => {
       await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
-        const original = 'line 1\nline 2\nline 3\nline 4\nline 5\n';
-        const modified = 'line 1\nline 2 modified\nline 3\nline 5\nline 6\n';
+        const original = "line 1\nline 2\nline 3\nline 4\nline 5\n";
+        const modified = "line 1\nline 2 modified\nline 3\nline 5\nline 6\n";
 
         const times: number[] = [];
 
@@ -496,16 +533,20 @@ test.describe('Git Operations Performance - Cross Browser', () => {
           const start = performance.now();
 
           // Simple diff algorithm (simulated)
-          const originalLines = original.split('\n');
-          const modifiedLines = modified.split('\n');
+          const originalLines = original.split("\n");
+          const modifiedLines = modified.split("\n");
 
           const changes = [];
-          for (let j = 0; j < Math.max(originalLines.length, modifiedLines.length); j++) {
+          for (
+            let j = 0;
+            j < Math.max(originalLines.length, modifiedLines.length);
+            j++
+          ) {
             if (originalLines[j] !== modifiedLines[j]) {
               changes.push({
                 line: j,
                 old: originalLines[j],
-                new: modifiedLines[j]
+                new: modifiedLines[j],
               });
             }
           }
@@ -520,35 +561,35 @@ test.describe('Git Operations Performance - Cross Browser', () => {
           avgDuration,
           minDuration: Math.min(...times),
           maxDuration: Math.max(...times),
-          iterations: times.length
+          iterations: times.length,
         };
       });
 
-      console.log('Diff performance:', result);
+      console.log("Diff performance:", result);
       expect(result.avgDuration).toBeLessThan(1); // Should be very fast for small files
     });
   });
 
-  test.describe('Compression Performance', () => {
-    test('should compress data efficiently', async ({ cleanPage }) => {
+  test.describe("Compression Performance", () => {
+    test("should compress data efficiently", async ({ cleanPage }) => {
       await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         const encoder = new TextEncoder();
-        const data = encoder.encode('test data\n'.repeat(1000));
+        const data = encoder.encode("test data\n".repeat(1000));
 
         const start = performance.now();
 
         // Use CompressionStream if available
-        if (typeof CompressionStream !== 'undefined') {
+        if (typeof CompressionStream !== "undefined") {
           const stream = new ReadableStream({
             start(controller) {
               controller.enqueue(data);
               controller.close();
-            }
+            },
           });
 
-          const compressed = stream.pipeThrough(new CompressionStream('gzip'));
+          const compressed = stream.pipeThrough(new CompressionStream("gzip"));
           const reader = compressed.getReader();
 
           const chunks: Uint8Array[] = [];
@@ -559,14 +600,17 @@ test.describe('Git Operations Performance - Cross Browser', () => {
           }
 
           const duration = performance.now() - start;
-          const compressedSize = chunks.reduce((sum, chunk) => sum + chunk.length, 0);
+          const compressedSize = chunks.reduce(
+            (sum, chunk) => sum + chunk.length,
+            0,
+          );
 
           return {
             hasCompressionStream: true,
             duration,
             originalSize: data.length,
             compressedSize,
-            compressionRatio: data.length / compressedSize
+            compressionRatio: data.length / compressedSize,
           };
         } else {
           // Fallback: just measure time to copy data
@@ -578,12 +622,12 @@ test.describe('Git Operations Performance - Cross Browser', () => {
             duration,
             originalSize: data.length,
             compressedSize: copy.length,
-            compressionRatio: 1
+            compressionRatio: 1,
           };
         }
       });
 
-      console.log('Compression performance:', result);
+      console.log("Compression performance:", result);
       expect(result.duration).toBeGreaterThan(0);
 
       if (result.hasCompressionStream) {

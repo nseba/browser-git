@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from "vitest/config";
 
 /**
  * Shared Vitest configuration for all packages
@@ -7,22 +7,22 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     // Use jsdom environment for browser-like APIs
-    environment: 'jsdom',
+    environment: "jsdom",
 
     // Enable globals like describe, it, expect
     globals: true,
 
     // Coverage configuration
     coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html', 'lcov'],
+      provider: "v8",
+      reporter: ["text", "json", "html", "lcov"],
       exclude: [
-        '**/node_modules/**',
-        '**/dist/**',
-        '**/*.config.*',
-        '**/test/**',
-        '**/*.test.*',
-        '**/*.spec.*',
+        "**/node_modules/**",
+        "**/dist/**",
+        "**/*.config.*",
+        "**/test/**",
+        "**/*.test.*",
+        "**/*.spec.*",
       ],
       thresholds: {
         lines: 65,
@@ -33,7 +33,7 @@ export default defineConfig({
     },
 
     // Test file patterns
-    include: ['**/*.{test,spec}.{ts,tsx}'],
+    include: ["**/*.{test,spec}.{ts,tsx}"],
 
     // Timeout settings
     testTimeout: 10000,

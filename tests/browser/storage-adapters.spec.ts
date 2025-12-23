@@ -3,16 +3,22 @@
  * Tests IndexedDB, OPFS, localStorage, and memory adapters across all browsers
  */
 
-import { test, expect } from './fixtures';
-import { checkIndexedDB, checkOPFS, getStorageQuota, setupConsoleLogging, TEST_PAGE_URL } from './helpers';
+import { test, expect } from "./fixtures";
+import {
+  checkIndexedDB,
+  checkOPFS,
+  getStorageQuota,
+  setupConsoleLogging,
+  TEST_PAGE_URL,
+} from "./helpers";
 
-test.describe('Storage Adapters - Cross Browser', () => {
+test.describe("Storage Adapters - Cross Browser", () => {
   test.beforeEach(async ({ page }) => {
     setupConsoleLogging(page);
   });
 
-  test.describe('Feature Detection', () => {
-    test('should detect IndexedDB availability', async ({ page }) => {
+  test.describe("Feature Detection", () => {
+    test("should detect IndexedDB availability", async ({ page }) => {
       await page.goto(TEST_PAGE_URL);
       const hasIndexedDB = await checkIndexedDB(page);
 
@@ -20,7 +26,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
       expect(hasIndexedDB).toBe(true);
     });
 
-    test('should report OPFS availability', async ({ page, browserName }) => {
+    test("should report OPFS availability", async ({ page, browserName }) => {
       await page.goto(TEST_PAGE_URL);
       const hasOPFS = await checkOPFS(page);
 
@@ -31,17 +37,17 @@ test.describe('Storage Adapters - Cross Browser', () => {
       console.log(`OPFS available in ${browserName}:`, hasOPFS);
     });
 
-    test('should have localStorage API', async ({ page }) => {
+    test("should have localStorage API", async ({ page }) => {
       await page.goto(TEST_PAGE_URL);
 
       const hasLocalStorage = await page.evaluate(() => {
-        return typeof localStorage !== 'undefined';
+        return typeof localStorage !== "undefined";
       });
 
       expect(hasLocalStorage).toBe(true);
     });
 
-    test('should report storage quota', async ({ page }) => {
+    test("should report storage quota", async ({ page }) => {
       await page.goto(TEST_PAGE_URL);
       const quota = await getStorageQuota(page);
 
@@ -49,24 +55,24 @@ test.describe('Storage Adapters - Cross Browser', () => {
         expect(quota.quota).toBeGreaterThan(0);
         expect(quota.usage).toBeGreaterThanOrEqual(0);
         expect(quota.available).toBeGreaterThan(0);
-        console.log('Storage quota:', quota);
+        console.log("Storage quota:", quota);
       }
     });
   });
 
-  test.describe('IndexedDB Adapter', () => {
-    test('should create and open database', async ({ cleanPage }) => {
+  test.describe("IndexedDB Adapter", () => {
+    test("should create and open database", async ({ cleanPage }) => {
       await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         return new Promise<{ success: boolean; error?: string }>((resolve) => {
-          const dbName = 'test-browser-git';
+          const dbName = "test-browser-git";
           const request = indexedDB.open(dbName, 1);
 
           request.onupgradeneeded = (event: any) => {
             const db = event.target.result;
-            if (!db.objectStoreNames.contains('objects')) {
-              db.createObjectStore('objects', { keyPath: 'key' });
+            if (!db.objectStoreNames.contains("objects")) {
+              db.createObjectStore("objects", { keyPath: "key" });
             }
           };
 
@@ -85,34 +91,34 @@ test.describe('Storage Adapters - Cross Browser', () => {
       expect(result.success).toBe(true);
     });
 
-    test('should write and read data', async ({ cleanPage }) => {
+    test("should write and read data", async ({ cleanPage }) => {
       await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         return new Promise<{ success: boolean; data?: string }>((resolve) => {
-          const dbName = 'test-rw';
+          const dbName = "test-rw";
           const request = indexedDB.open(dbName, 1);
 
           request.onupgradeneeded = (event: any) => {
             const db = event.target.result;
-            if (!db.objectStoreNames.contains('data')) {
-              db.createObjectStore('data', { keyPath: 'key' });
+            if (!db.objectStoreNames.contains("data")) {
+              db.createObjectStore("data", { keyPath: "key" });
             }
           };
 
           request.onsuccess = () => {
             const db = request.result;
-            const tx = db.transaction('data', 'readwrite');
-            const store = tx.objectStore('data');
+            const tx = db.transaction("data", "readwrite");
+            const store = tx.objectStore("data");
 
             // Write data
-            store.put({ key: 'test-key', value: 'test-value' });
+            store.put({ key: "test-key", value: "test-value" });
 
             tx.oncomplete = () => {
               // Read data
-              const readTx = db.transaction('data', 'readonly');
-              const readStore = readTx.objectStore('data');
-              const getRequest = readStore.get('test-key');
+              const readTx = db.transaction("data", "readonly");
+              const readStore = readTx.objectStore("data");
+              const getRequest = readStore.get("test-key");
 
               getRequest.onsuccess = () => {
                 db.close();
@@ -139,21 +145,21 @@ test.describe('Storage Adapters - Cross Browser', () => {
       });
 
       expect(result.success).toBe(true);
-      expect(result.data).toBe('test-value');
+      expect(result.data).toBe("test-value");
     });
 
-    test('should handle large binary data', async ({ cleanPage }) => {
+    test("should handle large binary data", async ({ cleanPage }) => {
       await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         return new Promise<{ success: boolean; size?: number }>((resolve) => {
-          const dbName = 'test-binary';
+          const dbName = "test-binary";
           const request = indexedDB.open(dbName, 1);
 
           request.onupgradeneeded = (event: any) => {
             const db = event.target.result;
-            if (!db.objectStoreNames.contains('binary')) {
-              db.createObjectStore('binary', { keyPath: 'key' });
+            if (!db.objectStoreNames.contains("binary")) {
+              db.createObjectStore("binary", { keyPath: "key" });
             }
           };
 
@@ -168,14 +174,14 @@ test.describe('Storage Adapters - Cross Browser', () => {
               view[i] = i % 256;
             }
 
-            const tx = db.transaction('binary', 'readwrite');
-            const store = tx.objectStore('binary');
-            store.put({ key: 'binary-data', value: buffer });
+            const tx = db.transaction("binary", "readwrite");
+            const store = tx.objectStore("binary");
+            store.put({ key: "binary-data", value: buffer });
 
             tx.oncomplete = () => {
-              const readTx = db.transaction('binary', 'readonly');
-              const readStore = readTx.objectStore('binary');
-              const getRequest = readStore.get('binary-data');
+              const readTx = db.transaction("binary", "readonly");
+              const readStore = readTx.objectStore("binary");
+              const getRequest = readStore.get("binary-data");
 
               getRequest.onsuccess = () => {
                 const data = getRequest.result?.value;
@@ -183,7 +189,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
                 indexedDB.deleteDatabase(dbName);
                 resolve({
                   success: true,
-                  size: data instanceof ArrayBuffer ? data.byteLength : 0
+                  size: data instanceof ArrayBuffer ? data.byteLength : 0,
                 });
               };
             };
@@ -199,18 +205,18 @@ test.describe('Storage Adapters - Cross Browser', () => {
       expect(result.size).toBe(1024 * 1024);
     });
 
-    test('should handle concurrent transactions', async ({ cleanPage }) => {
+    test("should handle concurrent transactions", async ({ cleanPage }) => {
       await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
         return new Promise<{ success: boolean; count?: number }>((resolve) => {
-          const dbName = 'test-concurrent';
+          const dbName = "test-concurrent";
           const request = indexedDB.open(dbName, 1);
 
           request.onupgradeneeded = (event: any) => {
             const db = event.target.result;
-            if (!db.objectStoreNames.contains('items')) {
-              db.createObjectStore('items', { keyPath: 'id' });
+            if (!db.objectStoreNames.contains("items")) {
+              db.createObjectStore("items", { keyPath: "id" });
             }
           };
 
@@ -221,8 +227,8 @@ test.describe('Storage Adapters - Cross Browser', () => {
             // Write 10 items concurrently
             for (let i = 0; i < 10; i++) {
               const promise = new Promise<void>((res) => {
-                const tx = db.transaction('items', 'readwrite');
-                const store = tx.objectStore('items');
+                const tx = db.transaction("items", "readwrite");
+                const store = tx.objectStore("items");
                 store.put({ id: `item-${i}`, value: `value-${i}` });
                 tx.oncomplete = () => res();
               });
@@ -231,8 +237,8 @@ test.describe('Storage Adapters - Cross Browser', () => {
 
             Promise.all(promises).then(() => {
               // Count items
-              const tx = db.transaction('items', 'readonly');
-              const store = tx.objectStore('items');
+              const tx = db.transaction("items", "readonly");
+              const store = tx.objectStore("items");
               const countRequest = store.count();
 
               countRequest.onsuccess = () => {
@@ -254,15 +260,15 @@ test.describe('Storage Adapters - Cross Browser', () => {
     });
   });
 
-  test.describe('localStorage Adapter', () => {
-    test('should write and read data', async ({ cleanPage }) => {
+  test.describe("localStorage Adapter", () => {
+    test("should write and read data", async ({ cleanPage }) => {
       await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(() => {
         try {
-          localStorage.setItem('test-key', 'test-value');
-          const value = localStorage.getItem('test-key');
-          localStorage.removeItem('test-key');
+          localStorage.setItem("test-key", "test-value");
+          const value = localStorage.getItem("test-key");
+          localStorage.removeItem("test-key");
           return { success: true, value };
         } catch (error: any) {
           return { success: false, error: error.message };
@@ -270,24 +276,24 @@ test.describe('Storage Adapters - Cross Browser', () => {
       });
 
       expect(result.success).toBe(true);
-      expect(result.value).toBe('test-value');
+      expect(result.value).toBe("test-value");
     });
 
-    test('should handle size limits gracefully', async ({ cleanPage }) => {
+    test("should handle size limits gracefully", async ({ cleanPage }) => {
       await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(() => {
         try {
           // Try to store 10MB (likely to exceed quota in most browsers)
-          const largeData = 'x'.repeat(10 * 1024 * 1024);
-          localStorage.setItem('large-key', largeData);
+          const largeData = "x".repeat(10 * 1024 * 1024);
+          localStorage.setItem("large-key", largeData);
           return { success: true, exceeded: false };
         } catch (error: any) {
           // QuotaExceededError is expected
           return {
             success: true,
             exceeded: true,
-            errorName: error.name
+            errorName: error.name,
           };
         }
       });
@@ -299,15 +305,17 @@ test.describe('Storage Adapters - Cross Browser', () => {
       }
     });
 
-    test('should handle JSON serialization', async ({ cleanPage }) => {
+    test("should handle JSON serialization", async ({ cleanPage }) => {
       await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(() => {
         try {
-          const obj = { foo: 'bar', num: 42, arr: [1, 2, 3] };
-          localStorage.setItem('json-key', JSON.stringify(obj));
-          const retrieved = JSON.parse(localStorage.getItem('json-key') || '{}');
-          localStorage.removeItem('json-key');
+          const obj = { foo: "bar", num: 42, arr: [1, 2, 3] };
+          localStorage.setItem("json-key", JSON.stringify(obj));
+          const retrieved = JSON.parse(
+            localStorage.getItem("json-key") || "{}",
+          );
+          localStorage.removeItem("json-key");
           return { success: true, data: retrieved };
         } catch (error: any) {
           return { success: false, error: error.message };
@@ -315,27 +323,35 @@ test.describe('Storage Adapters - Cross Browser', () => {
       });
 
       expect(result.success).toBe(true);
-      expect(result.data).toEqual({ foo: 'bar', num: 42, arr: [1, 2, 3] });
+      expect(result.data).toEqual({ foo: "bar", num: 42, arr: [1, 2, 3] });
     });
   });
 
-  test.describe('OPFS Adapter', () => {
-    test.skip(({ browserName }) => browserName === 'webkit', 'OPFS not supported in WebKit');
+  test.describe("OPFS Adapter", () => {
+    test.skip(
+      ({ browserName }) => browserName === "webkit",
+      "OPFS not supported in WebKit",
+    );
 
-    test('should create and write files', async ({ cleanPage, browserName }) => {
-      test.skip(browserName === 'webkit', 'OPFS not supported in WebKit');
+    test("should create and write files", async ({
+      cleanPage,
+      browserName,
+    }) => {
+      test.skip(browserName === "webkit", "OPFS not supported in WebKit");
 
       await cleanPage.goto(TEST_PAGE_URL);
       const hasOPFS = await checkOPFS(cleanPage);
 
-      test.skip(!hasOPFS, 'OPFS not available');
+      test.skip(!hasOPFS, "OPFS not available");
 
       const result = await cleanPage.evaluate(async () => {
         try {
           const root = await (navigator.storage as any).getDirectory();
-          const fileHandle = await root.getFileHandle('test.txt', { create: true });
+          const fileHandle = await root.getFileHandle("test.txt", {
+            create: true,
+          });
           const writable = await fileHandle.createWritable();
-          await writable.write('Hello OPFS');
+          await writable.write("Hello OPFS");
           await writable.close();
 
           // Read back
@@ -343,7 +359,7 @@ test.describe('Storage Adapters - Cross Browser', () => {
           const text = await file.text();
 
           // Cleanup
-          await root.removeEntry('test.txt');
+          await root.removeEntry("test.txt");
 
           return { success: true, content: text };
         } catch (error: any) {
@@ -353,31 +369,40 @@ test.describe('Storage Adapters - Cross Browser', () => {
 
       if (hasOPFS) {
         expect(result.success).toBe(true);
-        expect(result.content).toBe('Hello OPFS');
+        expect(result.content).toBe("Hello OPFS");
       }
     });
 
-    test('should create directory hierarchy', async ({ cleanPage, browserName }) => {
-      test.skip(browserName === 'webkit', 'OPFS not supported in WebKit');
+    test("should create directory hierarchy", async ({
+      cleanPage,
+      browserName,
+    }) => {
+      test.skip(browserName === "webkit", "OPFS not supported in WebKit");
 
       await cleanPage.goto(TEST_PAGE_URL);
       const hasOPFS = await checkOPFS(cleanPage);
 
-      test.skip(!hasOPFS, 'OPFS not available');
+      test.skip(!hasOPFS, "OPFS not available");
 
       const result = await cleanPage.evaluate(async () => {
         try {
           const root = await (navigator.storage as any).getDirectory();
-          const dirHandle = await root.getDirectoryHandle('test-dir', { create: true });
-          const subDirHandle = await dirHandle.getDirectoryHandle('sub-dir', { create: true });
-          const fileHandle = await subDirHandle.getFileHandle('file.txt', { create: true });
+          const dirHandle = await root.getDirectoryHandle("test-dir", {
+            create: true,
+          });
+          const subDirHandle = await dirHandle.getDirectoryHandle("sub-dir", {
+            create: true,
+          });
+          const fileHandle = await subDirHandle.getFileHandle("file.txt", {
+            create: true,
+          });
 
           const writable = await fileHandle.createWritable();
-          await writable.write('nested file');
+          await writable.write("nested file");
           await writable.close();
 
           // Cleanup
-          await root.removeEntry('test-dir', { recursive: true });
+          await root.removeEntry("test-dir", { recursive: true });
 
           return { success: true };
         } catch (error: any) {
@@ -391,50 +416,56 @@ test.describe('Storage Adapters - Cross Browser', () => {
     });
   });
 
-  test.describe('Performance Comparison', () => {
-    test('should measure IndexedDB write performance', async ({ cleanPage }) => {
+  test.describe("Performance Comparison", () => {
+    test("should measure IndexedDB write performance", async ({
+      cleanPage,
+    }) => {
       await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(async () => {
-        const dbName = 'perf-test';
+        const dbName = "perf-test";
         const request = indexedDB.open(dbName, 1);
 
-        return new Promise<{ duration: number; opsPerSecond: number }>((resolve) => {
-          request.onupgradeneeded = (event: any) => {
-            const db = event.target.result;
-            db.createObjectStore('data', { keyPath: 'key' });
-          };
-
-          request.onsuccess = () => {
-            const db = request.result;
-            const start = performance.now();
-            const tx = db.transaction('data', 'readwrite');
-            const store = tx.objectStore('data');
-
-            // Write 100 items
-            for (let i = 0; i < 100; i++) {
-              store.put({ key: `key-${i}`, value: `value-${i}` });
-            }
-
-            tx.oncomplete = () => {
-              const duration = performance.now() - start;
-              db.close();
-              indexedDB.deleteDatabase(dbName);
-              resolve({
-                duration,
-                opsPerSecond: Math.round(100 / (duration / 1000))
-              });
+        return new Promise<{ duration: number; opsPerSecond: number }>(
+          (resolve) => {
+            request.onupgradeneeded = (event: any) => {
+              const db = event.target.result;
+              db.createObjectStore("data", { keyPath: "key" });
             };
-          };
-        });
+
+            request.onsuccess = () => {
+              const db = request.result;
+              const start = performance.now();
+              const tx = db.transaction("data", "readwrite");
+              const store = tx.objectStore("data");
+
+              // Write 100 items
+              for (let i = 0; i < 100; i++) {
+                store.put({ key: `key-${i}`, value: `value-${i}` });
+              }
+
+              tx.oncomplete = () => {
+                const duration = performance.now() - start;
+                db.close();
+                indexedDB.deleteDatabase(dbName);
+                resolve({
+                  duration,
+                  opsPerSecond: Math.round(100 / (duration / 1000)),
+                });
+              };
+            };
+          },
+        );
       });
 
-      console.log('IndexedDB write performance:', result);
+      console.log("IndexedDB write performance:", result);
       expect(result.duration).toBeGreaterThan(0);
       expect(result.opsPerSecond).toBeGreaterThan(0);
     });
 
-    test('should measure localStorage write performance', async ({ cleanPage }) => {
+    test("should measure localStorage write performance", async ({
+      cleanPage,
+    }) => {
       await cleanPage.goto(TEST_PAGE_URL);
 
       const result = await cleanPage.evaluate(() => {
@@ -453,11 +484,11 @@ test.describe('Storage Adapters - Cross Browser', () => {
         const duration = performance.now() - start;
         return {
           duration,
-          opsPerSecond: Math.round(100 / (duration / 1000))
+          opsPerSecond: Math.round(100 / (duration / 1000)),
         };
       });
 
-      console.log('localStorage write performance:', result);
+      console.log("localStorage write performance:", result);
       expect(result.duration).toBeGreaterThan(0);
       expect(result.opsPerSecond).toBeGreaterThan(0);
     });

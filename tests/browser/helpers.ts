@@ -2,13 +2,13 @@
  * Playwright test helper utilities for browser-git e2e tests
  */
 
-import { Page } from '@playwright/test';
+import { Page } from "@playwright/test";
 
 /**
  * Test page URL that provides proper security context for storage APIs.
  * This URL is served by the Playwright web server configured in playwright.config.ts.
  */
-export const TEST_PAGE_URL = 'http://localhost:3456/test-page.html';
+export const TEST_PAGE_URL = "http://localhost:3456/test-page.html";
 
 /**
  * Creates a simple test page with browser-git loaded
@@ -24,17 +24,21 @@ export async function createTestPage(page: Page): Promise<void> {
 export async function checkIndexedDB(page: Page): Promise<boolean> {
   // Ensure we're on a page that allows storage access
   const currentUrl = page.url();
-  if (currentUrl === 'about:blank' || currentUrl === '' || !currentUrl.startsWith('http')) {
+  if (
+    currentUrl === "about:blank" ||
+    currentUrl === "" ||
+    !currentUrl.startsWith("http")
+  ) {
     await page.goto(TEST_PAGE_URL);
   }
 
   return await page.evaluate(async () => {
-    if (typeof indexedDB === 'undefined') {
+    if (typeof indexedDB === "undefined") {
       return false;
     }
 
     try {
-      const dbName = '__test_db__';
+      const dbName = "__test_db__";
       const request = indexedDB.open(dbName, 1);
 
       return new Promise<boolean>((resolve) => {
@@ -60,9 +64,9 @@ export async function checkIndexedDB(page: Page): Promise<boolean> {
 export async function checkOPFS(page: Page): Promise<boolean> {
   return await page.evaluate(() => {
     return (
-      typeof navigator !== 'undefined' &&
-      'storage' in navigator &&
-      'getDirectory' in navigator.storage
+      typeof navigator !== "undefined" &&
+      "storage" in navigator &&
+      "getDirectory" in navigator.storage
     );
   });
 }
@@ -99,34 +103,38 @@ export async function getStorageQuota(page: Page): Promise<{
 export async function clearAllStorage(page: Page): Promise<void> {
   // Ensure we're on a page that allows storage access (not about:blank)
   const currentUrl = page.url();
-  if (currentUrl === 'about:blank' || currentUrl === '' || !currentUrl.startsWith('http')) {
+  if (
+    currentUrl === "about:blank" ||
+    currentUrl === "" ||
+    !currentUrl.startsWith("http")
+  ) {
     await page.goto(TEST_PAGE_URL);
   }
 
   await page.evaluate(async () => {
     // Clear localStorage
     try {
-      if (typeof localStorage !== 'undefined') {
+      if (typeof localStorage !== "undefined") {
         localStorage.clear();
       }
     } catch (e) {
       // Ignore SecurityError and other errors
-      console.log('localStorage clear error:', e);
+      console.log("localStorage clear error:", e);
     }
 
     // Clear sessionStorage
     try {
-      if (typeof sessionStorage !== 'undefined') {
+      if (typeof sessionStorage !== "undefined") {
         sessionStorage.clear();
       }
     } catch (e) {
       // Ignore SecurityError and other errors
-      console.log('sessionStorage clear error:', e);
+      console.log("sessionStorage clear error:", e);
     }
 
     // Clear IndexedDB
     try {
-      if (typeof indexedDB !== 'undefined') {
+      if (typeof indexedDB !== "undefined") {
         const databases = await indexedDB.databases();
         for (const db of databases) {
           if (db.name) {
@@ -136,15 +144,15 @@ export async function clearAllStorage(page: Page): Promise<void> {
       }
     } catch (e) {
       // Ignore SecurityError and other errors
-      console.log('IndexedDB clear error:', e);
+      console.log("IndexedDB clear error:", e);
     }
 
     // Clear OPFS if available
     try {
       if (
-        typeof navigator !== 'undefined' &&
-        'storage' in navigator &&
-        'getDirectory' in navigator.storage
+        typeof navigator !== "undefined" &&
+        "storage" in navigator &&
+        "getDirectory" in navigator.storage
       ) {
         const root = await (navigator.storage as any).getDirectory();
         const entries = [];
@@ -157,7 +165,7 @@ export async function clearAllStorage(page: Page): Promise<void> {
       }
     } catch (e) {
       // Ignore SecurityError and other errors
-      console.log('OPFS clear error:', e);
+      console.log("OPFS clear error:", e);
     }
   });
 }
@@ -168,7 +176,7 @@ export async function clearAllStorage(page: Page): Promise<void> {
 export async function waitForCondition(
   page: Page,
   condition: () => boolean | Promise<boolean>,
-  timeout: number = 5000
+  timeout: number = 5000,
 ): Promise<void> {
   await page.waitForFunction(condition, { timeout });
 }
@@ -177,7 +185,7 @@ export async function waitForCondition(
  * Logs console messages from the browser to the test output
  */
 export function setupConsoleLogging(page: Page): void {
-  page.on('console', (msg) => {
+  page.on("console", (msg) => {
     const type = msg.type();
     const text = msg.text();
     console.log(`[Browser ${type}]:`, text);
@@ -190,13 +198,13 @@ export function setupConsoleLogging(page: Page): void {
 export function captureConsoleErrors(page: Page): string[] {
   const errors: string[] = [];
 
-  page.on('console', (msg) => {
-    if (msg.type() === 'error') {
+  page.on("console", (msg) => {
+    if (msg.type() === "error") {
       errors.push(msg.text());
     }
   });
 
-  page.on('pageerror', (error) => {
+  page.on("pageerror", (error) => {
     errors.push(error.message);
   });
 
@@ -208,7 +216,7 @@ export function captureConsoleErrors(page: Page): string[] {
  */
 export async function measurePerformance<T>(
   page: Page,
-  operation: (page: Page) => Promise<T>
+  operation: (page: Page) => Promise<T>,
 ): Promise<{ result: T; duration: number }> {
   const start = await page.evaluate(() => performance.now());
   const result = await operation(page);
@@ -221,15 +229,21 @@ export async function measurePerformance<T>(
 /**
  * Simulates a network condition (online/offline)
  */
-export async function setNetworkCondition(page: Page, online: boolean): Promise<void> {
+export async function setNetworkCondition(
+  page: Page,
+  online: boolean,
+): Promise<void> {
   await page.context().setOffline(!online);
 }
 
 /**
  * Takes a screenshot with a timestamp
  */
-export async function takeTimestampedScreenshot(page: Page, name: string): Promise<void> {
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+export async function takeTimestampedScreenshot(
+  page: Page,
+  name: string,
+): Promise<void> {
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
   await page.screenshot({
     path: `test-results/screenshot-${name}-${timestamp}.png`,
     fullPage: true,
@@ -239,20 +253,27 @@ export async function takeTimestampedScreenshot(page: Page, name: string): Promi
 /**
  * Injects a script into the page
  */
-export async function injectScript(page: Page, scriptPath: string): Promise<void> {
+export async function injectScript(
+  page: Page,
+  scriptPath: string,
+): Promise<void> {
   await page.addScriptTag({ path: scriptPath });
 }
 
 /**
  * Creates a blob URL from content
  */
-export async function createBlobURL(page: Page, content: string, mimeType: string): Promise<string> {
+export async function createBlobURL(
+  page: Page,
+  content: string,
+  mimeType: string,
+): Promise<string> {
   return await page.evaluate(
     ({ content, mimeType }) => {
       const blob = new Blob([content], { type: mimeType });
       return URL.createObjectURL(blob);
     },
-    { content, mimeType }
+    { content, mimeType },
   );
 }
 
@@ -262,18 +283,18 @@ export async function createBlobURL(page: Page, content: string, mimeType: strin
 export async function simulateDownload(
   page: Page,
   content: string,
-  filename: string
+  filename: string,
 ): Promise<void> {
   await page.evaluate(
     ({ content, filename }) => {
-      const blob = new Blob([content], { type: 'text/plain' });
+      const blob = new Blob([content], { type: "text/plain" });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = filename;
       a.click();
       URL.revokeObjectURL(url);
     },
-    { content, filename }
+    { content, filename },
   );
 }

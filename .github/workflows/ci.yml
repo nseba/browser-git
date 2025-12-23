@@ -43,6 +43,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build dependencies first
+        run: npm run build:deps
+
       - name: Run type checker
         run: npm run type-check
 
