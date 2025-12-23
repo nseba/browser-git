@@ -628,7 +628,8 @@ test.describe("Git Operations Performance - Cross Browser", () => {
       });
 
       console.log("Compression performance:", result);
-      expect(result.duration).toBeGreaterThan(0);
+      // In fast CI environments, operations may complete in under 1ms
+      expect(result.duration).toBeGreaterThanOrEqual(0);
 
       if (result.hasCompressionStream) {
         expect(result.compressedSize).toBeLessThan(result.originalSize);

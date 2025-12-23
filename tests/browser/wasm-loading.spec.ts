@@ -147,7 +147,8 @@ test.describe("WASM Loading - Cross Browser", () => {
       });
 
       expect(result.success).toBe(true);
-      expect(result.duration).toBeGreaterThan(0);
+      // In fast CI environments, operations may complete in under 1ms
+      expect(result.duration).toBeGreaterThanOrEqual(0);
       console.log("WASM instantiation time:", result.duration, "ms");
 
       // Should be reasonably fast (< 100ms for simple module)
@@ -217,7 +218,8 @@ test.describe("WASM Loading - Cross Browser", () => {
       });
 
       console.log("Memory allocation performance:", result);
-      expect(result.duration).toBeGreaterThan(0);
+      // In fast CI environments, operations may complete in under 1ms
+      expect(result.duration).toBeGreaterThanOrEqual(0);
       expect(result.avgTime).toBeLessThan(1); // Should be sub-millisecond
     });
 
