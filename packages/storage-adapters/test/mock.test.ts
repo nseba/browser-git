@@ -102,8 +102,9 @@ describe("MockAdapter", () => {
       await Promise.all(operations);
       const duration = Date.now() - start;
 
-      // Should take at least 100ms (5 operations × 20ms each, running in parallel)
-      expect(duration).toBeGreaterThanOrEqual(20);
+      // Should take at least 20ms (operations run in parallel with 20ms delay each)
+      // Allow small timing tolerance (2ms) for setTimeout precision
+      expect(duration).toBeGreaterThanOrEqual(18);
     });
   });
 
