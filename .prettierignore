@@ -1,0 +1,18 @@
+# Node modules
+node_modules/
+
+# Build outputs
+dist/
+build/
+coverage/
+
+# Generated files
+*.wasm
+*.wasm.map
+
+# Claude Code configuration
+.claude/
+
+# Documentation build
+docs-site/build/
+docs-site/.docusaurus/
