@@ -20,8 +20,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'yarn'
+          node-version: '20'
 
       - name: Setup TinyGo
         uses: acifani/setup-tinygo@v2
@@ -29,25 +28,25 @@ jobs:
           tinygo-version: '0.30.0'
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: npm install
 
       - name: Lint
-        run: yarn lint
+        run: npm run lint
 
       - name: Type check
-        run: yarn type-check
+        run: npm run build:deps && npm run build:main && npm run type-check
 
       - name: Run tests
-        run: yarn test:unit
+        run: npm run test:unit
 
       - name: Build WASM
-        run: yarn build:wasm
+        run: npm run build:wasm
 
       - name: Build packages
-        run: yarn build:packages
+        run: npm run build:packages
 
       - name: Run benchmarks
-        run: yarn bench:run
+        run: npm run bench:run
 
   publish-npm:
     name: Publish to NPM
@@ -60,8 +59,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'yarn'
+          node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Setup TinyGo
@@ -70,21 +68,21 @@ jobs:
           tinygo-version: '0.30.0'
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: npm install
 
       - name: Build
-        run: yarn build
+        run: npm run build
 
       - name: Sync versions
-        run: yarn version:sync
+        run: npm run version:sync
 
       - name: Publish to NPM (dry run)
-        run: yarn release:dry-run
+        run: npm run release:dry-run
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish to NPM
-        run: yarn release:publish
+        run: npm run release:publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -105,8 +103,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'yarn'
+          node-version: '20'
 
       - name: Setup TinyGo
         uses: acifani/setup-tinygo@v2
@@ -114,10 +111,10 @@ jobs:
           tinygo-version: '0.30.0'
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: npm install
 
       - name: Build
-        run: yarn build
+        run: npm run build
 
       - name: Generate changelog
         id: changelog
