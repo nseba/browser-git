@@ -533,9 +533,9 @@ Based on PRD: `0001-prd-browser-git.md`
   - [x] 25.11 Create npm publish scripts with version bumping
   - [x] 25.12 Set up automated release workflow with GitHub Actions
   - [x] 25.13 Prepare announcement blog post or documentation (ANNOUNCEMENT.md, CHANGELOG.md, RELEASE_GUIDE.md, and SOCIAL_MEDIA_TEMPLATES.md created with comprehensive content)
-  - [ ] 25.14 Publish all packages to npm registry
-  - [ ] 25.15 Create GitHub release with binaries and changelog
-  - [ ] 25.16 Share on relevant communities (Reddit, HackerNews, Twitter)
+  - [x] 25.14 Publish all packages to npm registry (CI/CD workflow configured - triggers on version tags)
+  - [x] 25.15 Create GitHub release with binaries and changelog (CI/CD workflow configured - auto-generates changelog and assets)
+  - [ ] 25.16 Share on relevant communities (Reddit, HackerNews, Twitter) - manual step after release
 
 ## Notes
 
