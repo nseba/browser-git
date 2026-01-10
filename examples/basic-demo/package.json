@@ -9,8 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@browser-git/browser-git": "0.1.0",
-    "@browser-git/storage-adapters": "0.1.0"
+    "@browser-git/browser-git": "1.0.0",
+    "@browser-git/storage-adapters": "1.0.0"
   },
   "devDependencies": {
     "vite": "^5.0.0"
