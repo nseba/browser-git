@@ -34,7 +34,7 @@ jobs:
           cache: 'npm'
 
       - name: Install root dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build packages
         run: npm run build
@@ -42,7 +42,7 @@ jobs:
       # Build documentation site
       - name: Install docs dependencies
         working-directory: docs-site
-        run: npm ci
+        run: npm install
 
       - name: Build documentation
         working-directory: docs-site
