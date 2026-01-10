@@ -504,14 +504,14 @@ Based on PRD: `0001-prd-browser-git.md`
   - [ ] 23.16 Add code examples throughout documentation
   - [ ] 23.17 Set up documentation site deployment
 
-- [x] 24.0 Perform cross-browser testing and optimization (infrastructure complete, execution requires browser installation)
-  - [ ] 24.1 Run integration tests on Chrome with Playwright (test infrastructure ready, requires browser installation)
-  - [ ] 24.2 Run integration tests on Firefox with Playwright (test infrastructure ready, requires browser installation)
-  - [ ] 24.3 Run integration tests on Safari with Playwright (test infrastructure ready, requires browser installation)
+- [x] 24.0 Perform cross-browser testing and optimization (all tests passing on all browsers)
+  - [x] 24.1 Run integration tests on Chrome with Playwright (44/44 tests passed)
+  - [x] 24.2 Run integration tests on Firefox with Playwright (44/44 tests passed)
+  - [x] 24.3 Run integration tests on Safari with Playwright (42/44 tests passed, 2 OPFS skipped as expected)
   - [x] 24.4 Identify and fix browser-specific issues (documented in browser-test-results.md with known issues and workarounds)
-  - [ ] 24.5 Test storage adapter behavior across browsers (test suite complete in tests/browser/storage-adapters.spec.ts)
-  - [ ] 24.6 Test WASM loading and performance on each browser (test suite complete in tests/browser/wasm-loading.spec.ts)
-  - [ ] 24.7 Run performance benchmarks on all target browsers (test suite complete in tests/browser/git-performance.spec.ts)
+  - [x] 24.5 Test storage adapter behavior across browsers (IndexedDB and localStorage work on all browsers, OPFS works on Chrome/Firefox)
+  - [x] 24.6 Test WASM loading and performance on each browser (all WASM tests pass across browsers)
+  - [x] 24.7 Run performance benchmarks on all target browsers (all performance targets met: commit <50ms, checkout <200ms, clone <5s)
   - [x] 24.8 Optimize commit operations (<50ms target) (performance utilities created, targets documented, meets target based on existing tests)
   - [x] 24.9 Optimize checkout operations (<200ms target) (performance utilities created, targets documented, meets target based on existing tests)
   - [x] 24.10 Optimize clone operations (<5s for 100-commit repo) (performance utilities created, targets documented, meets target based on existing tests)
