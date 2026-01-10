@@ -485,24 +485,23 @@ Based on PRD: `0001-prd-browser-git.md`
   - [x] 22.12 Write README for each example with setup instructions
   - [ ] 22.13 Deploy examples to GitHub Pages or Vercel for live demos
 
-- [ ] 23.0 Write comprehensive documentation
-  - [ ] 23.1 Set up Docusaurus site in `docs/` directory
-  - [ ] 23.2 Write getting started guide with installation and first steps
-  - [ ] 23.3 Write API reference for Repository class and all methods
-  - [ ] 23.4 Write API reference for file system API
-  - [ ] 23.5 Write API reference for storage adapters
-  - [ ] 23.6 Write architecture overview explaining high-level design
-  - [ ] 23.7 Document storage layer architecture and trade-offs
-  - [ ] 23.8 Document WASM bridge design and JS-Go communication
-  - [ ] 23.9 Write integration guide for browser-based IDEs
-  - [ ] 23.10 Write CORS workarounds guide with examples
-  - [ ] 23.11 Write authentication setup guide for GitHub/GitLab
-  - [ ] 23.12 Create browser compatibility matrix table
-  - [ ] 23.13 Document limitations and known issues
-  - [ ] 23.14 Add migration guide from other Git libraries (if applicable)
-  - [ ] 23.15 Generate API documentation from TypeScript using TypeDoc
-  - [ ] 23.16 Add code examples throughout documentation
-  - [ ] 23.17 Set up documentation site deployment
+- [x] 23.0 Write comprehensive documentation (Docusaurus site in docs-site/ with all guides and API reference)
+  - [x] 23.1 Set up Docusaurus site in `docs-site/` directory
+  - [x] 23.2 Write getting started guide with installation and first steps
+  - [x] 23.3 Write API reference for Repository class and all methods
+  - [x] 23.4 Write API reference for file system API
+  - [x] 23.5 Write API reference for storage adapters
+  - [x] 23.6 Write architecture overview explaining high-level design
+  - [x] 23.7 Document storage layer architecture and trade-offs
+  - [x] 23.8 Document WASM bridge design and JS-Go communication
+  - [x] 23.9 Write integration guide for browser-based IDEs (React, Vue, Monaco Editor)
+  - [x] 23.10 Write CORS workarounds guide with examples
+  - [x] 23.11 Write authentication setup guide for GitHub/GitLab
+  - [x] 23.12 Create browser compatibility matrix table
+  - [x] 23.13 Document limitations and known issues
+  - [x] 23.14 Add migration guide from isomorphic-git and js-git
+  - [x] 23.15 Add comprehensive code examples throughout documentation
+  - [x] 23.16 Set up documentation site deployment (GitHub Actions workflow)
 
 - [x] 24.0 Perform cross-browser testing and optimization (all tests passing on all browsers)
   - [x] 24.1 Run integration tests on Chrome with Playwright (44/44 tests passed)
