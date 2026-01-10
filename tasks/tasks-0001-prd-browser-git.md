@@ -481,7 +481,7 @@ Based on PRD: `0001-prd-browser-git.md`
   - [x] 22.8 Add diff viewer for file changes
   - [x] 22.9 Create `offline-docs` example with Markdown editor
   - [x] 22.10 Implement version history for documentation changes
-  - [ ] 22.11 Add search across documentation versions
+  - [x] 22.11 Add search across documentation versions (SearchPanel component with version history search)
   - [x] 22.12 Write README for each example with setup instructions
   - [x] 22.13 Deploy examples to GitHub Pages (GitHub Actions workflow configured)
 

@@ -4,6 +4,7 @@ import { marked } from "marked";
 import DocumentList from "./components/DocumentList";
 import MarkdownEditor from "./components/MarkdownEditor";
 import VersionHistory from "./components/VersionHistory";
+import SearchPanel from "./components/SearchPanel";
 import "./App.css";
 
 const App: React.FC = () => {
@@ -102,6 +103,40 @@ console.log('Hello, BrowserGit!');
     }
   };
 
+  const handleSearchResultSelect = async (
+    docName: string,
+    commitHash?: string
+  ) => {
+    if (!repo) return;
+
+    // If it's a commit message result, just select the first document
+    if (docName === "Commit Message") {
+      if (docs.length > 0) {
+        await handleDocSelect(docs[0]);
+      }
+      return;
+    }
+
+    try {
+      if (commitHash) {
+        // Restore file from specific commit
+        await repo.checkout(commitHash, { paths: [docName] });
+        const docContent = await repo.fs.readFile(docName, "utf-8");
+        setCurrentDoc(docName);
+        setContent(docContent);
+        setIsEditing(false);
+        alert(
+          `Showing ${docName} at version ${commitHash.substring(0, 7)}. Changes are temporary until you save.`
+        );
+      } else {
+        await handleDocSelect(docName);
+      }
+    } catch (error) {
+      console.error("Failed to load search result:", error);
+      alert(`Failed to load: ${(error as Error).message}`);
+    }
+  };
+
   const handleNewDoc = async () => {
     const docName = prompt("Enter document name (e.g., guide.md):");
     if (!docName || !repo) return;
@@ -170,6 +205,12 @@ console.log('Hello, BrowserGit!');
           )}
         </div>
       </header>
+
+      <SearchPanel
+        repo={repo}
+        docs={docs}
+        onResultSelect={handleSearchResultSelect}
+      />
 
       <div className="app-content">
         <DocumentList
