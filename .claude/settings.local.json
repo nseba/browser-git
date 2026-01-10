@@ -17,7 +17,8 @@
       "Bash(npx:*)",
       "Bash(for pkg in packages/*/package.json)",
       "Bash(done)",
-      "Bash(node scripts/sync-versions.js:*)"
+      "Bash(node scripts/sync-versions.js:*)",
+      "Bash(xxd:*)"
     ],
     "deny": [],
     "ask": []

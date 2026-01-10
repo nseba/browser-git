@@ -66,7 +66,7 @@ const config: Config = {
           label: "API Reference",
         },
         {
-          href: "/browser-git/examples/",
+          href: "https://nseba.github.io/browser-git/examples/",
           label: "Examples",
           position: "left",
         },
@@ -132,7 +132,7 @@ const config: Config = {
           items: [
             {
               label: "Examples",
-              href: "/browser-git/examples/",
+              href: "https://nseba.github.io/browser-git/examples/",
             },
             {
               label: "GitHub",
