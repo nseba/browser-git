@@ -466,8 +466,8 @@ Based on PRD: `0001-prd-browser-git.md`
   - [x] 21.14 Add help documentation for all commands
   - [x] 21.15 Add version flag and about information
   - [x] 21.16 Create formatted output utilities (tables, colors, symbols)
-  - [ ] 21.17 Write unit tests for CLI command parsing
-  - [ ] 21.18 Write integration tests for CLI workflows
+  - [x] 21.17 Write unit tests for CLI command parsing
+  - [x] 21.18 Write integration tests for CLI workflows
   - [x] 21.19 Make CLI executable with proper shebang and chmod
 
 - [x] 22.0 Create example applications
