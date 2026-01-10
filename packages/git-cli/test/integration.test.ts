@@ -160,7 +160,7 @@ describe("CLI Integration Tests", () => {
         hashAlgorithm: "sha1",
       });
       expect(success).toHaveBeenCalledWith(
-        "Initialized empty Git repository in ./.git/"
+        "Initialized empty Git repository in ./.git/",
       );
 
       vi.clearAllMocks();
@@ -177,16 +177,14 @@ describe("CLI Integration Tests", () => {
       vi.clearAllMocks();
 
       // Step 3: Commit changes
-      await runCommand(commitCommand, [
-        "commit",
-        "-m",
-        "Initial commit",
-      ]);
+      await runCommand(commitCommand, ["commit", "-m", "Initial commit"]);
       expect(mockRepo.commit).toHaveBeenCalledWith(
         "Initial commit",
-        expect.any(Object)
+        expect.any(Object),
       );
-      expect(success).toHaveBeenCalledWith(expect.stringContaining("Created commit"));
+      expect(success).toHaveBeenCalledWith(
+        expect.stringContaining("Created commit"),
+      );
 
       vi.clearAllMocks();
 
@@ -225,11 +223,7 @@ describe("CLI Integration Tests", () => {
       vi.clearAllMocks();
 
       // Commit the changes
-      await runCommand(commitCommand, [
-        "commit",
-        "-m",
-        "Add modified files",
-      ]);
+      await runCommand(commitCommand, ["commit", "-m", "Add modified files"]);
       expect(mockRepo.commit).toHaveBeenCalled();
     });
 
@@ -245,7 +239,7 @@ describe("CLI Integration Tests", () => {
       expect(mockRepo.add).toHaveBeenCalledWith(["."]);
       expect(mockRepo.commit).toHaveBeenCalledWith(
         "Auto-stage and commit",
-        expect.any(Object)
+        expect.any(Object),
       );
     });
   });
@@ -269,12 +263,7 @@ describe("CLI Integration Tests", () => {
       vi.clearAllMocks();
 
       // Step 3: Make changes and commit on feature branch
-      await runCommand(commitCommand, [
-        "commit",
-        "-a",
-        "-m",
-        "Feature work",
-      ]);
+      await runCommand(commitCommand, ["commit", "-a", "-m", "Feature work"]);
       expect(mockRepo.commit).toHaveBeenCalled();
 
       vi.clearAllMocks();
@@ -290,9 +279,12 @@ describe("CLI Integration Tests", () => {
       // Step 5: Merge feature into main
       mockRepo.merge.mockResolvedValue({ commitHash: "merge456" });
       await runCommand(mergeCommand, ["merge", "feature"]);
-      expect(mockRepo.merge).toHaveBeenCalledWith("feature", expect.any(Object));
+      expect(mockRepo.merge).toHaveBeenCalledWith(
+        "feature",
+        expect.any(Object),
+      );
       expect(success).toHaveBeenCalledWith(
-        expect.stringContaining("Merge completed")
+        expect.stringContaining("Merge completed"),
       );
     });
 
@@ -302,10 +294,10 @@ describe("CLI Integration Tests", () => {
       expect(mockRepo.createBranch).toHaveBeenCalledWith("new-feature");
       expect(mockRepo.checkout).toHaveBeenCalledWith(
         "new-feature",
-        expect.any(Object)
+        expect.any(Object),
       );
       expect(success).toHaveBeenCalledWith(
-        "Switched to a new branch 'new-feature'"
+        "Switched to a new branch 'new-feature'",
       );
     });
 
@@ -318,7 +310,7 @@ describe("CLI Integration Tests", () => {
       await runCommand(mergeCommand, ["merge", "feature"]);
 
       expect(success).toHaveBeenCalledWith(
-        expect.stringContaining("Fast-forward merge")
+        expect.stringContaining("Fast-forward merge"),
       );
     });
 
@@ -334,7 +326,7 @@ describe("CLI Integration Tests", () => {
       }
 
       expect(warning).toHaveBeenCalledWith(
-        expect.stringContaining("Automatic merge failed")
+        expect.stringContaining("Automatic merge failed"),
       );
     });
 
@@ -371,10 +363,10 @@ describe("CLI Integration Tests", () => {
       expect(Repository.clone).toHaveBeenCalledWith(
         "https://github.com/user/repo.git",
         "repo",
-        expect.any(Object)
+        expect.any(Object),
       );
       expect(success).toHaveBeenCalledWith(
-        expect.stringContaining("Cloned repository")
+        expect.stringContaining("Cloned repository"),
       );
 
       vi.clearAllMocks();
@@ -395,12 +387,7 @@ describe("CLI Integration Tests", () => {
       vi.clearAllMocks();
 
       // Step 4: Make local changes and push
-      await runCommand(commitCommand, [
-        "commit",
-        "-a",
-        "-m",
-        "Local changes",
-      ]);
+      await runCommand(commitCommand, ["commit", "-a", "-m", "Local changes"]);
       vi.clearAllMocks();
 
       await runCommand(pushCommand, ["push"]);
@@ -418,7 +405,7 @@ describe("CLI Integration Tests", () => {
       expect(Repository.clone).toHaveBeenCalledWith(
         "https://github.com/user/repo.git",
         "my-project",
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -434,7 +421,7 @@ describe("CLI Integration Tests", () => {
       await runCommand(fetchCommand, ["fetch", "upstream"]);
 
       expect(mockRepo.fetch).toHaveBeenCalledWith(
-        expect.objectContaining({ remote: "upstream" })
+        expect.objectContaining({ remote: "upstream" }),
       );
     });
 
@@ -442,7 +429,7 @@ describe("CLI Integration Tests", () => {
       await runCommand(pushCommand, ["push", "-f"]);
 
       expect(mockRepo.push).toHaveBeenCalledWith(
-        expect.objectContaining({ force: true })
+        expect.objectContaining({ force: true }),
       );
     });
 
@@ -453,7 +440,7 @@ describe("CLI Integration Tests", () => {
         expect.objectContaining({
           remote: "upstream",
           refspec: "feature",
-        })
+        }),
       );
     });
   });
@@ -493,7 +480,7 @@ describe("CLI Integration Tests", () => {
       await runCommand(mergeCommand, ["merge", "feature/new-api"]);
       expect(mockRepo.merge).toHaveBeenCalledWith(
         "feature/new-api",
-        expect.any(Object)
+        expect.any(Object),
       );
 
       // 7. Push merged changes
@@ -504,7 +491,7 @@ describe("CLI Integration Tests", () => {
       await runCommand(branchCommand, ["branch", "-d", "feature/new-api"]);
       expect(mockRepo.deleteBranch).toHaveBeenCalledWith(
         "feature/new-api",
-        false
+        false,
       );
     });
   });
@@ -535,7 +522,7 @@ describe("CLI Integration Tests", () => {
       // View recent commits
       await runCommand(logCommand, ["log", "-n", "3"]);
       expect(mockRepo.log).toHaveBeenCalledWith(
-        expect.objectContaining({ maxCount: 3 })
+        expect.objectContaining({ maxCount: 3 }),
       );
 
       vi.clearAllMocks();
@@ -547,7 +534,11 @@ describe("CLI Integration Tests", () => {
 
     it("should view commit history after multiple commits", async () => {
       // Simulate making several commits
-      const commits = ["feat: add feature", "fix: bug fix", "docs: update readme"];
+      const commits = [
+        "feat: add feature",
+        "fix: bug fix",
+        "docs: update readme",
+      ];
 
       for (const msg of commits) {
         mockRepo.commit.mockResolvedValueOnce(`hash-${msg.slice(0, 4)}`);
@@ -563,7 +554,7 @@ describe("CLI Integration Tests", () => {
           message: msg,
           author: { name: "Dev", email: "dev@test.com" },
           date: new Date(),
-        }))
+        })),
       );
 
       await runCommand(logCommand, ["log"]);
@@ -690,7 +681,7 @@ describe("CLI Integration Tests", () => {
 
       expect(mockRepo.checkout).toHaveBeenCalledWith(
         "main",
-        expect.objectContaining({ force: true })
+        expect.objectContaining({ force: true }),
       );
     });
 

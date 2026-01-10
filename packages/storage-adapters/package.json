@@ -1,6 +1,6 @@
 {
   "name": "@browser-git/storage-adapters",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Storage adapter implementations for BrowserGit (IndexedDB, OPFS, LocalStorage, in-memory)",
   "type": "module",
   "main": "./dist/index.js",

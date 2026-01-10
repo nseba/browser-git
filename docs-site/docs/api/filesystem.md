@@ -9,19 +9,19 @@ The `FileSystem` class provides a Node.js-like filesystem interface for browser 
 ## Accessing the FileSystem
 
 ```typescript
-import { Repository } from '@browser-git/browser-git';
+import { Repository } from "@browser-git/browser-git";
 
-const repo = await Repository.init('/project', { storage: 'indexeddb' });
+const repo = await Repository.init("/project", { storage: "indexeddb" });
 const fs = repo.fs;
 ```
 
 Or standalone:
 
 ```typescript
-import { FileSystem } from '@browser-git/browser-git';
-import { IndexedDBAdapter } from '@browser-git/storage-adapters';
+import { FileSystem } from "@browser-git/browser-git";
+import { IndexedDBAdapter } from "@browser-git/storage-adapters";
 
-const adapter = new IndexedDBAdapter('my-fs');
+const adapter = new IndexedDBAdapter("my-fs");
 await adapter.initialize();
 
 const fs = new FileSystem(adapter);
@@ -41,16 +41,18 @@ async readFile(
 ```
 
 **Parameters:**
+
 - `path` - Absolute path to the file
 - `encoding` - If `'utf-8'`, returns string; otherwise returns `Uint8Array`
 
 **Example:**
+
 ```typescript
 // Read as string
-const content = await fs.readFile('/project/README.md', 'utf-8');
+const content = await fs.readFile("/project/README.md", "utf-8");
 
 // Read as binary
-const binary = await fs.readFile('/project/image.png');
+const binary = await fs.readFile("/project/image.png");
 ```
 
 ### fs.writeFile()
@@ -66,24 +68,26 @@ async writeFile(
 ```
 
 **Options:**
+
 ```typescript
 interface WriteFileOptions {
-  encoding?: 'utf-8';
+  encoding?: "utf-8";
   mode?: number; // Unix file mode (default: 0o644)
-  flag?: 'w' | 'a'; // Write or append
+  flag?: "w" | "a"; // Write or append
 }
 ```
 
 **Example:**
+
 ```typescript
 // Write string
-await fs.writeFile('/project/file.txt', 'Hello, World!');
+await fs.writeFile("/project/file.txt", "Hello, World!");
 
 // Write binary
-await fs.writeFile('/project/data.bin', new Uint8Array([1, 2, 3, 4]));
+await fs.writeFile("/project/data.bin", new Uint8Array([1, 2, 3, 4]));
 
 // Append to file
-await fs.writeFile('/project/log.txt', 'New line\n', { flag: 'a' });
+await fs.writeFile("/project/log.txt", "New line\n", { flag: "a" });
 ```
 
 ### fs.appendFile()
@@ -106,8 +110,9 @@ async unlink(path: string): Promise<void>
 ```
 
 **Example:**
+
 ```typescript
-await fs.unlink('/project/temp.txt');
+await fs.unlink("/project/temp.txt");
 ```
 
 ### fs.rename()
@@ -119,12 +124,13 @@ async rename(oldPath: string, newPath: string): Promise<void>
 ```
 
 **Example:**
+
 ```typescript
 // Rename file
-await fs.rename('/project/old.txt', '/project/new.txt');
+await fs.rename("/project/old.txt", "/project/new.txt");
 
 // Move file
-await fs.rename('/project/file.txt', '/project/subdir/file.txt');
+await fs.rename("/project/file.txt", "/project/subdir/file.txt");
 ```
 
 ### fs.copyFile()
@@ -149,6 +155,7 @@ async mkdir(
 ```
 
 **Options:**
+
 ```typescript
 interface MkdirOptions {
   recursive?: boolean; // Create parent directories
@@ -157,12 +164,13 @@ interface MkdirOptions {
 ```
 
 **Example:**
+
 ```typescript
 // Create single directory
-await fs.mkdir('/project/src');
+await fs.mkdir("/project/src");
 
 // Create nested directories
-await fs.mkdir('/project/src/components/ui', { recursive: true });
+await fs.mkdir("/project/src/components/ui", { recursive: true });
 ```
 
 ### fs.rmdir()
@@ -177,6 +185,7 @@ async rmdir(
 ```
 
 **Options:**
+
 ```typescript
 interface RmdirOptions {
   recursive?: boolean; // Remove contents recursively
@@ -184,12 +193,13 @@ interface RmdirOptions {
 ```
 
 **Example:**
+
 ```typescript
 // Remove empty directory
-await fs.rmdir('/project/empty');
+await fs.rmdir("/project/empty");
 
 // Remove directory and contents
-await fs.rmdir('/project/temp', { recursive: true });
+await fs.rmdir("/project/temp", { recursive: true });
 ```
 
 ### fs.readdir()
@@ -204,6 +214,7 @@ async readdir(
 ```
 
 **Options:**
+
 ```typescript
 interface ReaddirOptions {
   withFileTypes?: boolean; // Return Dirent objects
@@ -212,6 +223,7 @@ interface ReaddirOptions {
 ```
 
 **Returns:**
+
 ```typescript
 interface Dirent {
   name: string;
@@ -222,13 +234,14 @@ interface Dirent {
 ```
 
 **Example:**
+
 ```typescript
 // List file names
-const files = await fs.readdir('/project/src');
+const files = await fs.readdir("/project/src");
 // ['index.ts', 'utils', 'components']
 
 // List with file types
-const entries = await fs.readdir('/project/src', { withFileTypes: true });
+const entries = await fs.readdir("/project/src", { withFileTypes: true });
 for (const entry of entries) {
   if (entry.isDirectory()) {
     console.log(`📁 ${entry.name}`);
@@ -238,7 +251,7 @@ for (const entry of entries) {
 }
 
 // Recursive listing
-const allFiles = await fs.readdir('/project', { recursive: true });
+const allFiles = await fs.readdir("/project", { recursive: true });
 ```
 
 ## File Information
@@ -252,6 +265,7 @@ async stat(path: string): Promise<Stats>
 ```
 
 **Returns:**
+
 ```typescript
 interface Stats {
   dev: number;
@@ -273,12 +287,13 @@ interface Stats {
 ```
 
 **Example:**
-```typescript
-const stats = await fs.stat('/project/file.txt');
 
-console.log('Size:', stats.size, 'bytes');
-console.log('Modified:', stats.mtime);
-console.log('Is file:', stats.isFile());
+```typescript
+const stats = await fs.stat("/project/file.txt");
+
+console.log("Size:", stats.size, "bytes");
+console.log("Modified:", stats.mtime);
+console.log("Is file:", stats.isFile());
 ```
 
 ### fs.lstat()
@@ -298,9 +313,10 @@ async exists(path: string): Promise<boolean>
 ```
 
 **Example:**
+
 ```typescript
-if (await fs.exists('/project/config.json')) {
-  const config = await fs.readFile('/project/config.json', 'utf-8');
+if (await fs.exists("/project/config.json")) {
+  const config = await fs.readFile("/project/config.json", "utf-8");
 }
 ```
 
@@ -313,8 +329,9 @@ async access(path: string, mode?: number): Promise<void>
 ```
 
 **Modes:**
+
 ```typescript
-import { constants } from '@browser-git/browser-git';
+import { constants } from "@browser-git/browser-git";
 
 await fs.access(path, constants.F_OK); // File exists
 await fs.access(path, constants.R_OK); // Readable
@@ -364,19 +381,18 @@ watch(
 ```
 
 **Options:**
+
 ```typescript
 interface WatchOptions {
   persistent?: boolean;
   recursive?: boolean;
 }
 
-type WatchListener = (
-  eventType: 'rename' | 'change',
-  filename: string
-) => void;
+type WatchListener = (eventType: "rename" | "change", filename: string) => void;
 ```
 
 **Returns:**
+
 ```typescript
 interface FSWatcher {
   close(): void;
@@ -384,10 +400,15 @@ interface FSWatcher {
 ```
 
 **Example:**
+
 ```typescript
-const watcher = fs.watch('/project/src', { recursive: true }, (event, filename) => {
-  console.log(`${event}: ${filename}`);
-});
+const watcher = fs.watch(
+  "/project/src",
+  { recursive: true },
+  (event, filename) => {
+    console.log(`${event}: ${filename}`);
+  },
+);
 
 // Later, stop watching
 watcher.close();
@@ -407,6 +428,7 @@ createReadStream(
 ```
 
 **Options:**
+
 ```typescript
 interface ReadStreamOptions {
   start?: number;
@@ -416,8 +438,9 @@ interface ReadStreamOptions {
 ```
 
 **Example:**
+
 ```typescript
-const stream = fs.createReadStream('/project/large-file.bin');
+const stream = fs.createReadStream("/project/large-file.bin");
 const reader = stream.getReader();
 
 while (true) {
@@ -439,8 +462,9 @@ createWriteStream(
 ```
 
 **Example:**
+
 ```typescript
-const stream = fs.createWriteStream('/project/output.bin');
+const stream = fs.createWriteStream("/project/output.bin");
 const writer = stream.getWriter();
 
 await writer.write(new Uint8Array([1, 2, 3]));
@@ -459,12 +483,13 @@ async glob(pattern: string): Promise<string[]>
 ```
 
 **Example:**
+
 ```typescript
 // Find all TypeScript files
-const tsFiles = await fs.glob('/project/**/*.ts');
+const tsFiles = await fs.glob("/project/**/*.ts");
 
 // Find files in specific directory
-const srcFiles = await fs.glob('/project/src/*.js');
+const srcFiles = await fs.glob("/project/src/*.js");
 ```
 
 ### fs.readJSON()
@@ -476,13 +501,14 @@ async readJSON<T>(path: string): Promise<T>
 ```
 
 **Example:**
+
 ```typescript
 interface Config {
   name: string;
   version: string;
 }
 
-const config = await fs.readJSON<Config>('/project/package.json');
+const config = await fs.readJSON<Config>("/project/package.json");
 console.log(config.name);
 ```
 
@@ -499,8 +525,9 @@ async writeJSON(
 ```
 
 **Example:**
+
 ```typescript
-await fs.writeJSON('/project/config.json', { debug: true }, { spaces: 2 });
+await fs.writeJSON("/project/config.json", { debug: true }, { spaces: 2 });
 ```
 
 ## Error Handling
@@ -508,30 +535,30 @@ await fs.writeJSON('/project/config.json', { debug: true }, { spaces: 2 });
 FileSystem operations throw errors with specific codes:
 
 ```typescript
-import { FileSystemError } from '@browser-git/browser-git';
+import { FileSystemError } from "@browser-git/browser-git";
 
 try {
-  await fs.readFile('/nonexistent');
+  await fs.readFile("/nonexistent");
 } catch (error) {
   if (error instanceof FileSystemError) {
     switch (error.code) {
-      case 'ENOENT':
-        console.log('File not found');
+      case "ENOENT":
+        console.log("File not found");
         break;
-      case 'EACCES':
-        console.log('Permission denied');
+      case "EACCES":
+        console.log("Permission denied");
         break;
-      case 'EISDIR':
-        console.log('Is a directory');
+      case "EISDIR":
+        console.log("Is a directory");
         break;
-      case 'ENOTDIR':
-        console.log('Not a directory');
+      case "ENOTDIR":
+        console.log("Not a directory");
         break;
-      case 'EEXIST':
-        console.log('File already exists');
+      case "EEXIST":
+        console.log("File already exists");
         break;
-      case 'ENOTEMPTY':
-        console.log('Directory not empty');
+      case "ENOTEMPTY":
+        console.log("Directory not empty");
         break;
     }
   }
@@ -543,27 +570,27 @@ try {
 Import path utilities:
 
 ```typescript
-import { path } from '@browser-git/browser-git';
+import { path } from "@browser-git/browser-git";
 
-path.join('/project', 'src', 'index.ts');
+path.join("/project", "src", "index.ts");
 // '/project/src/index.ts'
 
-path.dirname('/project/src/index.ts');
+path.dirname("/project/src/index.ts");
 // '/project/src'
 
-path.basename('/project/src/index.ts');
+path.basename("/project/src/index.ts");
 // 'index.ts'
 
-path.extname('/project/src/index.ts');
+path.extname("/project/src/index.ts");
 // '.ts'
 
-path.normalize('/project//src/../src/./index.ts');
+path.normalize("/project//src/../src/./index.ts");
 // '/project/src/index.ts'
 
-path.isAbsolute('/project/src');
+path.isAbsolute("/project/src");
 // true
 
-path.relative('/project', '/project/src/index.ts');
+path.relative("/project", "/project/src/index.ts");
 // 'src/index.ts'
 ```
 

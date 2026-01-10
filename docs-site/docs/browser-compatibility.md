@@ -10,28 +10,29 @@ BrowserGit is designed to work across all modern browsers. This page documents b
 
 ### Desktop Browsers
 
-| Feature | Chrome | Firefox | Safari | Edge |
-|---------|--------|---------|--------|------|
-| **Core Git Operations** | 86+ | 111+ | 15.2+ | 86+ |
-| WebAssembly | ✅ | ✅ | ✅ | ✅ |
-| IndexedDB | ✅ | ✅ | ✅ | ✅ |
-| OPFS | ✅ | ✅ | ⚠️ | ✅ |
-| Compression Streams | ✅ | ✅ | ✅ | ✅ |
-| Web Crypto | ✅ | ✅ | ✅ | ✅ |
-| Fetch API | ✅ | ✅ | ✅ | ✅ |
-| Streams API | ✅ | ✅ | ✅ | ✅ |
+| Feature                 | Chrome | Firefox | Safari | Edge |
+| ----------------------- | ------ | ------- | ------ | ---- |
+| **Core Git Operations** | 86+    | 111+    | 15.2+  | 86+  |
+| WebAssembly             | ✅     | ✅      | ✅     | ✅   |
+| IndexedDB               | ✅     | ✅      | ✅     | ✅   |
+| OPFS                    | ✅     | ✅      | ⚠️     | ✅   |
+| Compression Streams     | ✅     | ✅      | ✅     | ✅   |
+| Web Crypto              | ✅     | ✅      | ✅     | ✅   |
+| Fetch API               | ✅     | ✅      | ✅     | ✅   |
+| Streams API             | ✅     | ✅      | ✅     | ✅   |
 
 ### Mobile Browsers
 
-| Feature | Chrome Mobile | Safari Mobile | Firefox Mobile | Samsung Internet |
-|---------|---------------|---------------|----------------|------------------|
-| **Core Git Operations** | ✅ | ✅ | ✅ | ✅ |
-| WebAssembly | ✅ | ✅ | ✅ | ✅ |
-| IndexedDB | ✅ | ✅ | ✅ | ✅ |
-| OPFS | ✅ | ⚠️ | ✅ | ✅ |
-| Compression Streams | ✅ | ✅ | ✅ | ✅ |
+| Feature                 | Chrome Mobile | Safari Mobile | Firefox Mobile | Samsung Internet |
+| ----------------------- | ------------- | ------------- | -------------- | ---------------- |
+| **Core Git Operations** | ✅            | ✅            | ✅             | ✅               |
+| WebAssembly             | ✅            | ✅            | ✅             | ✅               |
+| IndexedDB               | ✅            | ✅            | ✅             | ✅               |
+| OPFS                    | ✅            | ⚠️            | ✅             | ✅               |
+| Compression Streams     | ✅            | ✅            | ✅             | ✅               |
 
 **Legend:**
+
 - ✅ Full support
 - ⚠️ Partial support / Known issues
 - ❌ Not supported
@@ -44,11 +45,13 @@ BrowserGit is designed to work across all modern browsers. This page documents b
 
 ```typescript
 // Check WebAssembly support
-const wasmSupported = typeof WebAssembly !== 'undefined' &&
-                      typeof WebAssembly.instantiate === 'function';
+const wasmSupported =
+  typeof WebAssembly !== "undefined" &&
+  typeof WebAssembly.instantiate === "function";
 ```
 
 **Browser versions:**
+
 - Chrome 57+
 - Firefox 52+
 - Safari 11+
@@ -60,7 +63,7 @@ const wasmSupported = typeof WebAssembly !== 'undefined' &&
 
 ```typescript
 // Check IndexedDB support
-const idbSupported = typeof indexedDB !== 'undefined';
+const idbSupported = typeof indexedDB !== "undefined";
 ```
 
 All modern browsers support IndexedDB. Some considerations:
@@ -75,21 +78,21 @@ All modern browsers support IndexedDB. Some considerations:
 
 ```typescript
 // Check OPFS support
-const opfsSupported = typeof navigator?.storage?.getDirectory === 'function';
+const opfsSupported = typeof navigator?.storage?.getDirectory === "function";
 ```
 
 **Known Issues:**
 
-| Browser | Issue | Workaround |
-|---------|-------|------------|
-| Safari | Throws `UnknownError` on some operations | Use IndexedDB instead |
-| Safari < 15.2 | Not available | Use IndexedDB |
-| Firefox < 111 | Not available | Use IndexedDB |
+| Browser       | Issue                                    | Workaround            |
+| ------------- | ---------------------------------------- | --------------------- |
+| Safari        | Throws `UnknownError` on some operations | Use IndexedDB instead |
+| Safari < 15.2 | Not available                            | Use IndexedDB         |
+| Firefox < 111 | Not available                            | Use IndexedDB         |
 
 **Detection and Fallback:**
 
 ```typescript
-import { detectFeatures, createAdapter } from '@browser-git/storage-adapters';
+import { detectFeatures, createAdapter } from "@browser-git/storage-adapters";
 
 async function getBestAdapter(name: string) {
   const features = await detectFeatures();
@@ -108,7 +111,7 @@ async function getBestAdapter(name: string) {
 
 ```typescript
 // Check Compression Streams support
-const compressionSupported = typeof CompressionStream !== 'undefined';
+const compressionSupported = typeof CompressionStream !== "undefined";
 ```
 
 **Fallback:** BrowserGit includes a JavaScript fallback implementation using pako.
@@ -119,7 +122,7 @@ const compressionSupported = typeof CompressionStream !== 'undefined';
 
 ```typescript
 // Check memory API support (Chrome only)
-const memoryApiSupported = typeof performance?.memory !== 'undefined';
+const memoryApiSupported = typeof performance?.memory !== "undefined";
 ```
 
 **Note:** Only available in Chromium-based browsers. BrowserGit works without it but can't report memory metrics on other browsers.
@@ -128,13 +131,13 @@ const memoryApiSupported = typeof performance?.memory !== 'undefined';
 
 Browser storage quotas vary significantly:
 
-| Browser | Default Quota | Notes |
-|---------|--------------|-------|
-| Chrome | 60% of disk | Eviction possible under pressure |
-| Firefox | 50% of disk | Prompts at 2GB |
-| Safari | 1GB | Strict quota |
-| Safari Mobile | 500MB | More restrictive |
-| Edge | Same as Chrome | Chromium-based |
+| Browser       | Default Quota  | Notes                            |
+| ------------- | -------------- | -------------------------------- |
+| Chrome        | 60% of disk    | Eviction possible under pressure |
+| Firefox       | 50% of disk    | Prompts at 2GB                   |
+| Safari        | 1GB            | Strict quota                     |
+| Safari Mobile | 500MB          | More restrictive                 |
+| Edge          | Same as Chrome | Chromium-based                   |
 
 ### Checking Available Storage
 
@@ -155,7 +158,7 @@ async function requestPersistence() {
   if (navigator.storage && navigator.storage.persist) {
     const granted = await navigator.storage.persist();
     if (granted) {
-      console.log('Storage will not be cleared automatically');
+      console.log("Storage will not be cleared automatically");
     }
   }
 }
@@ -174,8 +177,8 @@ async function requestPersistence() {
 **Recommended Configuration:**
 
 ```typescript
-const repo = await Repository.init('/project', {
-  storage: 'indexeddb' // Avoid OPFS on Safari
+const repo = await Repository.init("/project", {
+  storage: "indexeddb", // Avoid OPFS on Safari
 });
 ```
 
@@ -206,7 +209,7 @@ await navigator.storage.persist();
 BrowserGit includes comprehensive feature detection:
 
 ```typescript
-import { detectBrowserFeatures } from '@browser-git/browser-git';
+import { detectBrowserFeatures } from "@browser-git/browser-git";
 
 const features = await detectBrowserFeatures();
 
@@ -220,29 +223,29 @@ console.log({
   crypto: features.webCrypto,
   memory: features.memoryAPI,
   persistentStorage: features.persistentStorage,
-  storageQuota: features.storageQuota
+  storageQuota: features.storageQuota,
 });
 
 // Get recommendations
 const recommendations = features.getRecommendations();
-console.log('Recommended storage:', recommendations.storage);
-console.log('Warnings:', recommendations.warnings);
+console.log("Recommended storage:", recommendations.storage);
+console.log("Warnings:", recommendations.warnings);
 ```
 
 ## Polyfills
 
 BrowserGit includes polyfills for some features:
 
-| Feature | Polyfill | Impact |
-|---------|----------|--------|
-| Compression Streams | pako | Slightly slower compression |
-| TextEncoder/Decoder | Built-in | Negligible |
-| crypto.randomUUID | Built-in | Negligible |
+| Feature             | Polyfill | Impact                      |
+| ------------------- | -------- | --------------------------- |
+| Compression Streams | pako     | Slightly slower compression |
+| TextEncoder/Decoder | Built-in | Negligible                  |
+| crypto.randomUUID   | Built-in | Negligible                  |
 
 **Enabling Polyfills:**
 
 ```typescript
-import { enablePolyfills } from '@browser-git/browser-git';
+import { enablePolyfills } from "@browser-git/browser-git";
 
 // Automatically detect and apply needed polyfills
 await enablePolyfills();
@@ -253,16 +256,16 @@ await enablePolyfills();
 Run the compatibility check:
 
 ```typescript
-import { runCompatibilityCheck } from '@browser-git/browser-git';
+import { runCompatibilityCheck } from "@browser-git/browser-git";
 
 const result = await runCompatibilityCheck();
 
 if (result.compatible) {
-  console.log('Full compatibility');
+  console.log("Full compatibility");
 } else if (result.degraded) {
-  console.log('Degraded mode:', result.limitations);
+  console.log("Degraded mode:", result.limitations);
 } else {
-  console.log('Not compatible:', result.reason);
+  console.log("Not compatible:", result.reason);
 }
 ```
 

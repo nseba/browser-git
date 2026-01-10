@@ -134,20 +134,20 @@ describe("parser utilities", () => {
 
   describe("formatAuthor", () => {
     it("should format author object as string", () => {
-      expect(formatAuthor({ name: "John Doe", email: "john@example.com" })).toBe(
-        "John Doe <john@example.com>"
-      );
+      expect(
+        formatAuthor({ name: "John Doe", email: "john@example.com" }),
+      ).toBe("John Doe <john@example.com>");
     });
 
     it("should handle empty name", () => {
       expect(formatAuthor({ name: "", email: "john@example.com" })).toBe(
-        " <john@example.com>"
+        " <john@example.com>",
       );
     });
 
     it("should handle special characters", () => {
       expect(formatAuthor({ name: "O'Brien", email: "o@example.com" })).toBe(
-        "O'Brien <o@example.com>"
+        "O'Brien <o@example.com>",
       );
     });
   });
@@ -188,98 +188,98 @@ describe("parser utilities", () => {
       vi.useRealTimers();
     });
 
-    it('should format seconds ago (singular)', () => {
+    it("should format seconds ago (singular)", () => {
       const now = new Date("2024-01-15T12:00:01Z");
       vi.setSystemTime(now);
       const date = new Date("2024-01-15T12:00:00Z");
       expect(formatRelativeDate(date)).toBe("1 second ago");
     });
 
-    it('should format seconds ago (plural)', () => {
+    it("should format seconds ago (plural)", () => {
       const now = new Date("2024-01-15T12:00:30Z");
       vi.setSystemTime(now);
       const date = new Date("2024-01-15T12:00:00Z");
       expect(formatRelativeDate(date)).toBe("30 seconds ago");
     });
 
-    it('should format minutes ago (singular)', () => {
+    it("should format minutes ago (singular)", () => {
       const now = new Date("2024-01-15T12:01:00Z");
       vi.setSystemTime(now);
       const date = new Date("2024-01-15T12:00:00Z");
       expect(formatRelativeDate(date)).toBe("1 minute ago");
     });
 
-    it('should format minutes ago (plural)', () => {
+    it("should format minutes ago (plural)", () => {
       const now = new Date("2024-01-15T12:30:00Z");
       vi.setSystemTime(now);
       const date = new Date("2024-01-15T12:00:00Z");
       expect(formatRelativeDate(date)).toBe("30 minutes ago");
     });
 
-    it('should format hours ago (singular)', () => {
+    it("should format hours ago (singular)", () => {
       const now = new Date("2024-01-15T13:00:00Z");
       vi.setSystemTime(now);
       const date = new Date("2024-01-15T12:00:00Z");
       expect(formatRelativeDate(date)).toBe("1 hour ago");
     });
 
-    it('should format hours ago (plural)', () => {
+    it("should format hours ago (plural)", () => {
       const now = new Date("2024-01-15T17:00:00Z");
       vi.setSystemTime(now);
       const date = new Date("2024-01-15T12:00:00Z");
       expect(formatRelativeDate(date)).toBe("5 hours ago");
     });
 
-    it('should format days ago (singular)', () => {
+    it("should format days ago (singular)", () => {
       const now = new Date("2024-01-16T12:00:00Z");
       vi.setSystemTime(now);
       const date = new Date("2024-01-15T12:00:00Z");
       expect(formatRelativeDate(date)).toBe("1 day ago");
     });
 
-    it('should format days ago (plural)', () => {
+    it("should format days ago (plural)", () => {
       const now = new Date("2024-01-18T12:00:00Z");
       vi.setSystemTime(now);
       const date = new Date("2024-01-15T12:00:00Z");
       expect(formatRelativeDate(date)).toBe("3 days ago");
     });
 
-    it('should format weeks ago (singular)', () => {
+    it("should format weeks ago (singular)", () => {
       const now = new Date("2024-01-22T12:00:00Z");
       vi.setSystemTime(now);
       const date = new Date("2024-01-15T12:00:00Z");
       expect(formatRelativeDate(date)).toBe("1 week ago");
     });
 
-    it('should format weeks ago (plural)', () => {
+    it("should format weeks ago (plural)", () => {
       const now = new Date("2024-01-29T12:00:00Z");
       vi.setSystemTime(now);
       const date = new Date("2024-01-15T12:00:00Z");
       expect(formatRelativeDate(date)).toBe("2 weeks ago");
     });
 
-    it('should format months ago (singular)', () => {
+    it("should format months ago (singular)", () => {
       const now = new Date("2024-02-15T12:00:00Z");
       vi.setSystemTime(now);
       const date = new Date("2024-01-15T12:00:00Z");
       expect(formatRelativeDate(date)).toBe("1 month ago");
     });
 
-    it('should format months ago (plural)', () => {
+    it("should format months ago (plural)", () => {
       const now = new Date("2024-06-15T12:00:00Z");
       vi.setSystemTime(now);
       const date = new Date("2024-01-15T12:00:00Z");
       expect(formatRelativeDate(date)).toBe("5 months ago");
     });
 
-    it('should format years ago (singular)', () => {
+    it("should format years ago (singular)", () => {
       const now = new Date("2025-01-15T12:00:00Z");
       vi.setSystemTime(now);
       const date = new Date("2024-01-15T12:00:00Z");
       expect(formatRelativeDate(date)).toBe("1 year ago");
     });
 
-    it('should format years ago (plural)', () => {
+    it("should format years ago (plural)", () => {
       const now = new Date("2027-01-15T12:00:00Z");
       vi.setSystemTime(now);
       const date = new Date("2024-01-15T12:00:00Z");
@@ -306,15 +306,15 @@ describe("parser utilities", () => {
 
     it("should handle full SHA-1 hash", () => {
       expect(shortHash("da39a3ee5e6b4b0d3255bfef95601890afd80709")).toBe(
-        "da39a3e"
+        "da39a3e",
       );
     });
 
     it("should handle full SHA-256 hash", () => {
       expect(
         shortHash(
-          "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-        )
+          "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ),
       ).toBe("e3b0c44");
     });
   });

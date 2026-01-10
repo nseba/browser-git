@@ -31,7 +31,7 @@ const SearchPanel: React.FC<SearchPanelProps> = ({
   const getMatchContext = (
     content: string,
     query: string,
-    maxLength: number = 100
+    maxLength: number = 100,
   ): { context: string; lineNumber: number } | null => {
     const lowerContent = content.toLowerCase();
     const lowerQuery = query.toLowerCase();
@@ -115,7 +115,7 @@ const SearchPanel: React.FC<SearchPanelProps> = ({
                         (r) =>
                           r.docName === doc &&
                           !r.commitHash &&
-                          r.matchContext === matchInfo.context
+                          r.matchContext === matchInfo.context,
                       );
 
                       if (!isDuplicate) {
@@ -151,7 +151,7 @@ const SearchPanel: React.FC<SearchPanelProps> = ({
   const getFileAtCommit = async (
     repo: Repository,
     path: string,
-    commitHash: string
+    commitHash: string,
   ): Promise<string | null> => {
     try {
       // Save current state

@@ -28,14 +28,14 @@ The most common solution is to route requests through a CORS proxy that adds the
 #### Using a Public Proxy
 
 ```typescript
-import { Repository } from '@browser-git/browser-git';
+import { Repository } from "@browser-git/browser-git";
 
 const repo = await Repository.clone(
-  'https://github.com/user/repo.git',
-  '/local',
+  "https://github.com/user/repo.git",
+  "/local",
   {
-    corsProxy: 'https://cors-anywhere.herokuapp.com'
-  }
+    corsProxy: "https://cors-anywhere.herokuapp.com",
+  },
 );
 ```
 
@@ -47,36 +47,42 @@ Deploy your own CORS proxy for production:
 
 ```javascript
 // cors-proxy.js (Node.js/Express)
-const express = require('express');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+const express = require("express");
+const { createProxyMiddleware } = require("http-proxy-middleware");
 
 const app = express();
 
 // CORS headers
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'https://your-app.com');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header("Access-Control-Allow-Origin", "https://your-app.com");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return res.sendStatus(200);
   }
   next();
 });
 
 // Proxy to GitHub
-app.use('/github', createProxyMiddleware({
-  target: 'https://github.com',
-  changeOrigin: true,
-  pathRewrite: { '^/github': '' }
-}));
+app.use(
+  "/github",
+  createProxyMiddleware({
+    target: "https://github.com",
+    changeOrigin: true,
+    pathRewrite: { "^/github": "" },
+  }),
+);
 
 // Proxy to GitLab
-app.use('/gitlab', createProxyMiddleware({
-  target: 'https://gitlab.com',
-  changeOrigin: true,
-  pathRewrite: { '^/gitlab': '' }
-}));
+app.use(
+  "/gitlab",
+  createProxyMiddleware({
+    target: "https://gitlab.com",
+    changeOrigin: true,
+    pathRewrite: { "^/gitlab": "" },
+  }),
+);
 
 app.listen(3001);
 ```
@@ -85,11 +91,11 @@ Usage:
 
 ```typescript
 const repo = await Repository.clone(
-  'https://github.com/user/repo.git',
-  '/local',
+  "https://github.com/user/repo.git",
+  "/local",
   {
-    corsProxy: 'https://your-proxy.com/github'
-  }
+    corsProxy: "https://your-proxy.com/github",
+  },
 );
 ```
 
@@ -101,28 +107,28 @@ For better security and reliability, perform Git operations on your server:
 // Client-side
 async function pushChanges() {
   // Get the packfile from BrowserGit
-  const packfile = await repo.createPackfile('main');
+  const packfile = await repo.createPackfile("main");
 
   // Send to your server
-  const response = await fetch('/api/git/push', {
-    method: 'POST',
+  const response = await fetch("/api/git/push", {
+    method: "POST",
     body: packfile,
     headers: {
-      'Content-Type': 'application/x-git-upload-pack-result'
-    }
+      "Content-Type": "application/x-git-upload-pack-result",
+    },
   });
 }
 ```
 
 ```typescript
 // Server-side (Node.js)
-app.post('/api/git/push', async (req, res) => {
+app.post("/api/git/push", async (req, res) => {
   // Receive packfile from browser
   const packfile = req.body;
 
   // Push to GitHub using server-side Git
-  const git = simpleGit('/repo');
-  await git.push('origin', 'main');
+  const git = simpleGit("/repo");
+  await git.push("origin", "main");
 
   res.json({ success: true });
 });
@@ -138,17 +144,17 @@ async function saveFile(path: string, content: string, message: string) {
   const response = await fetch(
     `https://api.github.com/repos/${owner}/${repo}/contents/${path}`,
     {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         message,
         content: btoa(content), // Base64 encode
-        sha: existingSha // Required for updates
-      })
-    }
+        sha: existingSha, // Required for updates
+      }),
+    },
   );
 
   return response.json();
@@ -161,7 +167,7 @@ Cloudflare Workers provide a scalable, edge-deployed proxy:
 
 ```javascript
 // worker.js
-addEventListener('fetch', event => {
+addEventListener("fetch", (event) => {
   event.respondWith(handleRequest(event.request));
 });
 
@@ -172,26 +178,28 @@ async function handleRequest(request) {
   const targetUrl = url.pathname.slice(1); // Remove leading /
 
   // Validate target
-  if (!targetUrl.startsWith('https://github.com/') &&
-      !targetUrl.startsWith('https://gitlab.com/')) {
-    return new Response('Invalid target', { status: 400 });
+  if (
+    !targetUrl.startsWith("https://github.com/") &&
+    !targetUrl.startsWith("https://gitlab.com/")
+  ) {
+    return new Response("Invalid target", { status: 400 });
   }
 
   // Forward request
   const response = await fetch(targetUrl, {
     method: request.method,
     headers: request.headers,
-    body: request.body
+    body: request.body,
   });
 
   // Add CORS headers
   const newHeaders = new Headers(response.headers);
-  newHeaders.set('Access-Control-Allow-Origin', 'https://your-app.com');
-  newHeaders.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  newHeaders.set("Access-Control-Allow-Origin", "https://your-app.com");
+  newHeaders.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
 
   return new Response(response.body, {
     status: response.status,
-    headers: newHeaders
+    headers: newHeaders,
   });
 }
 ```
@@ -204,14 +212,18 @@ GitHub's API supports CORS for many operations:
 
 ```typescript
 // These work without a proxy
-const apiResponse = await fetch('https://api.github.com/repos/user/repo', {
-  headers: { 'Authorization': `Bearer ${token}` }
+const apiResponse = await fetch("https://api.github.com/repos/user/repo", {
+  headers: { Authorization: `Bearer ${token}` },
 });
 
 // Git protocol requires a proxy
-const repo = await Repository.clone('https://github.com/user/repo.git', '/local', {
-  corsProxy: 'https://your-proxy.com'
-});
+const repo = await Repository.clone(
+  "https://github.com/user/repo.git",
+  "/local",
+  {
+    corsProxy: "https://your-proxy.com",
+  },
+);
 ```
 
 ### GitLab
@@ -220,19 +232,23 @@ GitLab has similar restrictions:
 
 ```typescript
 // GraphQL API works
-const graphqlResponse = await fetch('https://gitlab.com/api/graphql', {
-  method: 'POST',
+const graphqlResponse = await fetch("https://gitlab.com/api/graphql", {
+  method: "POST",
   headers: {
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json'
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
   },
-  body: JSON.stringify({ query: '...' })
+  body: JSON.stringify({ query: "..." }),
 });
 
 // Git protocol needs proxy
-const repo = await Repository.clone('https://gitlab.com/user/repo.git', '/local', {
-  corsProxy: 'https://your-proxy.com'
-});
+const repo = await Repository.clone(
+  "https://gitlab.com/user/repo.git",
+  "/local",
+  {
+    corsProxy: "https://your-proxy.com",
+  },
+);
 ```
 
 ### Self-Hosted Git Servers
@@ -259,13 +275,13 @@ location /git/ {
 ### Detection
 
 ```typescript
-import { NetworkError } from '@browser-git/browser-git';
+import { NetworkError } from "@browser-git/browser-git";
 
 try {
-  await repo.fetch('origin');
+  await repo.fetch("origin");
 } catch (error) {
   if (error instanceof NetworkError && error.isCorsError) {
-    console.log('CORS error detected');
+    console.log("CORS error detected");
     // Suggest solutions to user
   }
 }
@@ -277,7 +293,7 @@ try {
 function handleCorsError(error: NetworkError) {
   if (error.isCorsError) {
     showModal({
-      title: 'Connection Blocked',
+      title: "Connection Blocked",
       message: `
         Your browser blocked the connection to the Git server.
 
@@ -287,9 +303,9 @@ function handleCorsError(error: NetworkError) {
         3. Use offline mode and sync later
       `,
       actions: [
-        { label: 'Configure Proxy', onClick: openProxySettings },
-        { label: 'Work Offline', onClick: enableOfflineMode }
-      ]
+        { label: "Configure Proxy", onClick: openProxySettings },
+        { label: "Work Offline", onClick: enableOfflineMode },
+      ],
     });
   }
 }
@@ -306,22 +322,18 @@ function handleCorsError(error: NetworkError) {
 
 ```javascript
 // Secure proxy example
-const ALLOWED_HOSTS = [
-  'github.com',
-  'gitlab.com',
-  'bitbucket.org'
-];
+const ALLOWED_HOSTS = ["github.com", "gitlab.com", "bitbucket.org"];
 
-app.use('/proxy', (req, res, next) => {
+app.use("/proxy", (req, res, next) => {
   const targetUrl = new URL(req.query.url);
 
   if (!ALLOWED_HOSTS.includes(targetUrl.hostname)) {
-    return res.status(403).json({ error: 'Host not allowed' });
+    return res.status(403).json({ error: "Host not allowed" });
   }
 
   // Rate limiting
   if (rateLimiter.isLimited(req.ip)) {
-    return res.status(429).json({ error: 'Too many requests' });
+    return res.status(429).json({ error: "Too many requests" });
   }
 
   next();
@@ -335,17 +347,17 @@ Never send tokens through untrusted proxies:
 ```typescript
 // Bad: Token exposed to proxy
 await fetch(`https://untrusted-proxy.com/https://github.com/...`, {
-  headers: { Authorization: `Bearer ${token}` }
+  headers: { Authorization: `Bearer ${token}` },
 });
 
 // Good: Use your own trusted proxy
 await fetch(`https://your-proxy.com/github/...`, {
-  headers: { Authorization: `Bearer ${token}` }
+  headers: { Authorization: `Bearer ${token}` },
 });
 
 // Better: Server handles authentication
-await fetch('/api/git/fetch', {
-  headers: { 'X-Session': sessionId }
+await fetch("/api/git/fetch", {
+  headers: { "X-Session": sessionId },
 });
 ```
 
@@ -363,21 +375,21 @@ class OfflineFirstRepository {
     await this.repo.commit(message, { author });
 
     // Queue sync for later
-    this.syncQueue.enqueue({ type: 'push' });
+    this.syncQueue.enqueue({ type: "push" });
   }
 
   async sync() {
     // Only sync when online and possible
     if (!navigator.onLine) {
-      return { status: 'offline' };
+      return { status: "offline" };
     }
 
     try {
-      await this.repo.push('origin', 'main');
-      return { status: 'synced' };
+      await this.repo.push("origin", "main");
+      return { status: "synced" };
     } catch (error) {
       if (error.isCorsError) {
-        return { status: 'blocked', reason: 'cors' };
+        return { status: "blocked", reason: "cors" };
       }
       throw error;
     }

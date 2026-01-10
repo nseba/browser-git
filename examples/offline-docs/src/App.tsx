@@ -105,7 +105,7 @@ console.log('Hello, BrowserGit!');
 
   const handleSearchResultSelect = async (
     docName: string,
-    commitHash?: string
+    commitHash?: string,
   ) => {
     if (!repo) return;
 
@@ -126,7 +126,7 @@ console.log('Hello, BrowserGit!');
         setContent(docContent);
         setIsEditing(false);
         alert(
-          `Showing ${docName} at version ${commitHash.substring(0, 7)}. Changes are temporary until you save.`
+          `Showing ${docName} at version ${commitHash.substring(0, 7)}. Changes are temporary until you save.`,
         );
       } else {
         await handleDocSelect(docName);

@@ -20,24 +20,27 @@ static async init(
 ```
 
 **Parameters:**
+
 - `path` - The path where the repository will be created
 - `options` - Optional configuration
 
 **Options:**
+
 ```typescript
 interface RepositoryOptions {
-  storage?: 'indexeddb' | 'opfs' | 'localstorage' | 'memory';
-  hashAlgorithm?: 'sha1' | 'sha256';
+  storage?: "indexeddb" | "opfs" | "localstorage" | "memory";
+  hashAlgorithm?: "sha1" | "sha256";
   defaultBranch?: string; // Default: 'main'
 }
 ```
 
 **Example:**
+
 ```typescript
-const repo = await Repository.init('/my-project', {
-  storage: 'indexeddb',
-  hashAlgorithm: 'sha1',
-  defaultBranch: 'main'
+const repo = await Repository.init("/my-project", {
+  storage: "indexeddb",
+  hashAlgorithm: "sha1",
+  defaultBranch: "main",
 });
 ```
 
@@ -50,15 +53,17 @@ static async open(path: string): Promise<Repository | null>
 ```
 
 **Parameters:**
+
 - `path` - Path to the repository
 
 **Returns:** The repository, or `null` if not found.
 
 **Example:**
+
 ```typescript
-const repo = await Repository.open('/my-project');
+const repo = await Repository.open("/my-project");
 if (!repo) {
-  console.log('Repository not found');
+  console.log("Repository not found");
 }
 ```
 
@@ -75,11 +80,13 @@ static async clone(
 ```
 
 **Parameters:**
+
 - `url` - Remote repository URL
 - `path` - Local path for the clone
 - `options` - Clone configuration
 
 **Options:**
+
 ```typescript
 interface CloneOptions extends RepositoryOptions {
   auth?: GitAuth;
@@ -90,7 +97,7 @@ interface CloneOptions extends RepositoryOptions {
 }
 
 interface GitAuth {
-  type: 'token' | 'basic' | 'callback';
+  type: "token" | "basic" | "callback";
   token?: string;
   username?: string;
   password?: string;
@@ -99,15 +106,16 @@ interface GitAuth {
 ```
 
 **Example:**
+
 ```typescript
 const repo = await Repository.clone(
-  'https://github.com/user/repo.git',
-  '/local-repo',
+  "https://github.com/user/repo.git",
+  "/local-repo",
   {
-    storage: 'indexeddb',
-    auth: { type: 'token', token: 'ghp_xxx' },
-    onProgress: (p) => console.log(`${p.phase}: ${p.loaded}/${p.total}`)
-  }
+    storage: "indexeddb",
+    auth: { type: "token", token: "ghp_xxx" },
+    onProgress: (p) => console.log(`${p.phase}: ${p.loaded}/${p.total}`),
+  },
 );
 ```
 
@@ -140,18 +148,20 @@ async add(paths: string[]): Promise<void>
 ```
 
 **Parameters:**
+
 - `paths` - Array of file paths or glob patterns
 
 **Example:**
+
 ```typescript
 // Add specific files
-await repo.add(['src/index.ts', 'README.md']);
+await repo.add(["src/index.ts", "README.md"]);
 
 // Add all files
-await repo.add(['.']);
+await repo.add(["."]);
 
 // Add by pattern
-await repo.add(['src/**/*.ts']);
+await repo.add(["src/**/*.ts"]);
 ```
 
 ### repo.commit()
@@ -166,6 +176,7 @@ async commit(
 ```
 
 **Options:**
+
 ```typescript
 interface CommitOptions {
   author: Author;
@@ -182,6 +193,7 @@ interface Author {
 ```
 
 **Returns:**
+
 ```typescript
 interface Commit {
   hash: string;
@@ -194,15 +206,16 @@ interface Commit {
 ```
 
 **Example:**
+
 ```typescript
-const commit = await repo.commit('Add new feature', {
+const commit = await repo.commit("Add new feature", {
   author: {
-    name: 'John Doe',
-    email: 'john@example.com'
-  }
+    name: "John Doe",
+    email: "john@example.com",
+  },
 });
 
-console.log('Created commit:', commit.hash);
+console.log("Created commit:", commit.hash);
 ```
 
 ### repo.status()
@@ -214,6 +227,7 @@ async status(): Promise<Status>
 ```
 
 **Returns:**
+
 ```typescript
 interface Status {
   current: string; // Current branch
@@ -227,19 +241,26 @@ interface Status {
 
 interface FileStatus {
   path: string;
-  status: 'added' | 'modified' | 'deleted' | 'renamed';
+  status: "added" | "modified" | "deleted" | "renamed";
   oldPath?: string; // For renamed files
 }
 ```
 
 **Example:**
+
 ```typescript
 const status = await repo.status();
 
-console.log('On branch:', status.current);
-console.log('Staged files:', status.staged.map(f => f.path));
-console.log('Modified files:', status.modified.map(f => f.path));
-console.log('Untracked files:', status.untracked);
+console.log("On branch:", status.current);
+console.log(
+  "Staged files:",
+  status.staged.map((f) => f.path),
+);
+console.log(
+  "Modified files:",
+  status.modified.map((f) => f.path),
+);
+console.log("Untracked files:", status.untracked);
 ```
 
 ## Branch Operations
@@ -256,6 +277,7 @@ async createBranch(
 ```
 
 **Options:**
+
 ```typescript
 interface CreateBranchOptions {
   startPoint?: string; // Commit or branch to start from
@@ -264,12 +286,13 @@ interface CreateBranchOptions {
 ```
 
 **Example:**
+
 ```typescript
 // Create from current HEAD
-await repo.createBranch('feature/new-feature');
+await repo.createBranch("feature/new-feature");
 
 // Create from specific commit
-await repo.createBranch('hotfix', { startPoint: 'abc1234' });
+await repo.createBranch("hotfix", { startPoint: "abc1234" });
 ```
 
 ### repo.deleteBranch()
@@ -284,6 +307,7 @@ async deleteBranch(
 ```
 
 **Options:**
+
 ```typescript
 interface DeleteBranchOptions {
   force?: boolean; // Delete even if not fully merged
@@ -301,6 +325,7 @@ async listBranches(
 ```
 
 **Options:**
+
 ```typescript
 interface ListBranchesOptions {
   remote?: boolean; // Include remote branches
@@ -309,6 +334,7 @@ interface ListBranchesOptions {
 ```
 
 **Returns:**
+
 ```typescript
 interface Branch {
   name: string;
@@ -339,6 +365,7 @@ async checkout(
 ```
 
 **Options:**
+
 ```typescript
 interface CheckoutOptions {
   create?: boolean; // Create branch if doesn't exist
@@ -348,15 +375,16 @@ interface CheckoutOptions {
 ```
 
 **Example:**
+
 ```typescript
 // Switch branch
-await repo.checkout('feature/new-feature');
+await repo.checkout("feature/new-feature");
 
 // Create and switch
-await repo.checkout('feature/another', { create: true });
+await repo.checkout("feature/another", { create: true });
 
 // Restore file from HEAD
-await repo.checkout('HEAD', { paths: ['src/index.ts'] });
+await repo.checkout("HEAD", { paths: ["src/index.ts"] });
 ```
 
 ## History Operations
@@ -370,6 +398,7 @@ async log(options?: LogOptions): Promise<Commit[]>
 ```
 
 **Options:**
+
 ```typescript
 interface LogOptions {
   maxCount?: number;
@@ -383,15 +412,16 @@ interface LogOptions {
 ```
 
 **Example:**
+
 ```typescript
 // Recent commits
 const commits = await repo.log({ maxCount: 10 });
 
 // Commits for a specific file
-const fileHistory = await repo.log({ path: 'src/index.ts' });
+const fileHistory = await repo.log({ path: "src/index.ts" });
 
 // Commits by author
-const myCommits = await repo.log({ author: 'john@example.com' });
+const myCommits = await repo.log({ author: "john@example.com" });
 ```
 
 ### repo.diff()
@@ -403,6 +433,7 @@ async diff(options?: DiffOptions): Promise<DiffResult>
 ```
 
 **Options:**
+
 ```typescript
 interface DiffOptions {
   from?: string; // Starting commit (default: HEAD)
@@ -414,6 +445,7 @@ interface DiffOptions {
 ```
 
 **Returns:**
+
 ```typescript
 interface DiffResult {
   files: FileDiff[];
@@ -422,7 +454,7 @@ interface DiffResult {
 interface FileDiff {
   path: string;
   oldPath?: string; // For renames
-  status: 'added' | 'modified' | 'deleted' | 'renamed';
+  status: "added" | "modified" | "deleted" | "renamed";
   binary: boolean;
   hunks: DiffHunk[];
   additions: number;
@@ -438,7 +470,7 @@ interface DiffHunk {
 }
 
 interface Change {
-  type: 'add' | 'delete' | 'context';
+  type: "add" | "delete" | "context";
   content: string;
   oldLineNumber?: number;
   newLineNumber?: number;
@@ -446,15 +478,16 @@ interface Change {
 ```
 
 **Example:**
+
 ```typescript
 // Diff working tree against HEAD
 const diff = await repo.diff();
 
 // Diff between commits
-const diff2 = await repo.diff({ from: 'abc123', to: 'def456' });
+const diff2 = await repo.diff({ from: "abc123", to: "def456" });
 
 // Show diff for specific file
-const fileDiff = await repo.diff({ paths: ['src/index.ts'] });
+const fileDiff = await repo.diff({ paths: ["src/index.ts"] });
 ```
 
 ### repo.blame()
@@ -466,6 +499,7 @@ async blame(path: string): Promise<BlameLine[]>
 ```
 
 **Returns:**
+
 ```typescript
 interface BlameLine {
   lineNumber: number;
@@ -490,15 +524,17 @@ async merge(
 ```
 
 **Options:**
+
 ```typescript
 interface MergeOptions {
   message?: string; // Custom merge commit message
   noCommit?: boolean; // Don't create merge commit
-  strategy?: 'recursive' | 'ours' | 'theirs';
+  strategy?: "recursive" | "ours" | "theirs";
 }
 ```
 
 **Returns:**
+
 ```typescript
 interface MergeResult {
   success: boolean;
@@ -515,13 +551,17 @@ interface ConflictFile {
 ```
 
 **Example:**
+
 ```typescript
-const result = await repo.merge('feature/new-feature');
+const result = await repo.merge("feature/new-feature");
 
 if (result.conflicts.length > 0) {
-  console.log('Conflicts in:', result.conflicts.map(c => c.path));
+  console.log(
+    "Conflicts in:",
+    result.conflicts.map((c) => c.path),
+  );
 } else {
-  console.log('Merge successful:', result.commit);
+  console.log("Merge successful:", result.commit);
 }
 ```
 
@@ -552,6 +592,7 @@ async listRemotes(): Promise<Remote[]>
 ```
 
 **Returns:**
+
 ```typescript
 interface Remote {
   name: string;
@@ -572,6 +613,7 @@ async fetch(
 ```
 
 **Options:**
+
 ```typescript
 interface FetchOptions {
   auth?: GitAuth;
@@ -607,6 +649,7 @@ async push(
 ```
 
 **Options:**
+
 ```typescript
 interface PushOptions {
   auth?: GitAuth;
@@ -618,11 +661,12 @@ interface PushOptions {
 ```
 
 **Example:**
+
 ```typescript
-await repo.push('origin', 'main', {
-  auth: { type: 'token', token: 'ghp_xxx' },
+await repo.push("origin", "main", {
+  auth: { type: "token", token: "ghp_xxx" },
   setUpstream: true,
-  onProgress: (p) => console.log(`Pushing: ${p.loaded}/${p.total}`)
+  onProgress: (p) => console.log(`Pushing: ${p.loaded}/${p.total}`),
 });
 ```
 
@@ -640,6 +684,7 @@ async createTag(
 ```
 
 **Options:**
+
 ```typescript
 interface CreateTagOptions {
   ref?: string; // Commit to tag (default: HEAD)

@@ -15,7 +15,7 @@ interface DiffEngine {
   diff(
     oldContent: string,
     newContent: string,
-    options?: DiffOptions
+    options?: DiffOptions,
   ): DiffResult;
 }
 
@@ -23,7 +23,7 @@ interface DiffOptions {
   contextLines?: number; // Lines of context (default: 3)
   ignoreWhitespace?: boolean;
   ignoreCase?: boolean;
-  algorithm?: 'myers' | 'patience' | 'histogram';
+  algorithm?: "myers" | "patience" | "histogram";
 }
 ```
 
@@ -34,14 +34,11 @@ The default diff algorithm, optimal for most use cases.
 ### Usage
 
 ```typescript
-import { MyersDiffEngine } from '@browser-git/diff-engine';
+import { MyersDiffEngine } from "@browser-git/diff-engine";
 
 const engine = new MyersDiffEngine();
 
-const result = engine.diff(
-  'line1\nline2\nline3',
-  'line1\nmodified\nline3'
-);
+const result = engine.diff("line1\nline2\nline3", "line1\nmodified\nline3");
 
 console.log(result.hunks);
 ```
@@ -57,15 +54,15 @@ interface DiffResult {
 }
 
 interface DiffHunk {
-  oldStart: number;  // Starting line in old content
-  oldLines: number;  // Number of lines in old content
-  newStart: number;  // Starting line in new content
-  newLines: number;  // Number of lines in new content
+  oldStart: number; // Starting line in old content
+  oldLines: number; // Number of lines in old content
+  newStart: number; // Starting line in new content
+  newLines: number; // Number of lines in new content
   changes: Change[];
 }
 
 interface Change {
-  type: 'add' | 'delete' | 'context';
+  type: "add" | "delete" | "context";
   content: string;
   oldLineNumber?: number;
   newLineNumber?: number;
@@ -107,15 +104,15 @@ const result = engine.diff(oldContent, newContent);
 Create diff engines with specific configurations:
 
 ```typescript
-import { DiffEngineFactory } from '@browser-git/diff-engine';
+import { DiffEngineFactory } from "@browser-git/diff-engine";
 
 // Default Myers algorithm
 const engine = DiffEngineFactory.create();
 
 // With options
 const customEngine = DiffEngineFactory.create({
-  algorithm: 'patience',
-  contextLines: 5
+  algorithm: "patience",
+  contextLines: 5,
 });
 ```
 
@@ -126,10 +123,10 @@ const customEngine = DiffEngineFactory.create({
 Convenience function for simple diffs:
 
 ```typescript
-import { computeDiff } from '@browser-git/diff-engine';
+import { computeDiff } from "@browser-git/diff-engine";
 
 const result = computeDiff(oldContent, newContent, {
-  contextLines: 3
+  contextLines: 3,
 });
 ```
 
@@ -138,13 +135,13 @@ const result = computeDiff(oldContent, newContent, {
 Generate unified diff format:
 
 ```typescript
-import { formatPatch } from '@browser-git/diff-engine';
+import { formatPatch } from "@browser-git/diff-engine";
 
 const patch = formatPatch({
-  oldPath: 'a/file.txt',
-  newPath: 'b/file.txt',
+  oldPath: "a/file.txt",
+  newPath: "b/file.txt",
   oldContent,
-  newContent
+  newContent,
 });
 
 // Output:
@@ -163,7 +160,7 @@ const patch = formatPatch({
 Apply a patch to content:
 
 ```typescript
-import { applyPatch } from '@browser-git/diff-engine';
+import { applyPatch } from "@browser-git/diff-engine";
 
 const patched = applyPatch(originalContent, patch);
 ```
@@ -173,13 +170,13 @@ const patched = applyPatch(originalContent, patch);
 Parse unified diff format:
 
 ```typescript
-import { parsePatch } from '@browser-git/diff-engine';
+import { parsePatch } from "@browser-git/diff-engine";
 
 const patches = parsePatch(patchText);
 
 for (const patch of patches) {
-  console.log('File:', patch.oldPath, '->', patch.newPath);
-  console.log('Hunks:', patch.hunks.length);
+  console.log("File:", patch.oldPath, "->", patch.newPath);
+  console.log("Hunks:", patch.hunks.length);
 }
 ```
 
@@ -188,7 +185,7 @@ for (const patch of patches) {
 For binary files:
 
 ```typescript
-import { BinaryDiff } from '@browser-git/diff-engine';
+import { BinaryDiff } from "@browser-git/diff-engine";
 
 const differ = new BinaryDiff();
 
@@ -198,9 +195,9 @@ const isBinary = differ.isBinary(content);
 // Compute binary diff (returns whether files differ)
 const result = differ.diff(oldBinary, newBinary);
 
-console.log('Files differ:', result.different);
-console.log('Old size:', result.oldSize);
-console.log('New size:', result.newSize);
+console.log("Files differ:", result.different);
+console.log("Old size:", result.oldSize);
+console.log("New size:", result.newSize);
 ```
 
 ## Three-Way Merge
@@ -208,21 +205,21 @@ console.log('New size:', result.newSize);
 For merge operations:
 
 ```typescript
-import { ThreeWayMerge } from '@browser-git/diff-engine';
+import { ThreeWayMerge } from "@browser-git/diff-engine";
 
 const merger = new ThreeWayMerge();
 
 const result = merger.merge({
   base: baseContent,
   ours: ourContent,
-  theirs: theirContent
+  theirs: theirContent,
 });
 
 if (result.hasConflicts) {
-  console.log('Conflicts found');
+  console.log("Conflicts found");
   console.log(result.conflictedContent);
 } else {
-  console.log('Merged successfully');
+  console.log("Merged successfully");
   console.log(result.mergedContent);
 }
 ```
@@ -265,12 +262,9 @@ interface ConflictRegion {
 For more granular diffs:
 
 ```typescript
-import { wordDiff } from '@browser-git/diff-engine';
+import { wordDiff } from "@browser-git/diff-engine";
 
-const result = wordDiff(
-  'The quick brown fox',
-  'The slow brown dog'
-);
+const result = wordDiff("The quick brown fox", "The slow brown dog");
 
 // result.changes:
 // [
@@ -288,9 +282,9 @@ const result = wordDiff(
 For inline changes:
 
 ```typescript
-import { charDiff } from '@browser-git/diff-engine';
+import { charDiff } from "@browser-git/diff-engine";
 
-const result = charDiff('hello', 'hallo');
+const result = charDiff("hello", "hallo");
 
 // result.changes:
 // [
@@ -306,13 +300,13 @@ const result = charDiff('hello', 'hallo');
 Implement your own diff algorithm:
 
 ```typescript
-import { DiffEngine, DiffResult, DiffOptions } from '@browser-git/diff-engine';
+import { DiffEngine, DiffResult, DiffOptions } from "@browser-git/diff-engine";
 
 class CustomDiffEngine implements DiffEngine {
   diff(
     oldContent: string,
     newContent: string,
-    options?: DiffOptions
+    options?: DiffOptions,
   ): DiffResult {
     // Your implementation
     const hunks = this.computeHunks(oldContent, newContent);
@@ -321,16 +315,16 @@ class CustomDiffEngine implements DiffEngine {
       hunks,
       additions: this.countAdditions(hunks),
       deletions: this.countDeletions(hunks),
-      changes: hunks.length
+      changes: hunks.length,
     };
   }
 }
 
 // Register custom engine
-DiffEngineFactory.register('custom', CustomDiffEngine);
+DiffEngineFactory.register("custom", CustomDiffEngine);
 
 // Use it
-const engine = DiffEngineFactory.create({ algorithm: 'custom' });
+const engine = DiffEngineFactory.create({ algorithm: "custom" });
 ```
 
 ## Performance Considerations
@@ -340,10 +334,10 @@ const engine = DiffEngineFactory.create({ algorithm: 'custom' });
 For large files, consider streaming:
 
 ```typescript
-import { streamingDiff } from '@browser-git/diff-engine';
+import { streamingDiff } from "@browser-git/diff-engine";
 
 const result = await streamingDiff(oldStream, newStream, {
-  chunkSize: 64 * 1024 // 64KB chunks
+  chunkSize: 64 * 1024, // 64KB chunks
 });
 ```
 
@@ -353,7 +347,7 @@ Prevent runaway diffs:
 
 ```typescript
 const result = await computeDiffWithTimeout(oldContent, newContent, {
-  timeout: 5000 // 5 seconds max
+  timeout: 5000, // 5 seconds max
 });
 ```
 

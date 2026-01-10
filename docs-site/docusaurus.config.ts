@@ -1,145 +1,146 @@
-import {themes as prismThemes} from 'prism-react-renderer';
-import type {Config} from '@docusaurus/types';
-import type * as Preset from '@docusaurus/preset-classic';
+import { themes as prismThemes } from "prism-react-renderer";
+import type { Config } from "@docusaurus/types";
+import type * as Preset from "@docusaurus/preset-classic";
 
 const config: Config = {
-  title: 'BrowserGit',
-  tagline: 'Full-featured Git implementation for browsers using Go + WebAssembly and TypeScript',
-  favicon: 'img/favicon.ico',
+  title: "BrowserGit",
+  tagline:
+    "Full-featured Git implementation for browsers using Go + WebAssembly and TypeScript",
+  favicon: "img/favicon.ico",
 
   future: {
     v4: true,
   },
 
-  url: 'https://nseba.github.io',
-  baseUrl: '/browser-git/',
+  url: "https://nseba.github.io",
+  baseUrl: "/browser-git/",
 
-  organizationName: 'nseba',
-  projectName: 'browser-git',
+  organizationName: "nseba",
+  projectName: "browser-git",
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: "throw",
 
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
+    defaultLocale: "en",
+    locales: ["en"],
   },
 
   presets: [
     [
-      'classic',
+      "classic",
       {
         docs: {
-          sidebarPath: './sidebars.ts',
-          editUrl: 'https://github.com/nseba/browser-git/tree/main/docs-site/',
+          sidebarPath: "./sidebars.ts",
+          editUrl: "https://github.com/nseba/browser-git/tree/main/docs-site/",
         },
         blog: false,
         theme: {
-          customCss: './src/css/custom.css',
+          customCss: "./src/css/custom.css",
         },
       } satisfies Preset.Options,
     ],
   ],
 
   themeConfig: {
-    image: 'img/browser-git-social-card.png',
+    image: "img/browser-git-social-card.png",
     colorMode: {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'BrowserGit',
+      title: "BrowserGit",
       logo: {
-        alt: 'BrowserGit Logo',
-        src: 'img/logo.svg',
+        alt: "BrowserGit Logo",
+        src: "img/logo.svg",
       },
       items: [
         {
-          type: 'docSidebar',
-          sidebarId: 'docsSidebar',
-          position: 'left',
-          label: 'Documentation',
+          type: "docSidebar",
+          sidebarId: "docsSidebar",
+          position: "left",
+          label: "Documentation",
         },
         {
-          type: 'docSidebar',
-          sidebarId: 'apiSidebar',
-          position: 'left',
-          label: 'API Reference',
+          type: "docSidebar",
+          sidebarId: "apiSidebar",
+          position: "left",
+          label: "API Reference",
         },
         {
-          href: '/browser-git/examples/',
-          label: 'Examples',
-          position: 'left',
+          href: "/browser-git/examples/",
+          label: "Examples",
+          position: "left",
         },
         {
-          href: 'https://github.com/nseba/browser-git',
-          label: 'GitHub',
-          position: 'right',
+          href: "https://github.com/nseba/browser-git",
+          label: "GitHub",
+          position: "right",
         },
       ],
     },
     footer: {
-      style: 'dark',
+      style: "dark",
       links: [
         {
-          title: 'Documentation',
+          title: "Documentation",
           items: [
             {
-              label: 'Getting Started',
-              to: '/docs/getting-started',
+              label: "Getting Started",
+              to: "/docs/getting-started",
             },
             {
-              label: 'API Reference',
-              to: '/docs/api/repository',
+              label: "API Reference",
+              to: "/docs/api/repository",
             },
             {
-              label: 'Architecture',
-              to: '/docs/architecture/overview',
+              label: "Architecture",
+              to: "/docs/architecture/overview",
             },
           ],
         },
         {
-          title: 'Guides',
+          title: "Guides",
           items: [
             {
-              label: 'Integration Guide',
-              to: '/docs/guides/integration',
+              label: "Integration Guide",
+              to: "/docs/guides/integration",
             },
             {
-              label: 'CORS Workarounds',
-              to: '/docs/guides/cors-workarounds',
+              label: "CORS Workarounds",
+              to: "/docs/guides/cors-workarounds",
             },
             {
-              label: 'Authentication',
-              to: '/docs/guides/authentication',
+              label: "Authentication",
+              to: "/docs/guides/authentication",
             },
           ],
         },
         {
-          title: 'Community',
+          title: "Community",
           items: [
             {
-              label: 'GitHub Issues',
-              href: 'https://github.com/nseba/browser-git/issues',
+              label: "GitHub Issues",
+              href: "https://github.com/nseba/browser-git/issues",
             },
             {
-              label: 'Discussions',
-              href: 'https://github.com/nseba/browser-git/discussions',
+              label: "Discussions",
+              href: "https://github.com/nseba/browser-git/discussions",
             },
           ],
         },
         {
-          title: 'More',
+          title: "More",
           items: [
             {
-              label: 'Examples',
-              href: '/browser-git/examples/',
+              label: "Examples",
+              href: "/browser-git/examples/",
             },
             {
-              label: 'GitHub',
-              href: 'https://github.com/nseba/browser-git',
+              label: "GitHub",
+              href: "https://github.com/nseba/browser-git",
             },
             {
-              label: 'npm',
-              href: 'https://www.npmjs.com/package/@browser-git/browser-git',
+              label: "npm",
+              href: "https://www.npmjs.com/package/@browser-git/browser-git",
             },
           ],
         },
@@ -149,7 +150,7 @@ const config: Config = {
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
-      additionalLanguages: ['bash', 'typescript', 'go'],
+      additionalLanguages: ["bash", "typescript", "go"],
     },
   } satisfies Preset.ThemeConfig,
 };

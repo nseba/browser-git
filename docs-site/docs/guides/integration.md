@@ -17,12 +17,12 @@ npm install @browser-git/browser-git
 ### Basic Setup
 
 ```typescript
-import { Repository, FileSystem } from '@browser-git/browser-git';
+import { Repository, FileSystem } from "@browser-git/browser-git";
 
 // Initialize on page load
 async function initGit() {
-  const repo = await Repository.init('/workspace', {
-    storage: 'indexeddb'
+  const repo = await Repository.init("/workspace", {
+    storage: "indexeddb",
   });
 
   return repo;
@@ -39,8 +39,14 @@ const repo = await initGit();
 Create a context to share the repository across components:
 
 ```tsx
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Repository } from '@browser-git/browser-git';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { Repository } from "@browser-git/browser-git";
 
 interface GitContextType {
   repo: Repository | null;
@@ -51,10 +57,16 @@ interface GitContextType {
 const GitContext = createContext<GitContextType>({
   repo: null,
   loading: true,
-  error: null
+  error: null,
 });
 
-export function GitProvider({ children, repoPath }: { children: ReactNode; repoPath: string }) {
+export function GitProvider({
+  children,
+  repoPath,
+}: {
+  children: ReactNode;
+  repoPath: string;
+}) {
   const [repo, setRepo] = useState<Repository | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -62,8 +74,9 @@ export function GitProvider({ children, repoPath }: { children: ReactNode; repoP
   useEffect(() => {
     async function init() {
       try {
-        const repository = await Repository.open(repoPath) ||
-                          await Repository.init(repoPath, { storage: 'indexeddb' });
+        const repository =
+          (await Repository.open(repoPath)) ||
+          (await Repository.init(repoPath, { storage: "indexeddb" }));
         setRepo(repository);
       } catch (e) {
         setError(e as Error);
@@ -99,9 +112,9 @@ function CommitButton() {
 
     setCommitting(true);
     try {
-      await repo.add(['.']);
-      await repo.commit('Update from browser', {
-        author: { name: 'User', email: 'user@example.com' }
+      await repo.add(["."]);
+      await repo.commit("Update from browser", {
+        author: { name: "User", email: "user@example.com" },
       });
     } finally {
       setCommitting(false);
@@ -110,7 +123,7 @@ function CommitButton() {
 
   return (
     <button onClick={handleCommit} disabled={committing}>
-      {committing ? 'Committing...' : 'Commit Changes'}
+      {committing ? "Committing..." : "Commit Changes"}
     </button>
   );
 }
@@ -122,7 +135,7 @@ function CommitButton() {
 interface FileNode {
   name: string;
   path: string;
-  type: 'file' | 'directory';
+  type: "file" | "directory";
   children?: FileNode[];
 }
 
@@ -142,16 +155,16 @@ function FileTree({ path }: { path: string }) {
             return {
               name: entry.name,
               path: fullPath,
-              type: 'directory' as const,
-              children: [] // Load lazily
+              type: "directory" as const,
+              children: [], // Load lazily
             };
           }
           return {
             name: entry.name,
             path: fullPath,
-            type: 'file' as const
+            type: "file" as const,
           };
-        })
+        }),
       );
       setTree(nodes);
     }
@@ -161,9 +174,9 @@ function FileTree({ path }: { path: string }) {
 
   return (
     <ul>
-      {tree.map(node => (
+      {tree.map((node) => (
         <li key={node.path}>
-          {node.type === 'directory' ? '📁' : '📄'} {node.name}
+          {node.type === "directory" ? "📁" : "📄"} {node.name}
         </li>
       ))}
     </ul>
@@ -176,8 +189,8 @@ function FileTree({ path }: { path: string }) {
 ### Composable
 
 ```typescript
-import { ref, onMounted } from 'vue';
-import { Repository } from '@browser-git/browser-git';
+import { ref, onMounted } from "vue";
+import { Repository } from "@browser-git/browser-git";
 
 export function useGitRepository(path: string) {
   const repo = ref<Repository | null>(null);
@@ -186,8 +199,9 @@ export function useGitRepository(path: string) {
 
   onMounted(async () => {
     try {
-      repo.value = await Repository.open(path) ||
-                   await Repository.init(path, { storage: 'indexeddb' });
+      repo.value =
+        (await Repository.open(path)) ||
+        (await Repository.init(path, { storage: "indexeddb" }));
     } catch (e) {
       error.value = e as Error;
     } finally {
@@ -195,15 +209,18 @@ export function useGitRepository(path: string) {
     }
   });
 
-  async function commit(message: string, author: { name: string; email: string }) {
-    if (!repo.value) throw new Error('Repository not initialized');
+  async function commit(
+    message: string,
+    author: { name: string; email: string },
+  ) {
+    if (!repo.value) throw new Error("Repository not initialized");
 
-    await repo.value.add(['.']);
+    await repo.value.add(["."]);
     return repo.value.commit(message, { author });
   }
 
   async function getStatus() {
-    if (!repo.value) throw new Error('Repository not initialized');
+    if (!repo.value) throw new Error("Repository not initialized");
     return repo.value.status();
   }
 
@@ -212,7 +229,7 @@ export function useGitRepository(path: string) {
     loading,
     error,
     commit,
-    getStatus
+    getStatus,
   };
 }
 ```
@@ -222,8 +239,8 @@ export function useGitRepository(path: string) {
 ### Monaco Editor Integration
 
 ```typescript
-import * as monaco from 'monaco-editor';
-import { Repository } from '@browser-git/browser-git';
+import * as monaco from "monaco-editor";
+import { Repository } from "@browser-git/browser-git";
 
 class GitIntegratedEditor {
   private repo: Repository;
@@ -233,22 +250,20 @@ class GitIntegratedEditor {
   constructor(repo: Repository, container: HTMLElement) {
     this.repo = repo;
     this.editor = monaco.editor.create(container, {
-      language: 'typescript',
-      theme: 'vs-dark'
+      language: "typescript",
+      theme: "vs-dark",
     });
 
     // Auto-save on change
-    this.editor.onDidChangeModelContent(
-      debounce(() => this.autoSave(), 1000)
-    );
+    this.editor.onDidChangeModelContent(debounce(() => this.autoSave(), 1000));
   }
 
   async openFile(path: string) {
-    const content = await this.repo.fs.readFile(path, 'utf-8');
+    const content = await this.repo.fs.readFile(path, "utf-8");
     const model = monaco.editor.createModel(
       content,
       undefined,
-      monaco.Uri.file(path)
+      monaco.Uri.file(path),
     );
     this.editor.setModel(model);
     this.currentFile = path;
@@ -276,10 +291,10 @@ class GitIntegratedEditor {
 ### Diff Viewer
 
 ```typescript
-import { DiffResult } from '@browser-git/browser-git';
+import { DiffResult } from "@browser-git/browser-git";
 
 function renderDiff(diff: DiffResult): string {
-  let html = '';
+  let html = "";
 
   for (const file of diff.files) {
     html += `<div class="diff-file">
@@ -290,18 +305,22 @@ function renderDiff(diff: DiffResult): string {
         <div class="hunk-header">@@ -${hunk.oldStart},${hunk.oldLines} +${hunk.newStart},${hunk.newLines} @@</div>`;
 
       for (const change of hunk.changes) {
-        const lineClass = change.type === 'add' ? 'line-add' :
-                         change.type === 'delete' ? 'line-delete' : 'line-context';
-        const prefix = change.type === 'add' ? '+' :
-                      change.type === 'delete' ? '-' : ' ';
+        const lineClass =
+          change.type === "add"
+            ? "line-add"
+            : change.type === "delete"
+              ? "line-delete"
+              : "line-context";
+        const prefix =
+          change.type === "add" ? "+" : change.type === "delete" ? "-" : " ";
 
         html += `<div class="diff-line ${lineClass}">${prefix}${escapeHtml(change.content)}</div>`;
       }
 
-      html += '</div>';
+      html += "</div>";
     }
 
-    html += '</div>';
+    html += "</div>";
   }
 
   return html;
@@ -314,25 +333,21 @@ function renderDiff(diff: DiffResult): string {
 
 ```typescript
 // sw.js
-self.addEventListener('install', (event) => {
+self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open('git-wasm-v1').then((cache) => {
-      return cache.addAll([
-        '/git-core.wasm',
-        '/index.html',
-        '/app.js'
-      ]);
-    })
+    caches.open("git-wasm-v1").then((cache) => {
+      return cache.addAll(["/git-core.wasm", "/index.html", "/app.js"]);
+    }),
   );
 });
 
 // Serve WASM from cache
-self.addEventListener('fetch', (event) => {
-  if (event.request.url.endsWith('.wasm')) {
+self.addEventListener("fetch", (event) => {
+  if (event.request.url.endsWith(".wasm")) {
     event.respondWith(
       caches.match(event.request).then((response) => {
         return response || fetch(event.request);
-      })
+      }),
     );
   }
 });
@@ -355,7 +370,7 @@ class GitSyncQueue {
   }
 
   private async persistQueue() {
-    localStorage.setItem('git-sync-queue', JSON.stringify(this.queue));
+    localStorage.setItem("git-sync-queue", JSON.stringify(this.queue));
   }
 
   private async processQueue() {
@@ -369,7 +384,7 @@ class GitSyncQueue {
         this.queue.shift();
         await this.persistQueue();
       } catch (e) {
-        console.error('Sync failed:', e);
+        console.error("Sync failed:", e);
         break;
       }
     }
@@ -379,10 +394,10 @@ class GitSyncQueue {
 
   private async executeOperation(op: { type: string; data: unknown }) {
     switch (op.type) {
-      case 'push':
+      case "push":
         await repo.push(op.data.remote, op.data.branch);
         break;
-      case 'fetch':
+      case "fetch":
         await repo.fetch(op.data.remote);
         break;
     }
@@ -400,7 +415,7 @@ let repoPromise: Promise<Repository> | null = null;
 
 export function getRepository(): Promise<Repository> {
   if (!repoPromise) {
-    repoPromise = Repository.init('/workspace', { storage: 'indexeddb' });
+    repoPromise = Repository.init("/workspace", { storage: "indexeddb" });
   }
   return repoPromise;
 }
@@ -409,7 +424,7 @@ export function getRepository(): Promise<Repository> {
 ### Virtual Scrolling for Large Histories
 
 ```tsx
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 function CommitLog() {
   const { repo } = useGit();
@@ -420,22 +435,27 @@ function CommitLog() {
     count: commits.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 60, // Estimated row height
-    overscan: 5
+    overscan: 5,
   });
 
   return (
-    <div ref={parentRef} style={{ height: '400px', overflow: 'auto' }}>
-      <div style={{ height: `${virtualizer.getTotalSize()}px`, position: 'relative' }}>
+    <div ref={parentRef} style={{ height: "400px", overflow: "auto" }}>
+      <div
+        style={{
+          height: `${virtualizer.getTotalSize()}px`,
+          position: "relative",
+        }}
+      >
         {virtualizer.getVirtualItems().map((virtualRow) => (
           <div
             key={virtualRow.key}
             style={{
-              position: 'absolute',
+              position: "absolute",
               top: 0,
               left: 0,
-              width: '100%',
+              width: "100%",
               height: `${virtualRow.size}px`,
-              transform: `translateY(${virtualRow.start}px)`
+              transform: `translateY(${virtualRow.start}px)`,
             }}
           >
             <CommitRow commit={commits[virtualRow.index]} />
@@ -451,7 +471,7 @@ function CommitLog() {
 
 ```typescript
 // git-worker.ts
-import { Repository } from '@browser-git/browser-git';
+import { Repository } from "@browser-git/browser-git";
 
 let repo: Repository | null = null;
 
@@ -462,17 +482,21 @@ self.onmessage = async (event) => {
     let result;
 
     switch (type) {
-      case 'init':
+      case "init":
         repo = await Repository.init(payload.path, payload.options);
         result = { success: true };
         break;
 
-      case 'clone':
-        repo = await Repository.clone(payload.url, payload.path, payload.options);
+      case "clone":
+        repo = await Repository.clone(
+          payload.url,
+          payload.path,
+          payload.options,
+        );
         result = { success: true };
         break;
 
-      case 'status':
+      case "status":
         result = await repo?.status();
         break;
 
@@ -487,7 +511,7 @@ self.onmessage = async (event) => {
 
 // main.ts
 class GitWorkerClient {
-  private worker = new Worker('/git-worker.js', { type: 'module' });
+  private worker = new Worker("/git-worker.js", { type: "module" });
   private pending = new Map<string, { resolve: Function; reject: Function }>();
 
   constructor() {
@@ -515,11 +539,11 @@ class GitWorkerClient {
   }
 
   init(path: string, options: unknown) {
-    return this.send('init', { path, options });
+    return this.send("init", { path, options });
   }
 
   clone(url: string, path: string, options: unknown) {
-    return this.send('clone', { url, path, options });
+    return this.send("clone", { url, path, options });
   }
 }
 ```
@@ -529,37 +553,37 @@ class GitWorkerClient {
 ### User-Friendly Error Messages
 
 ```typescript
-import { GitError, StorageError, NetworkError } from '@browser-git/browser-git';
+import { GitError, StorageError, NetworkError } from "@browser-git/browser-git";
 
 function handleGitError(error: Error): string {
   if (error instanceof NetworkError) {
     if (!navigator.onLine) {
-      return 'You are offline. Changes will sync when you reconnect.';
+      return "You are offline. Changes will sync when you reconnect.";
     }
-    return 'Network error. Please check your connection and try again.';
+    return "Network error. Please check your connection and try again.";
   }
 
   if (error instanceof StorageError) {
-    if (error.code === 'QUOTA_EXCEEDED') {
-      return 'Storage is full. Please free some space or delete unused repositories.';
+    if (error.code === "QUOTA_EXCEEDED") {
+      return "Storage is full. Please free some space or delete unused repositories.";
     }
-    return 'Storage error. Please try refreshing the page.';
+    return "Storage error. Please try refreshing the page.";
   }
 
   if (error instanceof GitError) {
     switch (error.code) {
-      case 'MERGE_CONFLICT':
-        return 'Merge conflict detected. Please resolve conflicts before continuing.';
-      case 'NOT_A_REPO':
-        return 'This directory is not a Git repository.';
-      case 'DIRTY_WORKING_TREE':
-        return 'You have uncommitted changes. Please commit or stash them first.';
+      case "MERGE_CONFLICT":
+        return "Merge conflict detected. Please resolve conflicts before continuing.";
+      case "NOT_A_REPO":
+        return "This directory is not a Git repository.";
+      case "DIRTY_WORKING_TREE":
+        return "You have uncommitted changes. Please commit or stash them first.";
       default:
         return `Git error: ${error.message}`;
     }
   }
 
-  return 'An unexpected error occurred. Please try again.';
+  return "An unexpected error occurred. Please try again.";
 }
 ```
 

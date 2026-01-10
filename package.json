@@ -1,6 +1,6 @@
 {
   "name": "browser-git",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A full-featured Git implementation for browsers using Go + WebAssembly and TypeScript",
   "private": true,
   "workspaces": [

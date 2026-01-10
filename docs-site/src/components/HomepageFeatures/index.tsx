@@ -1,7 +1,7 @@
-import type {ReactNode} from 'react';
-import clsx from 'clsx';
-import Heading from '@theme/Heading';
-import styles from './styles.module.css';
+import type { ReactNode } from "react";
+import clsx from "clsx";
+import Heading from "@theme/Heading";
+import styles from "./styles.module.css";
 
 type FeatureItem = {
   title: string;
@@ -11,8 +11,8 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Full Git in the Browser',
-    icon: '🌐',
+    title: "Full Git in the Browser",
+    icon: "🌐",
     description: (
       <>
         Complete Git implementation running entirely client-side. Clone, commit,
@@ -21,18 +21,18 @@ const FeatureList: FeatureItem[] = [
     ),
   },
   {
-    title: 'High Performance',
-    icon: '⚡',
+    title: "High Performance",
+    icon: "⚡",
     description: (
       <>
-        Built with Go + WebAssembly for native-like performance. Commits in under
-        1ms, checkouts in under 1ms, and optimized for large repositories.
+        Built with Go + WebAssembly for native-like performance. Commits in
+        under 1ms, checkouts in under 1ms, and optimized for large repositories.
       </>
     ),
   },
   {
-    title: 'Flexible Storage',
-    icon: '💾',
+    title: "Flexible Storage",
+    icon: "💾",
     description: (
       <>
         Multiple storage backends: IndexedDB, OPFS, LocalStorage, or in-memory.
@@ -42,11 +42,13 @@ const FeatureList: FeatureItem[] = [
   },
 ];
 
-function Feature({title, icon, description}: FeatureItem) {
+function Feature({ title, icon, description }: FeatureItem) {
   return (
-    <div className={clsx('col col--4')}>
+    <div className={clsx("col col--4")}>
       <div className="text--center">
-        <span className={styles.featureIcon} role="img">{icon}</span>
+        <span className={styles.featureIcon} role="img">
+          {icon}
+        </span>
       </div>
       <div className="text--center padding-horiz--md">
         <Heading as="h3">{title}</Heading>

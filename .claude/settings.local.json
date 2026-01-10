@@ -14,7 +14,9 @@
       "Bash(jq:*)",
       "Bash(echo:*)",
       "Bash(npm:*)",
-      "Bash(npx:*)"
+      "Bash(npx:*)",
+      "Bash(for pkg in packages/*/package.json)",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []

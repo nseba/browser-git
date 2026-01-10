@@ -24,24 +24,24 @@ npm install @browser-git/browser-git
 
 ```typescript
 // Before (isomorphic-git)
-import git from 'isomorphic-git';
-import http from 'isomorphic-git/http/web';
-import FS from '@isomorphic-git/lightning-fs';
+import git from "isomorphic-git";
+import http from "isomorphic-git/http/web";
+import FS from "@isomorphic-git/lightning-fs";
 
 // After (BrowserGit)
-import { Repository } from '@browser-git/browser-git';
+import { Repository } from "@browser-git/browser-git";
 ```
 
 ### Repository Initialization
 
 ```typescript
 // Before (isomorphic-git)
-const fs = new FS('my-app');
-await git.init({ fs, dir: '/project' });
+const fs = new FS("my-app");
+await git.init({ fs, dir: "/project" });
 
 // After (BrowserGit)
-const repo = await Repository.init('/project', {
-  storage: 'indexeddb'
+const repo = await Repository.init("/project", {
+  storage: "indexeddb",
 });
 ```
 
@@ -52,20 +52,20 @@ const repo = await Repository.init('/project', {
 await git.clone({
   fs,
   http,
-  dir: '/project',
-  url: 'https://github.com/user/repo',
-  corsProxy: 'https://cors.isomorphic-git.org',
-  onAuth: () => ({ username: token, password: 'x-oauth-basic' })
+  dir: "/project",
+  url: "https://github.com/user/repo",
+  corsProxy: "https://cors.isomorphic-git.org",
+  onAuth: () => ({ username: token, password: "x-oauth-basic" }),
 });
 
 // After (BrowserGit)
 const repo = await Repository.clone(
-  'https://github.com/user/repo',
-  '/project',
+  "https://github.com/user/repo",
+  "/project",
   {
-    corsProxy: 'https://cors.isomorphic-git.org',
-    auth: { type: 'token', token }
-  }
+    corsProxy: "https://cors.isomorphic-git.org",
+    auth: { type: "token", token },
+  },
 );
 ```
 
@@ -73,18 +73,18 @@ const repo = await Repository.clone(
 
 ```typescript
 // Before (isomorphic-git)
-await git.add({ fs, dir: '/project', filepath: 'file.txt' });
+await git.add({ fs, dir: "/project", filepath: "file.txt" });
 const sha = await git.commit({
   fs,
-  dir: '/project',
-  message: 'Add file',
-  author: { name: 'John', email: 'john@example.com' }
+  dir: "/project",
+  message: "Add file",
+  author: { name: "John", email: "john@example.com" },
 });
 
 // After (BrowserGit)
-await repo.add(['file.txt']);
-const commit = await repo.commit('Add file', {
-  author: { name: 'John', email: 'john@example.com' }
+await repo.add(["file.txt"]);
+const commit = await repo.commit("Add file", {
+  author: { name: "John", email: "john@example.com" },
 });
 ```
 
@@ -92,7 +92,7 @@ const commit = await repo.commit('Add file', {
 
 ```typescript
 // Before (isomorphic-git)
-const status = await git.statusMatrix({ fs, dir: '/project' });
+const status = await git.statusMatrix({ fs, dir: "/project" });
 
 // After (BrowserGit)
 const status = await repo.status();
@@ -103,22 +103,22 @@ const status = await repo.status();
 
 ```typescript
 // Before (isomorphic-git)
-const content = await fs.promises.readFile('/project/file.txt', 'utf8');
+const content = await fs.promises.readFile("/project/file.txt", "utf8");
 
 // After (BrowserGit)
-const content = await repo.fs.readFile('/project/file.txt', 'utf8');
+const content = await repo.fs.readFile("/project/file.txt", "utf8");
 ```
 
 ### Key Differences
 
-| Feature | isomorphic-git | BrowserGit |
-|---------|---------------|------------|
-| API Style | Function-based | Object-oriented |
-| Filesystem | External (lightning-fs) | Integrated |
-| Storage | lightning-fs (IndexedDB) | Multiple backends |
-| WASM | No | Yes (Go/TinyGo) |
-| TypeScript | Types available | Native TypeScript |
-| Diff Engine | Basic | Pluggable Myers algorithm |
+| Feature     | isomorphic-git           | BrowserGit                |
+| ----------- | ------------------------ | ------------------------- |
+| API Style   | Function-based           | Object-oriented           |
+| Filesystem  | External (lightning-fs)  | Integrated                |
+| Storage     | lightning-fs (IndexedDB) | Multiple backends         |
+| WASM        | No                       | Yes (Go/TinyGo)           |
+| TypeScript  | Types available          | Native TypeScript         |
+| Diff Engine | Basic                    | Pluggable Myers algorithm |
 
 ## Migrating from js-git
 
@@ -135,7 +135,7 @@ npm install @browser-git/browser-git
 
 ```typescript
 // Before (js-git) - callback style
-repo.loadAs('commit', hash, (err, commit) => {
+repo.loadAs("commit", hash, (err, commit) => {
   if (err) return handleError(err);
   processCommit(commit);
 });
@@ -149,15 +149,15 @@ const commit = await repo.getCommit(hash);
 ```typescript
 // Before (js-git)
 const repo = {};
-require('js-git/mixins/mem-db')(repo);
-require('js-git/mixins/create-tree')(repo);
-require('js-git/mixins/pack-ops')(repo);
-require('js-git/mixins/walkers')(repo);
-require('js-git/mixins/read-combiner')(repo);
-require('js-git/mixins/formats')(repo);
+require("js-git/mixins/mem-db")(repo);
+require("js-git/mixins/create-tree")(repo);
+require("js-git/mixins/pack-ops")(repo);
+require("js-git/mixins/walkers")(repo);
+require("js-git/mixins/read-combiner")(repo);
+require("js-git/mixins/formats")(repo);
 
 // After (BrowserGit)
-const repo = await Repository.init('/project');
+const repo = await Repository.init("/project");
 ```
 
 ## Migrating from nodegit (Node.js)
@@ -174,13 +174,13 @@ If you're moving a Node.js application to the browser:
 
 ```typescript
 // Before (nodegit - Node.js)
-const NodeGit = require('nodegit');
-const repo = await NodeGit.Repository.open('/path/to/repo');
+const NodeGit = require("nodegit");
+const repo = await NodeGit.Repository.open("/path/to/repo");
 const commit = await repo.getHeadCommit();
 
 // After (BrowserGit - Browser)
-const repo = await Repository.open('/project');
-const head = await repo.resolveRef('HEAD');
+const repo = await Repository.open("/project");
+const head = await repo.resolveRef("HEAD");
 const commit = await repo.getCommit(head);
 ```
 
@@ -206,11 +206,11 @@ adapter.set(key, value);
 
 ```typescript
 // Before (0.x)
-const repo = await Repository.init('/project', 'indexeddb');
+const repo = await Repository.init("/project", "indexeddb");
 
 // After (1.0)
-const repo = await Repository.init('/project', {
-  storage: 'indexeddb'
+const repo = await Repository.init("/project", {
+  storage: "indexeddb",
 });
 ```
 
@@ -219,10 +219,10 @@ const repo = await Repository.init('/project', {
 Enable deprecation warnings to prepare for upgrades:
 
 ```typescript
-import { setDeprecationHandler } from '@browser-git/browser-git';
+import { setDeprecationHandler } from "@browser-git/browser-git";
 
 setDeprecationHandler((message) => {
-  console.warn('Deprecation:', message);
+  console.warn("Deprecation:", message);
 });
 ```
 
@@ -236,12 +236,12 @@ To migrate data from one storage backend to another:
 import {
   IndexedDBAdapter,
   OPFSAdapter,
-  migrateStorage
-} from '@browser-git/storage-adapters';
+  migrateStorage,
+} from "@browser-git/storage-adapters";
 
 // Migrate from IndexedDB to OPFS
-const source = new IndexedDBAdapter('my-repo');
-const target = new OPFSAdapter('my-repo');
+const source = new IndexedDBAdapter("my-repo");
+const target = new OPFSAdapter("my-repo");
 
 await source.initialize();
 await target.initialize();
@@ -249,7 +249,7 @@ await target.initialize();
 await migrateStorage(source, target, {
   onProgress: (copied, total) => {
     console.log(`Migrating: ${copied}/${total}`);
-  }
+  },
 });
 
 // Verify migration
@@ -295,25 +295,25 @@ async function migrateRepository(oldAdapter, newAdapter) {
 BrowserGit automatically handles repository format upgrades:
 
 ```typescript
-const repo = await Repository.open('/project');
+const repo = await Repository.open("/project");
 // Automatic upgrade if needed
 
 // Check format version
-console.log('Format version:', repo.formatVersion);
+console.log("Format version:", repo.formatVersion);
 ```
 
 ### Manual Format Upgrade
 
 ```typescript
-import { upgradeRepository } from '@browser-git/browser-git';
+import { upgradeRepository } from "@browser-git/browser-git";
 
-const result = await upgradeRepository('/project', {
+const result = await upgradeRepository("/project", {
   targetVersion: 2,
-  backup: true
+  backup: true,
 });
 
 if (result.upgraded) {
-  console.log('Upgraded from', result.fromVersion, 'to', result.toVersion);
+  console.log("Upgraded from", result.fromVersion, "to", result.toVersion);
 }
 ```
 
@@ -327,10 +327,10 @@ The storage key may have changed. Check the adapter prefix:
 
 ```typescript
 // Old format
-const oldAdapter = new IndexedDBAdapter('repo-name');
+const oldAdapter = new IndexedDBAdapter("repo-name");
 
 // New format (if changed)
-const newAdapter = new IndexedDBAdapter('browser-git-repo-name');
+const newAdapter = new IndexedDBAdapter("browser-git-repo-name");
 ```
 
 #### "Object not found" errors

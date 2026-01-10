@@ -45,10 +45,10 @@ The WASM bridge provides a seamless interface between TypeScript and Go:
 ### Initialization
 
 ```typescript
-import { WasmLoader } from '@browser-git/browser-git';
+import { WasmLoader } from "@browser-git/browser-git";
 
 // Load the WASM module
-const wasmModule = await WasmLoader.load('/git-core.wasm');
+const wasmModule = await WasmLoader.load("/git-core.wasm");
 
 // The module is now ready to use
 const hash = wasmModule.sha1(data);
@@ -76,9 +76,9 @@ class WasmLoader {
   }
 
   private static async loadModule(): Promise<WebAssembly.Instance> {
-    const response = await fetch('/git-core.wasm');
+    const response = await fetch("/git-core.wasm");
     const { instance } = await WebAssembly.instantiateStreaming(response, {
-      env: this.createEnvironment()
+      env: this.createEnvironment(),
     });
 
     this.instance = instance;
@@ -132,7 +132,7 @@ The bridge tracks allocations and cleans up automatically:
 class WasmBridge {
   async withMemory<T>(
     data: Uint8Array[],
-    fn: (ptrs: number[]) => T
+    fn: (ptrs: number[]) => T,
   ): Promise<T> {
     const ptrs: number[] = [];
 
@@ -179,12 +179,12 @@ Complex objects are serialized using a binary protocol:
 
 ```typescript
 interface SerializedCommit {
-  treeHash: Uint8Array;    // 20 bytes (SHA-1) or 32 bytes (SHA-256)
+  treeHash: Uint8Array; // 20 bytes (SHA-1) or 32 bytes (SHA-256)
   parentHashes: Uint8Array; // Array of parent hashes
-  authorName: Uint8Array;   // UTF-8 encoded
-  authorEmail: Uint8Array;  // UTF-8 encoded
-  timestamp: number;        // Unix timestamp
-  message: Uint8Array;      // UTF-8 encoded
+  authorName: Uint8Array; // UTF-8 encoded
+  authorEmail: Uint8Array; // UTF-8 encoded
+  timestamp: number; // Unix timestamp
+  message: Uint8Array; // UTF-8 encoded
 }
 
 function serializeCommit(commit: Commit): Uint8Array {
@@ -251,19 +251,26 @@ func readString(ptr, len int32) string {
 ```typescript
 interface WasmExports {
   CreateCommit(
-    treePtr: number, treeLen: number,
-    msgPtr: number, msgLen: number,
-    authorPtr: number, authorLen: number,
-    resultPtr: number
+    treePtr: number,
+    treeLen: number,
+    msgPtr: number,
+    msgLen: number,
+    authorPtr: number,
+    authorLen: number,
+    resultPtr: number,
   ): number;
 
   SHA1(dataPtr: number, dataLen: number, resultPtr: number): void;
   SHA256(dataPtr: number, dataLen: number, resultPtr: number): void;
 
   ParsePackfile(dataPtr: number, dataLen: number, resultPtr: number): number;
-  ApplyDelta(basePtr: number, baseLen: number,
-             deltaPtr: number, deltaLen: number,
-             resultPtr: number): number;
+  ApplyDelta(
+    basePtr: number,
+    baseLen: number,
+    deltaPtr: number,
+    deltaLen: number,
+    resultPtr: number,
+  ): number;
 }
 ```
 
@@ -292,14 +299,19 @@ function parseResult(resultPtr: number, resultLen: number): WasmResult {
     const messageLen = view.getUint32(5, true);
     const message = decoder.decode(data.slice(9, 9 + messageLen));
 
-    return { success: false, errorCode, errorMessage: message, data: new Uint8Array() };
+    return {
+      success: false,
+      errorCode,
+      errorMessage: message,
+      data: new Uint8Array(),
+    };
   }
 
   return {
     success: true,
     errorCode: 0,
-    errorMessage: '',
-    data: data.slice(1)
+    errorMessage: "",
+    data: data.slice(1),
   };
 }
 ```
@@ -310,20 +322,20 @@ function parseResult(resultPtr: number, resultLen: number): WasmResult {
 class WasmError extends Error {
   constructor(
     public code: number,
-    message: string
+    message: string,
   ) {
     super(message);
-    this.name = 'WasmError';
+    this.name = "WasmError";
   }
 }
 
 const ERROR_CODES = {
-  0: 'Success',
-  1: 'InvalidObject',
-  2: 'CorruptedData',
-  3: 'OutOfMemory',
-  4: 'InvalidHash',
-  5: 'DeltaApplicationFailed'
+  0: "Success",
+  1: "InvalidObject",
+  2: "CorruptedData",
+  3: "OutOfMemory",
+  4: "InvalidHash",
+  5: "DeltaApplicationFailed",
 } as const;
 ```
 
@@ -380,7 +392,7 @@ For large files, stream data through WASM:
 ```typescript
 async function* streamThroughWasm(
   input: ReadableStream<Uint8Array>,
-  processChunk: (ptr: number, len: number) => void
+  processChunk: (ptr: number, len: number) => void,
 ): AsyncGenerator<Uint8Array> {
   const reader = input.getReader();
   const chunkSize = 64 * 1024; // 64KB chunks
@@ -408,21 +420,21 @@ async function* streamThroughWasm(
 ## Testing the Bridge
 
 ```typescript
-describe('WASM Bridge', () => {
+describe("WASM Bridge", () => {
   let bridge: WasmBridge;
 
   beforeAll(async () => {
     bridge = await WasmBridge.create();
   });
 
-  it('should compute SHA-1 correctly', async () => {
-    const data = new TextEncoder().encode('hello world');
+  it("should compute SHA-1 correctly", async () => {
+    const data = new TextEncoder().encode("hello world");
     const hash = await bridge.sha1(data);
 
-    expect(hash).toBe('2aae6c35c94fcfb415dbe95f408b9ce91ee846ed');
+    expect(hash).toBe("2aae6c35c94fcfb415dbe95f408b9ce91ee846ed");
   });
 
-  it('should handle large data', async () => {
+  it("should handle large data", async () => {
     const data = new Uint8Array(10 * 1024 * 1024); // 10MB
     crypto.getRandomValues(data);
 
@@ -430,12 +442,12 @@ describe('WASM Bridge', () => {
     expect(hash).toHaveLength(40);
   });
 
-  it('should handle errors gracefully', async () => {
+  it("should handle errors gracefully", async () => {
     const corruptedPackfile = new Uint8Array([0, 1, 2, 3]);
 
-    await expect(bridge.parsePackfile(corruptedPackfile))
-      .rejects
-      .toThrow('Invalid packfile header');
+    await expect(bridge.parsePackfile(corruptedPackfile)).rejects.toThrow(
+      "Invalid packfile header",
+    );
   });
 });
 ```

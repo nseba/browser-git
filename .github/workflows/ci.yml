@@ -67,6 +67,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build packages (required for cross-package imports in tests)
+        run: npm run build:deps && npm run build:main
+
       - name: Run tests
         run: npm run test:unit
 
@@ -85,6 +88,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Build packages (required for cross-package imports in tests)
+        run: npm run build:deps && npm run build:main
 
       - name: Run tests with coverage
         run: npm run test:coverage

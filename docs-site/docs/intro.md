@@ -57,20 +57,20 @@ browser-git/
 ## Quick Example
 
 ```typescript
-import { Repository } from '@browser-git/browser-git';
+import { Repository } from "@browser-git/browser-git";
 
 // Initialize a new repository
-const repo = await Repository.init('/my-project', {
-  storage: 'indexeddb'
+const repo = await Repository.init("/my-project", {
+  storage: "indexeddb",
 });
 
 // Create and add a file
-await repo.fs.writeFile('/my-project/README.md', '# My Project');
-await repo.add(['README.md']);
+await repo.fs.writeFile("/my-project/README.md", "# My Project");
+await repo.add(["README.md"]);
 
 // Commit the changes
-await repo.commit('Initial commit', {
-  author: { name: 'Your Name', email: 'you@example.com' }
+await repo.commit("Initial commit", {
+  author: { name: "Your Name", email: "you@example.com" },
 });
 
 // Check the log
@@ -80,14 +80,14 @@ console.log(commits);
 
 ## Browser Support
 
-| Browser | Version | Status |
-|---------|---------|--------|
-| Chrome | 86+ | Full support |
-| Firefox | 111+ | Full support |
-| Safari | 15.2+ | Full support (OPFS limited) |
-| Edge | 86+ | Full support |
-| Mobile Chrome | Latest | Full support |
-| Mobile Safari | 15.2+ | Full support (OPFS limited) |
+| Browser       | Version | Status                      |
+| ------------- | ------- | --------------------------- |
+| Chrome        | 86+     | Full support                |
+| Firefox       | 111+    | Full support                |
+| Safari        | 15.2+   | Full support (OPFS limited) |
+| Edge          | 86+     | Full support                |
+| Mobile Chrome | Latest  | Full support                |
+| Mobile Safari | 15.2+   | Full support (OPFS limited) |
 
 ## Next Steps
 

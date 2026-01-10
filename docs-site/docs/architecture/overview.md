@@ -150,6 +150,7 @@ Git operations like SHA-1 hashing, packfile parsing, and delta resolution are co
 ### 2. Pluggable Storage
 
 Different applications have different storage needs:
+
 - Large repositories benefit from OPFS's file-like API
 - Smaller repositories work well with IndexedDB
 - Testing scenarios use in-memory storage
@@ -161,11 +162,13 @@ The storage adapter interface allows swapping backends without changing applicat
 Two API levels serve different needs:
 
 **High-level (Repository)**: Familiar Git commands for most use cases
+
 ```typescript
-await repo.commit('message', { author });
+await repo.commit("message", { author });
 ```
 
 **Low-level (FileSystem)**: Direct file manipulation when needed
+
 ```typescript
 await fs.writeFile(path, content);
 await fs.readdir(path);
@@ -190,7 +193,7 @@ The WASM module manages its own linear memory. Large operations (like cloning) a
 // Packfile processing is streamed
 await processPackfile(stream, {
   chunkSize: 1024 * 1024, // 1MB chunks
-  onProgress: (percent) => console.log(`${percent}%`)
+  onProgress: (percent) => console.log(`${percent}%`),
 });
 ```
 
@@ -201,7 +204,7 @@ Frequently accessed objects (trees, commits) are cached in memory with LRU evict
 ```typescript
 const cache = new LRUCache<string, GitObject>({
   maxSize: 100 * 1024 * 1024, // 100MB
-  sizeCalculation: (obj) => obj.size
+  sizeCalculation: (obj) => obj.size,
 });
 ```
 
@@ -215,12 +218,12 @@ const cache = new LRUCache<string, GitObject>({
 
 ## Performance Targets
 
-| Operation | Target | Achieved |
-|-----------|--------|----------|
-| Commit | &lt;50ms | ~0.5ms |
-| Checkout | &lt;200ms | ~0.1ms |
-| Clone (100 commits) | &lt;5s | ~50ms |
-| WASM bundle size | &lt;2MB gzip | ~1.5MB |
+| Operation           | Target       | Achieved |
+| ------------------- | ------------ | -------- |
+| Commit              | &lt;50ms     | ~0.5ms   |
+| Checkout            | &lt;200ms    | ~0.1ms   |
+| Clone (100 commits) | &lt;5s       | ~50ms    |
+| WASM bundle size    | &lt;2MB gzip | ~1.5MB   |
 
 ## Next Steps
 

@@ -13,18 +13,20 @@ BrowserGit aims to provide a comprehensive Git implementation for browsers, but 
 **Limitation:** Browsers enforce Cross-Origin Resource Sharing (CORS) policies, preventing direct access to most Git servers.
 
 **Impact:**
+
 - Cannot directly clone from GitHub, GitLab, Bitbucket without a proxy
 - Cannot push/pull to remote repositories without CORS headers
 
 **Workarounds:**
+
 1. Use a CORS proxy (see [CORS Workarounds Guide](./guides/cors-workarounds))
 2. Use server-side relay endpoints
 3. Self-host Git servers with proper CORS headers
 
 ```typescript
 // Using a CORS proxy
-const repo = await Repository.clone(url, '/local', {
-  corsProxy: 'https://cors.isomorphic-git.org'
+const repo = await Repository.clone(url, "/local", {
+  corsProxy: "https://cors.isomorphic-git.org",
 });
 ```
 
@@ -33,17 +35,18 @@ const repo = await Repository.clone(url, '/local', {
 **Limitation:** Browsers cannot open raw TCP sockets, so SSH protocol is not available.
 
 **Impact:**
+
 - Only HTTPS URLs supported for remotes
 - SSH key authentication not possible
 
 **Workaround:** Use HTTPS with personal access tokens:
 
 ```typescript
-await repo.push('origin', 'main', {
+await repo.push("origin", "main", {
   auth: {
-    type: 'token',
-    token: 'ghp_xxxxxxxxxxxx'
-  }
+    type: "token",
+    token: "ghp_xxxxxxxxxxxx",
+  },
 });
 ```
 
@@ -52,6 +55,7 @@ await repo.push('origin', 'main', {
 **Limitation:** Browsers don't allow persistent background processes.
 
 **Impact:**
+
 - No automatic fetch/sync when tab is inactive
 - Long operations interrupted if tab is closed
 
@@ -59,8 +63,8 @@ await repo.push('origin', 'main', {
 
 ```typescript
 // In service worker
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'git-sync') {
+self.addEventListener("sync", (event) => {
+  if (event.tag === "git-sync") {
     event.waitUntil(syncRepository());
   }
 });
@@ -72,14 +76,15 @@ self.addEventListener('sync', (event) => {
 
 **Limitation:** Browsers impose storage limits that vary by browser and device.
 
-| Browser | Typical Quota | Notes |
-|---------|---------------|-------|
-| Chrome | 60% of disk | Can be evicted under pressure |
-| Firefox | 50% of disk | Prompts at 2GB |
-| Safari | 1GB | Strict, no expansion |
-| Mobile | 50-500MB | Device dependent |
+| Browser | Typical Quota | Notes                         |
+| ------- | ------------- | ----------------------------- |
+| Chrome  | 60% of disk   | Can be evicted under pressure |
+| Firefox | 50% of disk   | Prompts at 2GB                |
+| Safari  | 1GB           | Strict, no expansion          |
+| Mobile  | 50-500MB      | Device dependent              |
 
 **Impact:**
+
 - Cannot store very large repositories
 - Data may be evicted if storage pressure is high
 
@@ -96,7 +101,7 @@ const estimate = await navigator.storage.estimate();
 const available = estimate.quota - estimate.usage;
 
 if (available < requiredSize) {
-  throw new Error('Insufficient storage');
+  throw new Error("Insufficient storage");
 }
 ```
 
@@ -105,12 +110,14 @@ if (available < requiredSize) {
 **Limitation:** Browser storage is not a real filesystem.
 
 **Impact:**
+
 - No hard links support
 - No file permissions (mode bits are simulated)
 - No symbolic link guarantees across browsers
 - Path length limits may differ
 
 **Notes:**
+
 - File modes are stored but not enforced
 - Symlinks work within BrowserGit but not with external tools
 
@@ -118,20 +125,20 @@ if (available < requiredSize) {
 
 **Limitation:** Private/Incognito mode has severe storage restrictions.
 
-| Browser | Private Mode Behavior |
-|---------|----------------------|
-| Safari | ~50MB quota, cleared on close |
-| Chrome | Full quota, cleared on close |
-| Firefox | Full quota, cleared on close |
+| Browser | Private Mode Behavior         |
+| ------- | ----------------------------- |
+| Safari  | ~50MB quota, cleared on close |
+| Chrome  | Full quota, cleared on close  |
+| Firefox | Full quota, cleared on close  |
 
 **Workaround:** Detect private browsing and warn users:
 
 ```typescript
 async function detectPrivateBrowsing(): Promise<boolean> {
   try {
-    const db = await indexedDB.open('test');
+    const db = await indexedDB.open("test");
     db.close();
-    await indexedDB.deleteDatabase('test');
+    await indexedDB.deleteDatabase("test");
     return false;
   } catch {
     return true;
@@ -146,6 +153,7 @@ async function detectPrivateBrowsing(): Promise<boolean> {
 **Limitation:** Heavy Git operations can block the UI thread.
 
 **Impact:**
+
 - UI freezes during large commits
 - Long clone operations may trigger browser warnings
 
@@ -153,12 +161,12 @@ async function detectPrivateBrowsing(): Promise<boolean> {
 
 ```typescript
 // Use Web Workers for heavy operations
-const worker = new Worker('git-worker.js');
-worker.postMessage({ action: 'clone', url, path });
+const worker = new Worker("git-worker.js");
+worker.postMessage({ action: "clone", url, path });
 
 // Or use chunked processing
 for await (const chunk of repo.streamingClone(url)) {
-  await new Promise(r => setTimeout(r, 0)); // Yield to UI
+  await new Promise((r) => setTimeout(r, 0)); // Yield to UI
   processChunk(chunk);
 }
 ```
@@ -168,19 +176,21 @@ for await (const chunk of repo.streamingClone(url)) {
 **Limitation:** Browsers have limited memory, especially on mobile.
 
 **Impact:**
+
 - Very large files may fail to process
 - Many files in a single commit can cause issues
 - Large packfiles may not fit in memory
 
 **Recommendations:**
+
 - Use shallow clones for large repositories
 - Avoid committing files larger than 100MB
 - Use streaming APIs where available
 
 ```typescript
 // Shallow clone to reduce memory usage
-const repo = await Repository.clone(url, '/project', {
-  depth: 1
+const repo = await Repository.clone(url, "/project", {
+  depth: 1,
 });
 ```
 
@@ -189,6 +199,7 @@ const repo = await Repository.clone(url, '/project', {
 **Limitation:** WebAssembly modules take time to initialize.
 
 **Impact:**
+
 - First Git operation has additional latency (100-500ms)
 - Cold starts are slower than subsequent operations
 
@@ -196,7 +207,7 @@ const repo = await Repository.clone(url, '/project', {
 
 ```typescript
 // Warm up WASM during app initialization
-import { initializeWasm } from '@browser-git/browser-git';
+import { initializeWasm } from "@browser-git/browser-git";
 
 // Call early in app lifecycle
 await initializeWasm();
@@ -209,15 +220,16 @@ await initializeWasm();
 **Limitation:** Git partial clone (sparse checkout) is not fully supported.
 
 **Impact:**
+
 - Must clone entire repository history
 - Cannot fetch only specific directories
 
 **Workaround:** Use shallow clones:
 
 ```typescript
-const repo = await Repository.clone(url, '/project', {
+const repo = await Repository.clone(url, "/project", {
   depth: 1,
-  branch: 'main'
+  branch: "main",
 });
 ```
 
@@ -226,6 +238,7 @@ const repo = await Repository.clone(url, '/project', {
 **Limitation:** Git submodules have limited support.
 
 **Current Status:**
+
 - ✅ Clone repositories with submodules
 - ⚠️ Submodule initialization requires manual steps
 - ❌ Recursive submodule operations not supported
@@ -235,6 +248,7 @@ const repo = await Repository.clone(url, '/project', {
 **Limitation:** Git Large File Storage (LFS) is not supported.
 
 **Impact:**
+
 - LFS pointer files are checked out as-is
 - Large binary files tracked by LFS won't be available
 
@@ -266,6 +280,7 @@ async function commitWithHooks(repo, message, options) {
 **Limitation:** Commit signing with GPG keys is not supported.
 
 **Impact:**
+
 - Commits cannot be cryptographically signed
 - Verified badges won't appear on GitHub
 
@@ -279,8 +294,8 @@ async function commitWithHooks(repo, message, options) {
 
 ```typescript
 // Safari-safe configuration
-const repo = await Repository.init('/project', {
-  storage: 'indexeddb' // Avoid OPFS on Safari
+const repo = await Repository.init("/project", {
+  storage: "indexeddb", // Avoid OPFS on Safari
 });
 ```
 
@@ -302,23 +317,24 @@ const repo = await Repository.init('/project', {
 **Limitation:** Operations in one tab don't automatically reflect in others.
 
 **Impact:**
+
 - Changes made in one tab may not appear in another
 - Concurrent writes from multiple tabs can cause conflicts
 
 **Workaround:** Use BroadcastChannel for coordination:
 
 ```typescript
-const channel = new BroadcastChannel('git-sync');
+const channel = new BroadcastChannel("git-sync");
 
 channel.onmessage = (event) => {
-  if (event.data.type === 'commit') {
+  if (event.data.type === "commit") {
     // Reload repository state
     await repo.reload();
   }
 };
 
 // After commit
-channel.postMessage({ type: 'commit', hash: commit.hash });
+channel.postMessage({ type: "commit", hash: commit.hash });
 ```
 
 ### Single Writer Constraint
@@ -328,25 +344,25 @@ channel.postMessage({ type: 'commit', hash: commit.hash });
 **Workaround:** Use Web Locks API:
 
 ```typescript
-await navigator.locks.request('repo-/project', async () => {
-  await repo.commit('message', options);
+await navigator.locks.request("repo-/project", async () => {
+  await repo.commit("message", options);
 });
 ```
 
 ## Comparison with Native Git
 
-| Feature | Native Git | BrowserGit |
-|---------|-----------|------------|
-| SSH protocol | ✅ | ❌ |
-| HTTPS protocol | ✅ | ✅ (with CORS proxy) |
-| Full repository size | Unlimited | Limited by quota |
-| Background sync | ✅ | ❌ |
-| Submodules | ✅ | ⚠️ Limited |
-| LFS | ✅ | ❌ |
-| Hooks | ✅ | ❌ |
-| GPG signing | ✅ | ❌ |
-| Performance | Native speed | WASM overhead |
-| Concurrent access | ✅ | ⚠️ Limited |
+| Feature              | Native Git   | BrowserGit           |
+| -------------------- | ------------ | -------------------- |
+| SSH protocol         | ✅           | ❌                   |
+| HTTPS protocol       | ✅           | ✅ (with CORS proxy) |
+| Full repository size | Unlimited    | Limited by quota     |
+| Background sync      | ✅           | ❌                   |
+| Submodules           | ✅           | ⚠️ Limited           |
+| LFS                  | ✅           | ❌                   |
+| Hooks                | ✅           | ❌                   |
+| GPG signing          | ✅           | ❌                   |
+| Performance          | Native speed | WASM overhead        |
+| Concurrent access    | ✅           | ⚠️ Limited           |
 
 ## Reporting Issues
 

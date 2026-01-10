@@ -133,7 +133,7 @@ describe("CLI Commands", () => {
 
       expect(Repository.init).toHaveBeenCalledWith(
         "my-repo",
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -142,7 +142,7 @@ describe("CLI Commands", () => {
 
       expect(Repository.init).toHaveBeenCalledWith(
         ".",
-        expect.objectContaining({ bare: true })
+        expect.objectContaining({ bare: true }),
       );
     });
 
@@ -151,7 +151,7 @@ describe("CLI Commands", () => {
 
       expect(Repository.init).toHaveBeenCalledWith(
         ".",
-        expect.objectContaining({ initialBranch: "develop" })
+        expect.objectContaining({ initialBranch: "develop" }),
       );
     });
 
@@ -160,7 +160,7 @@ describe("CLI Commands", () => {
 
       expect(Repository.init).toHaveBeenCalledWith(
         ".",
-        expect.objectContaining({ hashAlgorithm: "sha256" })
+        expect.objectContaining({ hashAlgorithm: "sha256" }),
       );
     });
 
@@ -168,10 +168,10 @@ describe("CLI Commands", () => {
       vi.mocked(Repository.init).mockRejectedValue(new Error("Init failed"));
 
       await expect(runCommand(initCommand, ["init"])).rejects.toThrow(
-        "process.exit(1)"
+        "process.exit(1)",
       );
       expect(error).toHaveBeenCalledWith(
-        "Failed to initialize repository: Init failed"
+        "Failed to initialize repository: Init failed",
       );
     });
   });
@@ -198,7 +198,7 @@ describe("CLI Commands", () => {
 
       expect(mockRepo.add).toHaveBeenCalledWith(
         ["file1.txt", "file2.txt"],
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -219,7 +219,7 @@ describe("CLI Commands", () => {
       mockRepo.add.mockRejectedValue(new Error("Add failed"));
 
       await expect(runCommand(addCommand, ["add", "file.txt"])).rejects.toThrow(
-        "process.exit(1)"
+        "process.exit(1)",
       );
       expect(error).toHaveBeenCalledWith("Failed to add files: Add failed");
     });
@@ -236,7 +236,7 @@ describe("CLI Commands", () => {
 
       expect(mockRepo.commit).toHaveBeenCalledWith(
         "Initial commit",
-        expect.objectContaining({ message: "Initial commit" })
+        expect.objectContaining({ message: "Initial commit" }),
       );
       expect(success).toHaveBeenCalled();
     });
@@ -244,10 +244,10 @@ describe("CLI Commands", () => {
     it("should require message or amend flag", () => {
       // Verify the command requires -m or --amend flags
       const messageOption = commitCommand.options.find(
-        (opt) => opt.short === "-m" || opt.long === "--message"
+        (opt) => opt.short === "-m" || opt.long === "--message",
       );
       const amendOption = commitCommand.options.find(
-        (opt) => opt.long === "--amend"
+        (opt) => opt.long === "--amend",
       );
       expect(messageOption).toBeDefined();
       expect(amendOption).toBeDefined();
@@ -274,7 +274,7 @@ describe("CLI Commands", () => {
         "Test",
         expect.objectContaining({
           author: { name: "John Doe", email: "john@example.com" },
-        })
+        }),
       );
     });
 
@@ -286,17 +286,17 @@ describe("CLI Commands", () => {
           "Test",
           "--author",
           "invalid",
-        ])
+        ]),
       ).rejects.toThrow("process.exit(1)");
       expect(error).toHaveBeenCalledWith(
-        'Invalid author format. Use: "Name <email>"'
+        'Invalid author format. Use: "Name <email>"',
       );
     });
 
     it("should support --amend option with message", async () => {
       // Verify the command accepts --amend flag
       const amendOption = commitCommand.options.find(
-        (opt) => opt.long === "--amend"
+        (opt) => opt.long === "--amend",
       );
       expect(amendOption).toBeDefined();
       expect(amendOption?.description).toContain("amend");
@@ -372,7 +372,7 @@ describe("CLI Commands", () => {
       await runCommand(logCommand, ["log"]);
 
       expect(mockRepo.log).toHaveBeenCalledWith(
-        expect.objectContaining({ maxCount: 10 })
+        expect.objectContaining({ maxCount: 10 }),
       );
     });
 
@@ -395,7 +395,7 @@ describe("CLI Commands", () => {
       await runCommand(logCommand, ["log", "-n", "5"]);
 
       expect(mockRepo.log).toHaveBeenCalledWith(
-        expect.objectContaining({ maxCount: 5 })
+        expect.objectContaining({ maxCount: 5 }),
       );
     });
 
@@ -403,7 +403,7 @@ describe("CLI Commands", () => {
       await runCommand(logCommand, ["log", "--author", "John"]);
 
       expect(mockRepo.log).toHaveBeenCalledWith(
-        expect.objectContaining({ author: "John" })
+        expect.objectContaining({ author: "John" }),
       );
     });
 
@@ -411,7 +411,7 @@ describe("CLI Commands", () => {
       await runCommand(logCommand, ["log", "--grep", "fix"]);
 
       expect(mockRepo.log).toHaveBeenCalledWith(
-        expect.objectContaining({ grep: "fix" })
+        expect.objectContaining({ grep: "fix" }),
       );
     });
 
@@ -494,10 +494,10 @@ describe("CLI Commands", () => {
       expect(mockRepo.createBranch).toHaveBeenCalledWith("new-feature");
       expect(mockRepo.checkout).toHaveBeenCalledWith(
         "new-feature",
-        expect.any(Object)
+        expect.any(Object),
       );
       expect(success).toHaveBeenCalledWith(
-        "Switched to a new branch 'new-feature'"
+        "Switched to a new branch 'new-feature'",
       );
     });
 
@@ -506,7 +506,7 @@ describe("CLI Commands", () => {
 
       expect(mockRepo.checkout).toHaveBeenCalledWith(
         "main",
-        expect.objectContaining({ force: true })
+        expect.objectContaining({ force: true }),
       );
     });
   });
@@ -528,7 +528,7 @@ describe("CLI Commands", () => {
         message: undefined,
       });
       expect(success).toHaveBeenCalledWith(
-        "Merge completed with commit abc1234"
+        "Merge completed with commit abc1234",
       );
     });
 
@@ -554,7 +554,7 @@ describe("CLI Commands", () => {
 
       expect(mockRepo.merge).toHaveBeenCalledWith(
         "feature",
-        expect.objectContaining({ fastForwardOnly: true })
+        expect.objectContaining({ fastForwardOnly: true }),
       );
     });
 
@@ -575,10 +575,10 @@ describe("CLI Commands", () => {
       });
 
       await expect(
-        runCommand(mergeCommand, ["merge", "feature"])
+        runCommand(mergeCommand, ["merge", "feature"]),
       ).rejects.toThrow("process.exit(1)");
       expect(warning).toHaveBeenCalledWith(
-        "Automatic merge failed. Fix conflicts and commit the result."
+        "Automatic merge failed. Fix conflicts and commit the result.",
       );
     });
 
@@ -605,7 +605,7 @@ describe("CLI Commands", () => {
       expect(Repository.clone).toHaveBeenCalledWith(
         "https://github.com/user/repo.git",
         "repo",
-        expect.any(Object)
+        expect.any(Object),
       );
       expect(success).toHaveBeenCalledWith("Cloned repository to repo");
     });
@@ -620,7 +620,7 @@ describe("CLI Commands", () => {
       expect(Repository.clone).toHaveBeenCalledWith(
         "https://github.com/user/repo.git",
         "my-dir",
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -635,7 +635,7 @@ describe("CLI Commands", () => {
       expect(Repository.clone).toHaveBeenCalledWith(
         "https://github.com/user/repo.git",
         "repo",
-        expect.objectContaining({ depth: 1 })
+        expect.objectContaining({ depth: 1 }),
       );
     });
 
@@ -650,7 +650,7 @@ describe("CLI Commands", () => {
       expect(Repository.clone).toHaveBeenCalledWith(
         "https://github.com/user/repo.git",
         "repo",
-        expect.objectContaining({ branch: "develop" })
+        expect.objectContaining({ branch: "develop" }),
       );
     });
 
@@ -673,7 +673,7 @@ describe("CLI Commands", () => {
             username: "user",
             password: "secret",
           },
-        })
+        }),
       );
     });
   });
@@ -688,7 +688,7 @@ describe("CLI Commands", () => {
       await runCommand(fetchCommand, ["fetch"]);
 
       expect(mockRepo.fetch).toHaveBeenCalledWith(
-        expect.objectContaining({ remote: "origin" })
+        expect.objectContaining({ remote: "origin" }),
       );
       expect(success).toHaveBeenCalledWith("Fetched from origin");
     });
@@ -697,7 +697,7 @@ describe("CLI Commands", () => {
       await runCommand(fetchCommand, ["fetch", "upstream"]);
 
       expect(mockRepo.fetch).toHaveBeenCalledWith(
-        expect.objectContaining({ remote: "upstream" })
+        expect.objectContaining({ remote: "upstream" }),
       );
       expect(success).toHaveBeenCalledWith("Fetched from upstream");
     });
@@ -713,7 +713,7 @@ describe("CLI Commands", () => {
       await runCommand(fetchCommand, ["fetch", "--prune"]);
 
       expect(mockRepo.fetch).toHaveBeenCalledWith(
-        expect.objectContaining({ prune: true })
+        expect.objectContaining({ prune: true }),
       );
     });
 
@@ -721,7 +721,7 @@ describe("CLI Commands", () => {
       await runCommand(fetchCommand, ["fetch", "--depth", "5"]);
 
       expect(mockRepo.fetch).toHaveBeenCalledWith(
-        expect.objectContaining({ depth: 5 })
+        expect.objectContaining({ depth: 5 }),
       );
     });
   });
@@ -738,7 +738,7 @@ describe("CLI Commands", () => {
       await runCommand(pullCommand, ["pull"]);
 
       expect(mockRepo.pull).toHaveBeenCalledWith(
-        expect.objectContaining({ remote: "origin" })
+        expect.objectContaining({ remote: "origin" }),
       );
       expect(success).toHaveBeenCalledWith("Pull completed");
     });
@@ -752,7 +752,7 @@ describe("CLI Commands", () => {
         expect.objectContaining({
           remote: "upstream",
           branch: "develop",
-        })
+        }),
       );
     });
 
@@ -762,7 +762,7 @@ describe("CLI Commands", () => {
       await runCommand(pullCommand, ["pull", "--rebase"]);
 
       expect(mockRepo.pull).toHaveBeenCalledWith(
-        expect.objectContaining({ rebase: true })
+        expect.objectContaining({ rebase: true }),
       );
     });
 
@@ -772,7 +772,7 @@ describe("CLI Commands", () => {
       await runCommand(pullCommand, ["pull", "--ff-only"]);
 
       expect(mockRepo.pull).toHaveBeenCalledWith(
-        expect.objectContaining({ fastForwardOnly: true })
+        expect.objectContaining({ fastForwardOnly: true }),
       );
     });
 
@@ -803,7 +803,7 @@ describe("CLI Commands", () => {
       await runCommand(pushCommand, ["push"]);
 
       expect(mockRepo.push).toHaveBeenCalledWith(
-        expect.objectContaining({ remote: "origin" })
+        expect.objectContaining({ remote: "origin" }),
       );
       expect(success).toHaveBeenCalledWith("Pushed to origin");
     });
@@ -812,7 +812,7 @@ describe("CLI Commands", () => {
       await runCommand(pushCommand, ["push", "upstream"]);
 
       expect(mockRepo.push).toHaveBeenCalledWith(
-        expect.objectContaining({ remote: "upstream" })
+        expect.objectContaining({ remote: "upstream" }),
       );
       expect(success).toHaveBeenCalledWith("Pushed to upstream");
     });
@@ -824,7 +824,7 @@ describe("CLI Commands", () => {
         expect.objectContaining({
           remote: "origin",
           refspec: "main",
-        })
+        }),
       );
     });
 
@@ -832,10 +832,10 @@ describe("CLI Commands", () => {
       await runCommand(pushCommand, ["push", "--force"]);
 
       expect(warning).toHaveBeenCalledWith(
-        "Force push can cause data loss on remote repository"
+        "Force push can cause data loss on remote repository",
       );
       expect(mockRepo.push).toHaveBeenCalledWith(
-        expect.objectContaining({ force: true })
+        expect.objectContaining({ force: true }),
       );
     });
 
@@ -843,7 +843,7 @@ describe("CLI Commands", () => {
       await runCommand(pushCommand, ["push", "--all"]);
 
       expect(mockRepo.push).toHaveBeenCalledWith(
-        expect.objectContaining({ all: true })
+        expect.objectContaining({ all: true }),
       );
     });
 
@@ -851,27 +851,37 @@ describe("CLI Commands", () => {
       await runCommand(pushCommand, ["push", "--tags"]);
 
       expect(mockRepo.push).toHaveBeenCalledWith(
-        expect.objectContaining({ tags: true })
+        expect.objectContaining({ tags: true }),
       );
     });
 
     it("should support --delete option", async () => {
-      await runCommand(pushCommand, ["push", "--delete", "origin", "old-branch"]);
+      await runCommand(pushCommand, [
+        "push",
+        "--delete",
+        "origin",
+        "old-branch",
+      ]);
 
       expect(mockRepo.push).toHaveBeenCalledWith(
         expect.objectContaining({
           delete: true,
           refspec: "old-branch",
-        })
+        }),
       );
       expect(success).toHaveBeenCalledWith("Deleted remote branch old-branch");
     });
 
     it("should support --set-upstream option", async () => {
-      await runCommand(pushCommand, ["push", "--set-upstream", "origin", "main"]);
+      await runCommand(pushCommand, [
+        "push",
+        "--set-upstream",
+        "origin",
+        "main",
+      ]);
 
       expect(mockRepo.push).toHaveBeenCalledWith(
-        expect.objectContaining({ setUpstream: true })
+        expect.objectContaining({ setUpstream: true }),
       );
     });
   });
@@ -892,7 +902,10 @@ describe("CLI Commands", () => {
               oldLines: 1,
               newStart: 1,
               newLines: 1,
-              lines: [{ type: "delete", content: "old" }, { type: "add", content: "new" }],
+              lines: [
+                { type: "delete", content: "old" },
+                { type: "add", content: "new" },
+              ],
             },
           ],
         },
@@ -909,7 +922,7 @@ describe("CLI Commands", () => {
       await runCommand(diffCommand, ["diff", "--cached"]);
 
       expect(mockRepo.diff).toHaveBeenCalledWith(
-        expect.objectContaining({ cached: true })
+        expect.objectContaining({ cached: true }),
       );
     });
 
@@ -919,7 +932,7 @@ describe("CLI Commands", () => {
       await runCommand(diffCommand, ["diff", "--staged"]);
 
       expect(mockRepo.diff).toHaveBeenCalledWith(
-        expect.objectContaining({ cached: true })
+        expect.objectContaining({ cached: true }),
       );
     });
 
@@ -929,7 +942,7 @@ describe("CLI Commands", () => {
       await runCommand(diffCommand, ["diff", "-U", "5"]);
 
       expect(mockRepo.diff).toHaveBeenCalledWith(
-        expect.objectContaining({ unified: 5 })
+        expect.objectContaining({ unified: 5 }),
       );
     });
 
@@ -945,7 +958,7 @@ describe("CLI Commands", () => {
       mockRepo.diff.mockRejectedValue(new Error("Diff failed"));
 
       await expect(runCommand(diffCommand, ["diff"])).rejects.toThrow(
-        "process.exit(1)"
+        "process.exit(1)",
       );
       expect(error).toHaveBeenCalledWith("Failed to show diff: Diff failed");
     });

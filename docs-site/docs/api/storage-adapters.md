@@ -36,8 +36,8 @@ interface StorageAdapter {
 }
 
 interface StorageQuota {
-  usage: number;   // Bytes used
-  quota: number;   // Total available
+  usage: number; // Bytes used
+  quota: number; // Total available
   available: number; // Remaining
 }
 ```
@@ -53,6 +53,7 @@ constructor(name: string, options?: IndexedDBOptions)
 ```
 
 **Options:**
+
 ```typescript
 interface IndexedDBOptions {
   version?: number;
@@ -63,33 +64,35 @@ interface IndexedDBOptions {
 ### Usage
 
 ```typescript
-import { IndexedDBAdapter } from '@browser-git/storage-adapters';
+import { IndexedDBAdapter } from "@browser-git/storage-adapters";
 
-const adapter = new IndexedDBAdapter('my-repo');
+const adapter = new IndexedDBAdapter("my-repo");
 await adapter.initialize();
 
 // Store data
-await adapter.set('objects/abc123', new Uint8Array([1, 2, 3]));
+await adapter.set("objects/abc123", new Uint8Array([1, 2, 3]));
 
 // Retrieve data
-const data = await adapter.get('objects/abc123');
+const data = await adapter.get("objects/abc123");
 
 // Check existence
-const exists = await adapter.exists('objects/abc123');
+const exists = await adapter.exists("objects/abc123");
 
 // List keys
-const keys = await adapter.list('objects/');
+const keys = await adapter.list("objects/");
 
 // Delete
-await adapter.delete('objects/abc123');
+await adapter.delete("objects/abc123");
 
 // Batch operations
-await adapter.setBatch(new Map([
-  ['key1', new Uint8Array([1])],
-  ['key2', new Uint8Array([2])]
-]));
+await adapter.setBatch(
+  new Map([
+    ["key1", new Uint8Array([1])],
+    ["key2", new Uint8Array([2])],
+  ]),
+);
 
-const batch = await adapter.getBatch(['key1', 'key2']);
+const batch = await adapter.getBatch(["key1", "key2"]);
 
 // Get quota
 const quota = await adapter.getQuota();
@@ -102,12 +105,12 @@ await adapter.close();
 
 ### Browser Support
 
-| Browser | Version | Notes |
-|---------|---------|-------|
-| Chrome | 23+ | Full support |
-| Firefox | 10+ | Full support |
-| Safari | 10+ | Full support |
-| Edge | 12+ | Full support |
+| Browser | Version | Notes        |
+| ------- | ------- | ------------ |
+| Chrome  | 23+     | Full support |
+| Firefox | 10+     | Full support |
+| Safari  | 10+     | Full support |
+| Edge    | 12+     | Full support |
 
 ## OPFSAdapter
 
@@ -120,6 +123,7 @@ constructor(name: string, options?: OPFSOptions)
 ```
 
 **Options:**
+
 ```typescript
 interface OPFSOptions {
   rootPath?: string;
@@ -129,34 +133,34 @@ interface OPFSOptions {
 ### Usage
 
 ```typescript
-import { OPFSAdapter } from '@browser-git/storage-adapters';
+import { OPFSAdapter } from "@browser-git/storage-adapters";
 
-const adapter = new OPFSAdapter('my-repo');
+const adapter = new OPFSAdapter("my-repo");
 await adapter.initialize();
 
 // Same interface as IndexedDBAdapter
-await adapter.set('objects/abc123', data);
-const retrieved = await adapter.get('objects/abc123');
+await adapter.set("objects/abc123", data);
+const retrieved = await adapter.get("objects/abc123");
 ```
 
 ### Browser Support
 
-| Browser | Version | Notes |
-|---------|---------|-------|
-| Chrome | 86+ | Full support |
-| Firefox | 111+ | Full support |
-| Safari | 15.2+ | Limited, may throw errors |
-| Edge | 86+ | Full support |
+| Browser | Version | Notes                     |
+| ------- | ------- | ------------------------- |
+| Chrome  | 86+     | Full support              |
+| Firefox | 111+    | Full support              |
+| Safari  | 15.2+   | Limited, may throw errors |
+| Edge    | 86+     | Full support              |
 
 ### Feature Detection
 
 ```typescript
-import { isOPFSSupported } from '@browser-git/storage-adapters';
+import { isOPFSSupported } from "@browser-git/storage-adapters";
 
 if (await isOPFSSupported()) {
-  const adapter = new OPFSAdapter('my-repo');
+  const adapter = new OPFSAdapter("my-repo");
 } else {
-  const adapter = new IndexedDBAdapter('my-repo');
+  const adapter = new IndexedDBAdapter("my-repo");
 }
 ```
 
@@ -173,13 +177,13 @@ constructor(prefix: string)
 ### Usage
 
 ```typescript
-import { LocalStorageAdapter } from '@browser-git/storage-adapters';
+import { LocalStorageAdapter } from "@browser-git/storage-adapters";
 
-const adapter = new LocalStorageAdapter('my-repo');
+const adapter = new LocalStorageAdapter("my-repo");
 await adapter.initialize();
 
 // Data is base64 encoded internally
-await adapter.set('key', new Uint8Array([1, 2, 3]));
+await adapter.set("key", new Uint8Array([1, 2, 3]));
 ```
 
 ### Limitations
@@ -199,19 +203,19 @@ In-memory adapter for testing and temporary storage.
 ### Constructor
 
 ```typescript
-constructor()
+constructor();
 ```
 
 ### Usage
 
 ```typescript
-import { MemoryAdapter } from '@browser-git/storage-adapters';
+import { MemoryAdapter } from "@browser-git/storage-adapters";
 
 const adapter = new MemoryAdapter();
 await adapter.initialize();
 
 // Perfect for testing
-await adapter.set('test-key', testData);
+await adapter.set("test-key", testData);
 
 // Data is lost when adapter is garbage collected
 ```
@@ -229,23 +233,23 @@ constructor(responses?: MockResponses)
 ### Usage
 
 ```typescript
-import { MockAdapter } from '@browser-git/storage-adapters';
+import { MockAdapter } from "@browser-git/storage-adapters";
 
 const mock = new MockAdapter({
-  'objects/abc': new Uint8Array([1, 2, 3])
+  "objects/abc": new Uint8Array([1, 2, 3]),
 });
 
 await mock.initialize();
 
 // Returns predefined response
-const data = await mock.get('objects/abc');
+const data = await mock.get("objects/abc");
 
 // Track calls
 console.log(mock.calls);
 // [{ method: 'get', args: ['objects/abc'] }]
 
 // Simulate errors
-mock.setError('get', new Error('Network error'));
+mock.setError("get", new Error("Network error"));
 ```
 
 ## Adapter Factory
@@ -253,29 +257,29 @@ mock.setError('get', new Error('Network error'));
 Create the best available adapter:
 
 ```typescript
-import { createAdapter, AdapterType } from '@browser-git/storage-adapters';
+import { createAdapter, AdapterType } from "@browser-git/storage-adapters";
 
 // Automatic selection
-const adapter = await createAdapter('my-repo');
+const adapter = await createAdapter("my-repo");
 
 // Explicit selection
-const indexed = await createAdapter('my-repo', AdapterType.IndexedDB);
-const opfs = await createAdapter('my-repo', AdapterType.OPFS);
-const local = await createAdapter('my-repo', AdapterType.LocalStorage);
-const memory = await createAdapter('my-repo', AdapterType.Memory);
+const indexed = await createAdapter("my-repo", AdapterType.IndexedDB);
+const opfs = await createAdapter("my-repo", AdapterType.OPFS);
+const local = await createAdapter("my-repo", AdapterType.LocalStorage);
+const memory = await createAdapter("my-repo", AdapterType.Memory);
 ```
 
 ## Feature Detection
 
 ```typescript
-import { detectFeatures } from '@browser-git/storage-adapters';
+import { detectFeatures } from "@browser-git/storage-adapters";
 
 const features = await detectFeatures();
 
-console.log('IndexedDB:', features.indexeddb);
-console.log('OPFS:', features.opfs);
-console.log('LocalStorage:', features.localstorage);
-console.log('Storage Quota:', features.quota);
+console.log("IndexedDB:", features.indexeddb);
+console.log("OPFS:", features.opfs);
+console.log("LocalStorage:", features.localstorage);
+console.log("Storage Quota:", features.quota);
 ```
 
 ## Wrapper Adapters
@@ -285,16 +289,16 @@ console.log('Storage Quota:', features.quota);
 Adds LRU caching layer:
 
 ```typescript
-import { CachedAdapter } from '@browser-git/storage-adapters';
+import { CachedAdapter } from "@browser-git/storage-adapters";
 
 const cached = new CachedAdapter(baseAdapter, {
   maxSize: 50 * 1024 * 1024, // 50MB
-  maxAge: 5 * 60 * 1000 // 5 minutes
+  maxAge: 5 * 60 * 1000, // 5 minutes
 });
 
 // Reads are cached
-const data = await cached.get('key'); // From storage
-const data2 = await cached.get('key'); // From cache
+const data = await cached.get("key"); // From storage
+const data2 = await cached.get("key"); // From cache
 
 // Clear cache
 cached.clearCache();
@@ -305,15 +309,15 @@ cached.clearCache();
 Adds compression:
 
 ```typescript
-import { CompressionAdapter } from '@browser-git/storage-adapters';
+import { CompressionAdapter } from "@browser-git/storage-adapters";
 
 const compressed = new CompressionAdapter(baseAdapter, {
   threshold: 1024, // Compress data > 1KB
-  algorithm: 'gzip'
+  algorithm: "gzip",
 });
 
 // Data is automatically compressed/decompressed
-await compressed.set('large-key', largeData);
+await compressed.set("large-key", largeData);
 ```
 
 ### EncryptedAdapter
@@ -321,29 +325,32 @@ await compressed.set('large-key', largeData);
 Adds encryption:
 
 ```typescript
-import { EncryptedAdapter } from '@browser-git/storage-adapters';
+import { EncryptedAdapter } from "@browser-git/storage-adapters";
 
 const encrypted = new EncryptedAdapter(baseAdapter, {
-  key: cryptoKey // Web Crypto API key
+  key: cryptoKey, // Web Crypto API key
 });
 
 // Data is encrypted at rest
-await encrypted.set('secret', sensitiveData);
+await encrypted.set("secret", sensitiveData);
 ```
 
 ## Error Handling
 
 ```typescript
-import { StorageError, QuotaExceededError } from '@browser-git/storage-adapters';
+import {
+  StorageError,
+  QuotaExceededError,
+} from "@browser-git/storage-adapters";
 
 try {
-  await adapter.set('large-key', veryLargeData);
+  await adapter.set("large-key", veryLargeData);
 } catch (error) {
   if (error instanceof QuotaExceededError) {
-    console.log('Storage full:', error.quota);
+    console.log("Storage full:", error.quota);
     // Prompt user to free space
   } else if (error instanceof StorageError) {
-    console.log('Storage error:', error.code, error.message);
+    console.log("Storage error:", error.code, error.message);
   }
 }
 ```
@@ -351,10 +358,10 @@ try {
 ## Testing with Adapters
 
 ```typescript
-import { MemoryAdapter } from '@browser-git/storage-adapters';
-import { Repository } from '@browser-git/browser-git';
+import { MemoryAdapter } from "@browser-git/storage-adapters";
+import { Repository } from "@browser-git/browser-git";
 
-describe('My Git Tests', () => {
+describe("My Git Tests", () => {
   let adapter: MemoryAdapter;
   let repo: Repository;
 
@@ -362,8 +369,8 @@ describe('My Git Tests', () => {
     adapter = new MemoryAdapter();
     await adapter.initialize();
 
-    repo = await Repository.init('/test', {
-      storage: adapter // Pass adapter directly
+    repo = await Repository.init("/test", {
+      storage: adapter, // Pass adapter directly
     });
   });
 
@@ -371,10 +378,10 @@ describe('My Git Tests', () => {
     await adapter.close();
   });
 
-  it('should create commits', async () => {
-    await repo.fs.writeFile('/test/file.txt', 'content');
-    await repo.add(['file.txt']);
-    await repo.commit('test', { author });
+  it("should create commits", async () => {
+    await repo.fs.writeFile("/test/file.txt", "content");
+    await repo.add(["file.txt"]);
+    await repo.commit("test", { author });
 
     const log = await repo.log();
     expect(log).toHaveLength(1);

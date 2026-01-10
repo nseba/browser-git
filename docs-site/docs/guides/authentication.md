@@ -19,22 +19,22 @@ The most common authentication method for browser environments.
 
 ```typescript
 const repo = await Repository.clone(
-  'https://github.com/user/private-repo.git',
-  '/local',
+  "https://github.com/user/private-repo.git",
+  "/local",
   {
     auth: {
-      type: 'token',
-      token: 'ghp_xxxxxxxxxxxxxxxxxxxx'
-    }
-  }
+      type: "token",
+      token: "ghp_xxxxxxxxxxxxxxxxxxxx",
+    },
+  },
 );
 
 // Push with authentication
-await repo.push('origin', 'main', {
+await repo.push("origin", "main", {
   auth: {
-    type: 'token',
-    token: 'ghp_xxxxxxxxxxxxxxxxxxxx'
-  }
+    type: "token",
+    token: "ghp_xxxxxxxxxxxxxxxxxxxx",
+  },
 });
 ```
 
@@ -45,14 +45,14 @@ await repo.push('origin', 'main', {
 
 ```typescript
 const repo = await Repository.clone(
-  'https://gitlab.com/user/repo.git',
-  '/local',
+  "https://gitlab.com/user/repo.git",
+  "/local",
   {
     auth: {
-      type: 'token',
-      token: 'glpat-xxxxxxxxxxxxxxxxxxxx'
-    }
-  }
+      type: "token",
+      token: "glpat-xxxxxxxxxxxxxxxxxxxx",
+    },
+  },
 );
 ```
 
@@ -63,15 +63,15 @@ const repo = await Repository.clone(
 
 ```typescript
 const repo = await Repository.clone(
-  'https://bitbucket.org/user/repo.git',
-  '/local',
+  "https://bitbucket.org/user/repo.git",
+  "/local",
   {
     auth: {
-      type: 'basic',
-      username: 'your-username',
-      password: 'your-app-password'
-    }
-  }
+      type: "basic",
+      username: "your-username",
+      password: "your-app-password",
+    },
+  },
 );
 ```
 
@@ -96,12 +96,12 @@ class GitHubOAuth {
     const params = new URLSearchParams({
       client_id: this.clientId,
       redirect_uri: this.redirectUri,
-      scope: 'repo',
-      state: crypto.randomUUID()
+      scope: "repo",
+      state: crypto.randomUUID(),
     });
 
     // Store state for CSRF protection
-    sessionStorage.setItem('oauth_state', params.get('state')!);
+    sessionStorage.setItem("oauth_state", params.get("state")!);
 
     window.location.href = `https://github.com/login/oauth/authorize?${params}`;
   }
@@ -109,14 +109,14 @@ class GitHubOAuth {
   // Step 2: Handle callback (requires server-side token exchange)
   async handleCallback(code: string, state: string): Promise<string> {
     // Verify state
-    if (state !== sessionStorage.getItem('oauth_state')) {
-      throw new Error('Invalid state - possible CSRF attack');
+    if (state !== sessionStorage.getItem("oauth_state")) {
+      throw new Error("Invalid state - possible CSRF attack");
     }
 
     // Exchange code for token (must be done server-side)
-    const response = await fetch('/api/github/token', {
-      method: 'POST',
-      body: JSON.stringify({ code })
+    const response = await fetch("/api/github/token", {
+      method: "POST",
+      body: JSON.stringify({ code }),
     });
 
     const { access_token } = await response.json();
@@ -125,7 +125,10 @@ class GitHubOAuth {
 }
 
 // Usage
-const oauth = new GitHubOAuth('your-client-id', 'https://your-app.com/callback');
+const oauth = new GitHubOAuth(
+  "your-client-id",
+  "https://your-app.com/callback",
+);
 
 // On "Connect GitHub" button click
 oauth.authorize();
@@ -138,20 +141,20 @@ const token = await oauth.handleCallback(code, state);
 
 ```typescript
 // server.ts (Node.js/Express)
-app.post('/api/github/token', async (req, res) => {
+app.post("/api/github/token", async (req, res) => {
   const { code } = req.body;
 
-  const response = await fetch('https://github.com/login/oauth/access_token', {
-    method: 'POST',
+  const response = await fetch("https://github.com/login/oauth/access_token", {
+    method: "POST",
     headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       client_id: process.env.GITHUB_CLIENT_ID,
       client_secret: process.env.GITHUB_CLIENT_SECRET,
-      code
-    })
+      code,
+    }),
   });
 
   const data = await response.json();
@@ -170,15 +173,15 @@ For self-hosted Git servers or services that support it:
 
 ```typescript
 const repo = await Repository.clone(
-  'https://git.example.com/repo.git',
-  '/local',
+  "https://git.example.com/repo.git",
+  "/local",
   {
     auth: {
-      type: 'basic',
-      username: 'username',
-      password: 'password'
-    }
-  }
+      type: "basic",
+      username: "username",
+      password: "password",
+    },
+  },
 );
 ```
 
@@ -190,7 +193,7 @@ const repo = await Repository.clone(
 
 ```typescript
 class CredentialManager {
-  private static readonly KEY = 'git_credentials';
+  private static readonly KEY = "git_credentials";
 
   static save(credentials: GitCredentials): void {
     // Encrypt before storing
@@ -235,40 +238,43 @@ class SecureCredentialStore {
     const passwordBuffer = encoder.encode(userPassword);
 
     const keyMaterial = await crypto.subtle.importKey(
-      'raw',
+      "raw",
       passwordBuffer,
-      'PBKDF2',
+      "PBKDF2",
       false,
-      ['deriveKey']
+      ["deriveKey"],
     );
 
     this.encryptionKey = await crypto.subtle.deriveKey(
       {
-        name: 'PBKDF2',
-        salt: encoder.encode('browser-git-credentials'),
+        name: "PBKDF2",
+        salt: encoder.encode("browser-git-credentials"),
         iterations: 100000,
-        hash: 'SHA-256'
+        hash: "SHA-256",
       },
       keyMaterial,
-      { name: 'AES-GCM', length: 256 },
+      { name: "AES-GCM", length: 256 },
       false,
-      ['encrypt', 'decrypt']
+      ["encrypt", "decrypt"],
     );
 
     // Open database
     this.db = await this.openDatabase();
   }
 
-  async saveCredentials(remote: string, credentials: GitCredentials): Promise<void> {
+  async saveCredentials(
+    remote: string,
+    credentials: GitCredentials,
+  ): Promise<void> {
     if (!this.db || !this.encryptionKey) {
-      throw new Error('Store not initialized');
+      throw new Error("Store not initialized");
     }
 
     const encrypted = await this.encrypt(JSON.stringify(credentials));
 
     return new Promise((resolve, reject) => {
-      const tx = this.db!.transaction(['credentials'], 'readwrite');
-      const store = tx.objectStore('credentials');
+      const tx = this.db!.transaction(["credentials"], "readwrite");
+      const store = tx.objectStore("credentials");
       store.put({ remote, encrypted });
       tx.oncomplete = () => resolve();
       tx.onerror = () => reject(tx.error);
@@ -277,12 +283,12 @@ class SecureCredentialStore {
 
   async getCredentials(remote: string): Promise<GitCredentials | null> {
     if (!this.db || !this.encryptionKey) {
-      throw new Error('Store not initialized');
+      throw new Error("Store not initialized");
     }
 
     return new Promise((resolve, reject) => {
-      const tx = this.db!.transaction(['credentials'], 'readonly');
-      const store = tx.objectStore('credentials');
+      const tx = this.db!.transaction(["credentials"], "readonly");
+      const store = tx.objectStore("credentials");
       const request = store.get(remote);
 
       request.onsuccess = async () => {
@@ -304,9 +310,9 @@ class SecureCredentialStore {
     const iv = crypto.getRandomValues(new Uint8Array(12));
 
     const encrypted = await crypto.subtle.encrypt(
-      { name: 'AES-GCM', iv },
+      { name: "AES-GCM", iv },
       this.encryptionKey!,
-      encoder.encode(data)
+      encoder.encode(data),
     );
 
     // Prepend IV to encrypted data
@@ -323,9 +329,9 @@ class SecureCredentialStore {
     const encrypted = dataArray.slice(12);
 
     const decrypted = await crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv },
+      { name: "AES-GCM", iv },
       this.encryptionKey!,
-      encrypted
+      encrypted,
     );
 
     return new TextDecoder().decode(decrypted);
@@ -333,11 +339,11 @@ class SecureCredentialStore {
 
   private openDatabase(): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open('git-credentials', 1);
+      const request = indexedDB.open("git-credentials", 1);
 
       request.onupgradeneeded = () => {
         const db = request.result;
-        db.createObjectStore('credentials', { keyPath: 'remote' });
+        db.createObjectStore("credentials", { keyPath: "remote" });
       };
 
       request.onsuccess = () => resolve(request.result);
@@ -353,22 +359,22 @@ BrowserGit supports authentication hooks for dynamic credential handling:
 
 ```typescript
 const repo = await Repository.clone(
-  'https://github.com/user/repo.git',
-  '/local',
+  "https://github.com/user/repo.git",
+  "/local",
   {
     auth: {
-      type: 'callback',
+      type: "callback",
       callback: async (url: string, operation: string) => {
         // Prompt user for credentials if needed
         const credentials = await promptForCredentials(url);
 
         return {
-          type: 'token',
-          token: credentials.token
+          type: "token",
+          token: credentials.token,
         };
-      }
-    }
-  }
+      },
+    },
+  },
 );
 ```
 
@@ -377,7 +383,7 @@ const repo = await Repository.clone(
 ```typescript
 async function promptForCredentials(url: string): Promise<GitCredentials> {
   return new Promise((resolve, reject) => {
-    const modal = document.createElement('div');
+    const modal = document.createElement("div");
     modal.innerHTML = `
       <div class="modal">
         <h2>Authentication Required</h2>
@@ -393,26 +399,28 @@ async function promptForCredentials(url: string): Promise<GitCredentials> {
 
     document.body.appendChild(modal);
 
-    const form = modal.querySelector('#credential-form')!;
-    const cancelBtn = modal.querySelector('#cancel')!;
+    const form = modal.querySelector("#credential-form")!;
+    const cancelBtn = modal.querySelector("#cancel")!;
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener("submit", (e) => {
       e.preventDefault();
-      const username = (modal.querySelector('#username') as HTMLInputElement).value;
-      const password = (modal.querySelector('#password') as HTMLInputElement).value;
+      const username = (modal.querySelector("#username") as HTMLInputElement)
+        .value;
+      const password = (modal.querySelector("#password") as HTMLInputElement)
+        .value;
 
       document.body.removeChild(modal);
 
       if (password) {
-        resolve({ type: 'basic', username, password });
+        resolve({ type: "basic", username, password });
       } else {
-        resolve({ type: 'token', token: username });
+        resolve({ type: "token", token: username });
       }
     });
 
-    cancelBtn.addEventListener('click', () => {
+    cancelBtn.addEventListener("click", () => {
       document.body.removeChild(modal);
-      reject(new Error('User cancelled'));
+      reject(new Error("User cancelled"));
     });
   });
 }
@@ -425,7 +433,7 @@ Handle multiple accounts for the same provider:
 ```typescript
 interface Account {
   id: string;
-  provider: 'github' | 'gitlab' | 'bitbucket';
+  provider: "github" | "gitlab" | "bitbucket";
   username: string;
   token: string;
 }
@@ -458,8 +466,8 @@ class AccountManager {
     }
 
     return {
-      type: 'token',
-      token: account.token
+      type: "token",
+      token: account.token,
     };
   }
 }
@@ -471,7 +479,7 @@ class AccountManager {
 
 ```typescript
 // BAD
-const token = 'ghp_xxxxxxxxxxxx';
+const token = "ghp_xxxxxxxxxxxx";
 
 // GOOD
 const token = await getTokenFromSecureStorage();
@@ -481,11 +489,11 @@ const token = await getTokenFromSecureStorage();
 
 ```typescript
 // Request tokens with limited lifetime
-const response = await fetch('/api/github/token', {
+const response = await fetch("/api/github/token", {
   body: JSON.stringify({
-    scope: 'repo',
-    expires_in: 3600 // 1 hour
-  })
+    scope: "repo",
+    expires_in: 3600, // 1 hour
+  }),
 });
 ```
 
@@ -510,9 +518,9 @@ class TokenManager {
   }
 
   private async refreshToken(): Promise<{ token: string; expires_in: number }> {
-    const response = await fetch('/api/auth/refresh', {
-      method: 'POST',
-      credentials: 'include'
+    const response = await fetch("/api/auth/refresh", {
+      method: "POST",
+      credentials: "include",
     });
 
     return response.json();
@@ -540,23 +548,25 @@ async function logout(): Promise<void> {
 ### Authentication Errors
 
 ```typescript
-import { AuthenticationError } from '@browser-git/browser-git';
+import { AuthenticationError } from "@browser-git/browser-git";
 
 try {
-  await repo.push('origin', 'main');
+  await repo.push("origin", "main");
 } catch (error) {
   if (error instanceof AuthenticationError) {
     switch (error.code) {
-      case 'INVALID_CREDENTIALS':
-        showError('Invalid credentials. Please check your token.');
+      case "INVALID_CREDENTIALS":
+        showError("Invalid credentials. Please check your token.");
         break;
-      case 'TOKEN_EXPIRED':
+      case "TOKEN_EXPIRED":
         await refreshAndRetry();
         break;
-      case 'INSUFFICIENT_SCOPE':
-        showError('Token lacks required permissions. Please grant repo access.');
+      case "INSUFFICIENT_SCOPE":
+        showError(
+          "Token lacks required permissions. Please grant repo access.",
+        );
         break;
-      case 'RATE_LIMITED':
+      case "RATE_LIMITED":
         showError(`Rate limited. Try again after ${error.retryAfter} seconds.`);
         break;
     }
