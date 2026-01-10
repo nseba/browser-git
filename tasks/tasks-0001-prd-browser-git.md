@@ -483,7 +483,7 @@ Based on PRD: `0001-prd-browser-git.md`
   - [x] 22.10 Implement version history for documentation changes
   - [ ] 22.11 Add search across documentation versions
   - [x] 22.12 Write README for each example with setup instructions
-  - [ ] 22.13 Deploy examples to GitHub Pages or Vercel for live demos
+  - [x] 22.13 Deploy examples to GitHub Pages (GitHub Actions workflow configured)
 
 - [x] 23.0 Write comprehensive documentation (Docusaurus site in docs-site/ with all guides and API reference)
   - [x] 23.1 Set up Docusaurus site in `docs-site/` directory
